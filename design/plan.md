@@ -4,18 +4,18 @@
 
 ### 1.1 技术栈选择
 
-- [ ] 选择 React + TypeScript 作为主要技术栈
-- [ ] 使用 Vite 作为构建工具
-- [ ] 使用 TailwindCSS 进行样式管理
-- [ ] 使用 Jest + React Testing Library 进行测试
+- [x] 选择 React + TypeScript 作为主要技术栈
+- [x] 使用 Vite 作为构建工具
+- [x] 使用 TailwindCSS 进行样式管理
+- [x] 使用 Jest + React Testing Library 进行测试
 
 ### 1.2 项目结构搭建
 
-- [ ] 初始化项目
-- [ ] 配置开发环境
-- [ ] 设置代码规范（ESLint, Prettier）
-- [ ] 配置测试环境
-- [ ] 创建基础目录结构
+- [x] 初始化项目
+- [x] 配置开发环境
+- [x] 设置代码规范（ESLint, Prettier）
+- [x] 配置测试环境
+- [x] 创建基础目录结构
 
 ### 1.3 Docker 配置
 
