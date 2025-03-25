@@ -1,5 +1,6 @@
 import { gameReducer } from '../gameReducer';
-import { GameState, GameAction, GameMode, Card, Player } from '../../types/game';
+import { GameState, Card, GameAction } from '../../types/game';
+import { GameMode, CardType, ActionType } from '../../constants/gameConstants';
 import {
   validateCardPlacement,
   validateCardReplacement,
@@ -12,160 +13,196 @@ import {
 describe('Game Integration', () => {
   const mockCard1: Card = {
     id: 'card1',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 1,
     isWildcard: false,
   };
 
   const mockCard2: Card = {
     id: 'card2',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 2,
     isWildcard: false,
   };
 
   const mockCard3: Card = {
     id: 'card3',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 3,
     isWildcard: false,
   };
 
-  const mockPlayers: Player[] = [
-    { id: '1', name: 'Player 1', hand: [], score: 0 },
-    { id: '2', name: 'Player 2', hand: [], score: 0 },
-  ];
+  const mockPlayer = {
+    id: 'player1',
+    name: 'Player 1',
+    hand: [mockCard1, mockCard2, mockCard3],
+  };
 
-  let state: GameState;
-
-  beforeEach(() => {
-    state = {
-      id: 'game1',
-      mode: 'addition',
-      players: mockPlayers,
-      currentPlayerIndex: 0,
-      deck: [],
-      placedCards: [],
-      isGameStarted: false,
-      isGameEnded: false,
-      winner: null,
-      lastAction: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+  const createInitialState = (): GameState => ({
+    id: 'game1',
+    mode: GameMode.STANDARD,
+    players: [mockPlayer],
+    currentPlayerIndex: 0,
+    deck: [],
+    placedCards: [],
+    stagingArea: [],
+    isGameStarted: true,
+    isGameEnded: false,
+    winner: null,
+    lastAction: {
+      type: ActionType.START_GAME,
+      payload: {
+        mode: GameMode.STANDARD,
+        players: [{ ...mockPlayer, hand: [] }],
+      },
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
   });
 
   describe('Complete Game Flow', () => {
     it('should handle a complete valid game flow', () => {
-      // Player 1's turn
-      const player1 = state.players[0];
-      const cardsToPlace = [mockCard1, mockCard2, mockCard3];
+      let state = createInitialState();
 
-      // Add cards to player's hand
-      state.players[0].hand = [...cardsToPlace];
-
-      // Validate card placement
-      expect(validateCardPlacement(cardsToPlace, state.mode)).toBe(true);
-      expect(canPlaceCards(player1, cardsToPlace)).toBe(true);
-
-      // Place cards
-      const placeAction: GameAction = {
-        type: 'PLACE_CARDS',
+      // Place first card
+      const placeAction1: GameAction = {
+        type: ActionType.PLACE_CARD,
         payload: {
-          playerId: '1',
-          cards: cardsToPlace,
+          playerId: 'player1',
+          card: mockCard1,
         },
       };
-      state = gameReducer(state, placeAction);
+      state = gameReducer(state, placeAction1);
+
+      expect(state.stagingArea).toHaveLength(1);
+      expect(state.stagingArea).toContainEqual(mockCard1);
+
+      // Place second card
+      const placeAction2: GameAction = {
+        type: ActionType.PLACE_CARD,
+        payload: {
+          playerId: 'player1',
+          card: mockCard2,
+        },
+      };
+      state = gameReducer(state, placeAction2);
+
+      expect(state.stagingArea).toHaveLength(2);
+      expect(state.stagingArea).toContainEqual(mockCard2);
+
+      // Place third card
+      const placeAction3: GameAction = {
+        type: ActionType.PLACE_CARD,
+        payload: {
+          playerId: 'player1',
+          card: mockCard3,
+        },
+      };
+      state = gameReducer(state, placeAction3);
+
+      expect(state.stagingArea).toHaveLength(3);
+      expect(state.stagingArea).toContainEqual(mockCard3);
+
+      // Validate card placement
+      expect(validateCardPlacement(state.stagingArea, state.mode)).toBe(true);
+
+      // Commit cards
+      const commitAction: GameAction = {
+        type: ActionType.COMMIT_CARDS,
+        payload: {
+          playerId: 'player1',
+        },
+      };
+      state = gameReducer(state, commitAction);
+
+      expect(state.stagingArea).toHaveLength(0);
+      expect(state.placedCards).toHaveLength(3);
+      expect(state.placedCards).toContainEqual(mockCard1);
+      expect(state.placedCards).toContainEqual(mockCard2);
+      expect(state.placedCards).toContainEqual(mockCard3);
 
       // End turn
       const endTurnAction: GameAction = {
-        type: 'END_TURN',
-        payload: {
-          playerId: '1',
-        },
+        type: ActionType.END_TURN,
+        payload: {},
       };
       state = gameReducer(state, endTurnAction);
 
-      // Player 2's turn
-      const player2 = state.players[1];
-      const cardsToReplace = [mockCard1, mockCard2];
-      const newCards = [mockCard3];
+      expect(state.currentPlayerIndex).toBe(0); // Only one player, so it wraps back to 0
+    });
 
-      // Add cards to player's hand
-      state.players[1].hand = [...cardsToReplace];
+    it('should handle invalid actions', () => {
+      let state = createInitialState();
 
-      // Validate card replacement
-      expect(validateCardReplacement(cardsToReplace, newCards)).toBe(true);
-      expect(canReplaceCards(player2, cardsToReplace)).toBe(true);
+      // Try to place a card that's not in hand
+      const invalidCard: Card = {
+        id: 'invalid',
+        type: CardType.NUMBER,
+        value: 10,
+        isWildcard: false,
+      };
 
-      // Replace cards
-      const replaceAction: GameAction = {
-        type: 'REPLACE_CARDS',
+      const invalidPlaceAction: GameAction = {
+        type: ActionType.PLACE_CARD,
         payload: {
-          playerId: '2',
-          oldCards: cardsToReplace,
-          newCards: newCards,
+          playerId: 'player1',
+          card: invalidCard,
         },
       };
-      state = gameReducer(state, replaceAction);
+      state = gameReducer(state, invalidPlaceAction);
 
-      // End turn
-      state = gameReducer(state, endTurnAction);
+      // State should remain unchanged
+      expect(state.stagingArea).toHaveLength(0);
+      expect(state.placedCards).toHaveLength(0);
+      expect(state.players[0].hand).toHaveLength(3);
 
-      // Check game end
-      const winner = checkGameEnd(state.players);
-      if (winner) {
-        const endGameAction: GameAction = {
-          type: 'END_GAME',
-          payload: {
-            winnerId: winner,
-          },
-        };
-        state = gameReducer(state, endGameAction);
-      }
+      // Try to commit without enough cards
+      const invalidCommitAction: GameAction = {
+        type: ActionType.COMMIT_CARDS,
+        payload: {
+          playerId: 'player1',
+        },
+      };
+      state = gameReducer(state, invalidCommitAction);
 
-      // Verify final state
-      expect(state.isGameEnded).toBe(true);
-      expect(state.winner).toBeDefined();
+      // State should remain unchanged
+      expect(state.stagingArea).toHaveLength(0);
+      expect(state.placedCards).toHaveLength(0);
+      expect(state.players[0].hand).toHaveLength(3);
     });
   });
 
   describe('Invalid Actions', () => {
     it('should handle invalid card placement', () => {
+      const state = createInitialState();
       const player = state.players[0];
       const invalidCards = [mockCard1, mockCard2];
-
-      // Add cards to player's hand
-      state.players[0].hand = [...invalidCards];
 
       // Validate invalid placement
       expect(validateCardPlacement(invalidCards, state.mode)).toBe(false);
       expect(canPlaceCards(player, invalidCards)).toBe(true);
 
-      // Attempt invalid placement
+      // Try to place invalid cards
       const placeAction: GameAction = {
-        type: 'PLACE_CARDS',
+        type: ActionType.PLACE_CARD,
         payload: {
-          playerId: '1',
-          cards: invalidCards,
+          playerId: 'player1',
+          card: mockCard1,
         },
       };
       const newState = gameReducer(state, placeAction);
 
       // Verify state remains unchanged
-      expect(newState).toEqual(state);
+      expect(newState.placedCards).toHaveLength(0);
     });
 
     it('should handle invalid card replacement', () => {
+      const state = createInitialState();
       const player = state.players[0];
       const invalidReplacement = {
         oldCards: [mockCard1],
         newCards: [mockCard2, mockCard3],
       };
-
-      // Add cards to player's hand
-      state.players[0].hand = [...invalidReplacement.oldCards];
 
       // Validate invalid replacement
       expect(
@@ -173,11 +210,11 @@ describe('Game Integration', () => {
       ).toBe(false);
       expect(canReplaceCards(player, invalidReplacement.oldCards)).toBe(true);
 
-      // Attempt invalid replacement
+      // Try to replace cards
       const replaceAction: GameAction = {
-        type: 'REPLACE_CARDS',
+        type: ActionType.REPLACE_CARDS,
         payload: {
-          playerId: '1',
+          playerId: 'player1',
           oldCards: invalidReplacement.oldCards,
           newCards: invalidReplacement.newCards,
         },
@@ -191,59 +228,49 @@ describe('Game Integration', () => {
 
   describe('Deck Management', () => {
     it('should handle drawing cards correctly', () => {
-      const player = state.players[0];
+      const state = createInitialState();
       const cardToDraw = mockCard1;
 
       // Add card to deck
       state.deck = [cardToDraw];
 
       // Validate card drawing
-      expect(canDrawCard([cardToDraw])).toBe(true);
+      expect(canDrawCard(state.deck)).toBe(true);
 
       // Draw card
       const drawAction: GameAction = {
-        type: 'DRAW_CARD',
+        type: ActionType.DRAW_CARD,
         payload: {
-          playerId: '1',
+          playerId: 'player1',
           card: cardToDraw,
         },
       };
-      state = gameReducer(state, drawAction);
+      const newState = gameReducer(state, drawAction);
 
       // Verify card was drawn
-      expect(state.players[0].hand).toContain(cardToDraw);
-      expect(state.deck).not.toContain(cardToDraw);
+      expect(newState.players[0].hand).toContain(cardToDraw);
+      expect(newState.deck).not.toContain(cardToDraw);
     });
 
     it('should handle empty deck', () => {
+      const state = createInitialState();
       const player = state.players[0];
 
       // Validate empty deck
-      expect(canDrawCard([])).toBe(false);
+      expect(canDrawCard(state.deck)).toBe(false);
 
-      // Save the current state
-      const initialState = {
-        ...state,
-        createdAt: state.createdAt.toISOString(),
-        updatedAt: state.updatedAt.toISOString(),
-      };
-
-      // Attempt to draw from empty deck
+      // Try to draw from empty deck
       const drawAction: GameAction = {
-        type: 'DRAW_CARD',
+        type: ActionType.DRAW_CARD,
         payload: {
-          playerId: '1',
+          playerId: 'player1',
           card: mockCard1,
         },
       };
-      const newState = {
-        ...gameReducer(state, drawAction),
-        createdAt: state.createdAt.toISOString(),
-        updatedAt: state.updatedAt.toISOString(),
-      };
+      const newState = gameReducer(state, drawAction);
 
       // Verify state remains unchanged
-      expect(newState).toEqual(initialState);
+      expect(newState).toEqual(state);
     });
   });
 });

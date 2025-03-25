@@ -6,33 +6,34 @@ import {
   canReplaceCards,
   canDrawCard,
 } from '../gameRules';
-import { Card, GameMode } from '../../types/game';
+import { Card } from '../../types/game';
+import { GameMode, CardType } from '../../constants/gameConstants';
 
 describe('gameRules', () => {
   const mockCard1: Card = {
     id: 'card1',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 1,
     isWildcard: false,
   };
 
   const mockCard2: Card = {
     id: 'card2',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 2,
     isWildcard: false,
   };
 
   const mockCard3: Card = {
     id: 'card3',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 3,
     isWildcard: false,
   };
 
   describe('validateCardPlacement', () => {
     it('should validate addition mode correctly', () => {
-      const mode: GameMode = 'addition';
+      const mode = GameMode.STANDARD;
 
       // Valid: 1 + 2 = 3
       expect(validateCardPlacement([mockCard1, mockCard2, mockCard3], mode)).toBe(true);
@@ -40,7 +41,7 @@ describe('gameRules', () => {
       // Invalid: 1 + 2 ≠ 4
       const invalidCard: Card = {
         id: 'card4',
-        type: 'number',
+        type: CardType.NUMBER,
         value: 4,
         isWildcard: false,
       };
@@ -48,12 +49,12 @@ describe('gameRules', () => {
     });
 
     it('should validate multiplication mode correctly', () => {
-      const mode: GameMode = 'multiplication';
+      const mode = GameMode.ADVANCED;
 
       // Valid: 2 × 3 = 6
       const card6: Card = {
         id: 'card6',
-        type: 'number',
+        type: CardType.NUMBER,
         value: 6,
         isWildcard: false,
       };
@@ -62,7 +63,7 @@ describe('gameRules', () => {
       // Invalid: 2 × 3 ≠ 7
       const card7: Card = {
         id: 'card7',
-        type: 'number',
+        type: CardType.NUMBER,
         value: 7,
         isWildcard: false,
       };
@@ -70,7 +71,7 @@ describe('gameRules', () => {
     });
 
     it('should require exactly 3 cards', () => {
-      const mode: GameMode = 'addition';
+      const mode = GameMode.STANDARD;
       expect(validateCardPlacement([mockCard1, mockCard2], mode)).toBe(false);
       expect(validateCardPlacement([mockCard1, mockCard2, mockCard3, mockCard1], mode)).toBe(false);
     });
@@ -97,8 +98,8 @@ describe('gameRules', () => {
   describe('checkGameEnd', () => {
     it('should detect winner when a player has no cards', () => {
       const players = [
-        { id: '1', hand: [] },
-        { id: '2', hand: [mockCard1] },
+        { id: '1', name: 'Player 1', hand: [] },
+        { id: '2', name: 'Player 2', hand: [mockCard1] },
       ];
 
       expect(checkGameEnd(players)).toBe('1');
@@ -106,8 +107,8 @@ describe('gameRules', () => {
 
     it('should return null when no player has empty hand', () => {
       const players = [
-        { id: '1', hand: [mockCard1] },
-        { id: '2', hand: [mockCard2] },
+        { id: '1', name: 'Player 1', hand: [mockCard1] },
+        { id: '2', name: 'Player 2', hand: [mockCard2] },
       ];
 
       expect(checkGameEnd(players)).toBeNull();
@@ -117,6 +118,8 @@ describe('gameRules', () => {
   describe('canPlaceCards', () => {
     it('should allow placing cards that are in player hand', () => {
       const player = {
+        id: '1',
+        name: 'Player 1',
         hand: [mockCard1, mockCard2, mockCard3],
       };
 
@@ -125,6 +128,8 @@ describe('gameRules', () => {
 
     it('should not allow placing cards that are not in player hand', () => {
       const player = {
+        id: '1',
+        name: 'Player 1',
         hand: [mockCard1, mockCard2],
       };
 
@@ -135,6 +140,8 @@ describe('gameRules', () => {
   describe('canReplaceCards', () => {
     it('should allow replacing cards that are in player hand', () => {
       const player = {
+        id: '1',
+        name: 'Player 1',
         hand: [mockCard1, mockCard2],
       };
 
@@ -143,6 +150,8 @@ describe('gameRules', () => {
 
     it('should not allow replacing cards that are not in player hand', () => {
       const player = {
+        id: '1',
+        name: 'Player 1',
         hand: [mockCard1],
       };
 

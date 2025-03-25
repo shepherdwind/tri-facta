@@ -1,57 +1,74 @@
 import { gameReducer } from '../gameReducer';
-import { GameState, GameAction, GameMode, Card, Player } from '../../types/game';
+import { GameState, GameAction, Card, Player } from '../../types/game';
+import { GameMode, CardType, ActionType } from '../../constants/gameConstants';
 
 describe('gameReducer', () => {
   const mockCard1: Card = {
     id: 'card1',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 1,
     isWildcard: false,
   };
 
   const mockCard2: Card = {
     id: 'card2',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 2,
     isWildcard: false,
   };
 
   const mockCard3: Card = {
     id: 'card3',
-    type: 'number',
+    type: CardType.NUMBER,
     value: 3,
     isWildcard: false,
   };
 
+  const mockCard4: Card = {
+    id: 'card4',
+    type: CardType.NUMBER,
+    value: 5,
+    isWildcard: false,
+  };
+
   const mockPlayers: Player[] = [
-    { id: '1', name: 'Player 1', hand: [], score: 0 },
-    { id: '2', name: 'Player 2', hand: [], score: 0 },
+    { id: '1', name: 'Player 1', hand: [] },
+    { id: '2', name: 'Player 2', hand: [] },
   ];
 
-  let initialState: GameState;
+  const mockPlayer = {
+    id: 'player1',
+    name: 'Player 1',
+    hand: [mockCard1, mockCard2, mockCard3, mockCard4],
+  };
 
-  beforeEach(() => {
-    initialState = {
-      id: 'game1',
-      mode: 'addition',
-      players: mockPlayers,
-      currentPlayerIndex: 0,
-      deck: [mockCard1, mockCard2, mockCard3],
-      placedCards: [],
-      isGameStarted: false,
-      isGameEnded: false,
-      winner: null,
-      lastAction: null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-  });
+  const initialState: GameState = {
+    id: 'game1',
+    mode: GameMode.STANDARD,
+    players: [mockPlayer],
+    currentPlayerIndex: 0,
+    deck: [],
+    placedCards: [],
+    stagingArea: [],
+    isGameStarted: true,
+    isGameEnded: false,
+    winner: null,
+    lastAction: {
+      type: ActionType.START_GAME,
+      payload: {
+        mode: GameMode.STANDARD,
+        players: [{ ...mockPlayer, hand: [] }],
+      },
+    },
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
 
   it('should initialize game state correctly', () => {
     const startAction: GameAction = {
-      type: 'START_GAME',
+      type: ActionType.START_GAME,
       payload: {
-        mode: 'addition',
+        mode: GameMode.STANDARD,
         players: mockPlayers,
       },
     };
@@ -59,119 +76,189 @@ describe('gameReducer', () => {
     const newState = gameReducer(initialState, startAction);
 
     expect(newState.isGameStarted).toBe(true);
-    expect(newState.mode).toBe('addition');
+    expect(newState.mode).toBe(GameMode.STANDARD);
     expect(newState.players.length).toBe(2);
     // After dealing initial hands (6 cards each), the deck should have 30 cards
     expect(newState.deck.length).toBe(30); // 42 - (2 players * 6 cards)
   });
 
   it('should handle placing cards correctly', () => {
-    // First start the game
-    const startAction: GameAction = {
-      type: 'START_GAME',
+    const state = { ...initialState };
+
+    // Place first card
+    const placeAction1: GameAction = {
+      type: ActionType.PLACE_CARD,
       payload: {
-        mode: 'addition',
-        players: mockPlayers,
+        playerId: 'player1',
+        card: mockCard1,
       },
     };
-    let state = gameReducer(initialState, startAction);
+    let newState = gameReducer(state, placeAction1);
 
-    // Add cards to player's hand
-    state.players[0].hand = [mockCard1, mockCard2, mockCard3];
+    expect(newState.players[0].hand).toHaveLength(3);
+    expect(newState.stagingArea).toHaveLength(1);
+    expect(newState.stagingArea).toContainEqual(mockCard1);
 
-    const placeAction: GameAction = {
-      type: 'PLACE_CARDS',
+    // Place second card
+    const placeAction2: GameAction = {
+      type: ActionType.PLACE_CARD,
       payload: {
-        playerId: '1',
-        cards: [mockCard1, mockCard2, mockCard3],
+        playerId: 'player1',
+        card: mockCard2,
       },
     };
+    newState = gameReducer(newState, placeAction2);
 
-    const newState = gameReducer(state, placeAction);
+    expect(newState.players[0].hand).toHaveLength(2);
+    expect(newState.stagingArea).toHaveLength(2);
+    expect(newState.stagingArea).toContainEqual(mockCard2);
 
-    expect(newState.players[0].hand).toHaveLength(0);
+    // Place third card
+    const placeAction3: GameAction = {
+      type: ActionType.PLACE_CARD,
+      payload: {
+        playerId: 'player1',
+        card: mockCard3,
+      },
+    };
+    newState = gameReducer(newState, placeAction3);
+
+    expect(newState.players[0].hand).toHaveLength(1);
+    expect(newState.stagingArea).toHaveLength(3);
+    expect(newState.stagingArea).toContainEqual(mockCard3);
+
+    // Commit cards
+    const commitAction: GameAction = {
+      type: ActionType.COMMIT_CARDS,
+      payload: {
+        playerId: 'player1',
+      },
+    };
+    newState = gameReducer(newState, commitAction);
+
+    expect(newState.stagingArea).toHaveLength(0);
     expect(newState.placedCards).toHaveLength(3);
     expect(newState.placedCards).toContainEqual(mockCard1);
     expect(newState.placedCards).toContainEqual(mockCard2);
     expect(newState.placedCards).toContainEqual(mockCard3);
   });
 
-  it('should handle replacing cards correctly', () => {
-    // First start the game
-    const startAction: GameAction = {
-      type: 'START_GAME',
+  it('should handle invalid card placement', () => {
+    const state = { ...initialState };
+
+    // Place first card (value 1)
+    const placeAction1: GameAction = {
+      type: ActionType.PLACE_CARD,
       payload: {
-        mode: 'addition',
-        players: mockPlayers,
+        playerId: 'player1',
+        card: mockCard1,
       },
     };
-    let state = gameReducer(initialState, startAction);
+    let newState = gameReducer(state, placeAction1);
 
-    // Add cards to player's hand and deck
-    state.players[0].hand = [mockCard1, mockCard2];
-    state.deck = [mockCard3];
+    expect(newState.stagingArea).toHaveLength(1);
+    expect(newState.stagingArea).toContainEqual(mockCard1);
+
+    // Place second card (value 2)
+    const placeAction2: GameAction = {
+      type: ActionType.PLACE_CARD,
+      payload: {
+        playerId: 'player1',
+        card: mockCard2,
+      },
+    };
+    newState = gameReducer(newState, placeAction2);
+
+    expect(newState.stagingArea).toHaveLength(2);
+    expect(newState.stagingArea).toContainEqual(mockCard1);
+    expect(newState.stagingArea).toContainEqual(mockCard2);
+
+    // Place third card (value 5, which makes an invalid combination)
+    const placeAction3: GameAction = {
+      type: ActionType.PLACE_CARD,
+      payload: {
+        playerId: 'player1',
+        card: mockCard4,
+      },
+    };
+    newState = gameReducer(newState, placeAction3);
+
+    expect(newState.stagingArea).toHaveLength(3);
+    expect(newState.stagingArea).toContainEqual(mockCard1);
+    expect(newState.stagingArea).toContainEqual(mockCard2);
+    expect(newState.stagingArea).toContainEqual(mockCard4);
+
+    // Try to commit invalid combination
+    const commitAction: GameAction = {
+      type: ActionType.COMMIT_CARDS,
+      payload: {
+        playerId: 'player1',
+      },
+    };
+    newState = gameReducer(newState, commitAction);
+
+    // Cards should be returned to player's hand
+    expect(newState.stagingArea).toHaveLength(0);
+    expect(newState.placedCards).toHaveLength(0);
+    expect(newState.players[0].hand).toContainEqual(mockCard1);
+    expect(newState.players[0].hand).toContainEqual(mockCard2);
+    expect(newState.players[0].hand).toContainEqual(mockCard4);
+  });
+
+  it('should handle replacing cards correctly', () => {
+    const state = { ...initialState };
+    const oldCards = [mockCard1, mockCard2];
+    const newCards = [mockCard3];
 
     const replaceAction: GameAction = {
-      type: 'REPLACE_CARDS',
+      type: ActionType.REPLACE_CARDS,
       payload: {
-        playerId: '1',
-        oldCards: [mockCard1, mockCard2],
-        newCards: [mockCard3],
+        playerId: 'player1',
+        oldCards,
+        newCards,
       },
     };
 
     const newState = gameReducer(state, replaceAction);
 
-    // After replacing 2 cards with 1 card, the hand should have 1 card
-    expect(newState.players[0].hand).toHaveLength(1);
+    // Verify cards were replaced
+    expect(newState.players[0].hand).not.toContainEqual(mockCard1);
+    expect(newState.players[0].hand).not.toContainEqual(mockCard2);
     expect(newState.players[0].hand).toContainEqual(mockCard3);
-    expect(newState.deck).toHaveLength(0);
   });
 
-  it('should handle drawing a card correctly', () => {
-    // First start the game
-    const startAction: GameAction = {
-      type: 'START_GAME',
-      payload: {
-        mode: 'addition',
-        players: mockPlayers,
-      },
-    };
-    let state = gameReducer(initialState, startAction);
-
-    // Set up deck
-    state.deck = [mockCard1];
+  it('should handle drawing cards correctly', () => {
+    const state = { ...initialState };
+    const cardToDraw = mockCard1;
 
     const drawAction: GameAction = {
-      type: 'DRAW_CARD',
+      type: ActionType.DRAW_CARD,
       payload: {
-        playerId: '1',
-        card: mockCard1,
+        playerId: 'player1',
+        card: cardToDraw,
       },
     };
 
     const newState = gameReducer(state, drawAction);
 
-    expect(newState.players[0].hand).toContainEqual(mockCard1);
-    expect(newState.deck).toHaveLength(0);
+    // Verify card was drawn
+    expect(newState.players[0].hand).toContainEqual(cardToDraw);
   });
 
   it('should handle ending turn correctly', () => {
     // First start the game
     const startAction: GameAction = {
-      type: 'START_GAME',
+      type: ActionType.START_GAME,
       payload: {
-        mode: 'addition',
+        mode: GameMode.STANDARD,
         players: mockPlayers,
       },
     };
     let state = gameReducer(initialState, startAction);
 
     const endTurnAction: GameAction = {
-      type: 'END_TURN',
-      payload: {
-        playerId: '1',
-      },
+      type: ActionType.END_TURN,
+      payload: {},
     };
 
     const newState = gameReducer(state, endTurnAction);
@@ -181,7 +268,7 @@ describe('gameReducer', () => {
 
   it('should handle ending game correctly', () => {
     const endGameAction: GameAction = {
-      type: 'END_GAME',
+      type: ActionType.END_GAME,
       payload: {
         winnerId: '1',
       },

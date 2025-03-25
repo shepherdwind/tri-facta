@@ -1,19 +1,23 @@
-import { GameMode, Card } from '../types/game';
+import { Card } from '../types/game';
+import { GameMode } from '../constants/gameConstants';
 
 export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
   if (cards.length !== 3) return false;
 
+  // Check for duplicate values
   const values = cards.map((card) => card.value);
+  const uniqueValues = new Set(values);
+  if (uniqueValues.size !== values.length) return false;
 
-  if (mode === 'addition') {
-    // For addition mode: a + b = c
+  if (mode === GameMode.STANDARD) {
+    // For standard mode: a + b = c
     return (
       values[0] + values[1] === values[2] ||
       values[1] + values[2] === values[0] ||
       values[0] + values[2] === values[1]
     );
   } else {
-    // For multiplication mode: a × b = c
+    // For advanced mode: a × b = c
     return (
       values[0] * values[1] === values[2] ||
       values[1] * values[2] === values[0] ||

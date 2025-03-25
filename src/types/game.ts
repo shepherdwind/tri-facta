@@ -1,6 +1,4 @@
-export type GameMode = 'addition' | 'multiplication';
-
-export type CardType = 'number' | 'wildcard';
+import { GameMode, CardType, ActionType } from '../constants/gameConstants';
 
 export interface Card {
   id: string;
@@ -13,7 +11,7 @@ export interface Player {
   id: string;
   name: string;
   hand: Card[];
-  score: number;
+  score?: number;
 }
 
 export interface GameState {
@@ -23,18 +21,70 @@ export interface GameState {
   currentPlayerIndex: number;
   deck: Card[];
   placedCards: Card[];
+  stagingArea: Card[];
   isGameStarted: boolean;
   isGameEnded: boolean;
   winner: string | null;
-  lastAction: GameAction | null;
+  lastAction: GameAction;
   createdAt: Date;
   updatedAt: Date;
 }
 
+export interface StartGamePayload {
+  mode: GameMode;
+  players: Player[];
+}
+
+export interface PlaceCardPayload {
+  playerId: string;
+  card: Card;
+}
+
+export interface CommitCardsPayload {
+  playerId: string;
+}
+
+export interface ReplaceCardsPayload {
+  playerId: string;
+  oldCards: Card[];
+  newCards: Card[];
+}
+
+export interface DrawCardPayload {
+  playerId: string;
+  card: Card;
+}
+
+export interface EndGamePayload {
+  winnerId: string;
+}
+
 export type GameAction =
-  | { type: 'START_GAME'; payload: { mode: GameMode; players: Player[] } }
-  | { type: 'PLACE_CARDS'; payload: { playerId: string; cards: Card[] } }
-  | { type: 'REPLACE_CARDS'; payload: { playerId: string; oldCards: Card[]; newCards: Card[] } }
-  | { type: 'DRAW_CARD'; payload: { playerId: string; card: Card } }
-  | { type: 'END_TURN'; payload: { playerId: string } }
-  | { type: 'END_GAME'; payload: { winnerId: string } };
+  | {
+      type: ActionType.START_GAME;
+      payload: StartGamePayload;
+    }
+  | {
+      type: ActionType.PLACE_CARD;
+      payload: PlaceCardPayload;
+    }
+  | {
+      type: ActionType.COMMIT_CARDS;
+      payload: CommitCardsPayload;
+    }
+  | {
+      type: ActionType.REPLACE_CARDS;
+      payload: ReplaceCardsPayload;
+    }
+  | {
+      type: ActionType.DRAW_CARD;
+      payload: DrawCardPayload;
+    }
+  | {
+      type: ActionType.END_TURN;
+      payload: {};
+    }
+  | {
+      type: ActionType.END_GAME;
+      payload: EndGamePayload;
+    };
