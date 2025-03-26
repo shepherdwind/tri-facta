@@ -30,12 +30,13 @@ export class GameManager {
       }
     }
 
-    // Add wildcards
+    // Add wildcards with random values between 1 and MAX_NUMBER_VALUE
     for (let i = 0; i < GameConfig.WILDCARDS_COUNT; i++) {
+      const randomValue = Math.floor(Math.random() * GameConfig.MAX_NUMBER_VALUE) + 1;
       deck.push({
         id: uuidv4(),
         type: CardType.WILDCARD,
-        value: 0,
+        value: randomValue,
         isWildcard: true,
       });
     }

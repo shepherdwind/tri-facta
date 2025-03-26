@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es2021": true
+    "es2021": true,
+    "jest": true
   },
   "extends": [
     "eslint:recommended",
@@ -21,7 +22,10 @@
   "plugins": ["react", "@typescript-eslint", "prettier"],
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   },
   "settings": {
     "react": {

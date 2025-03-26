@@ -1,30 +1,70 @@
 import { Card } from '../types/game';
 import { GameMode } from '../constants/gameConstants';
+import { GameConfig } from '../constants/gameConstants';
 
 export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
   if (cards.length !== 3) return false;
 
-  // Check for duplicate values
-  const values = cards.map((card) => card.value);
+  // Count wildcards
+  const wildcards = cards.filter((card) => card.isWildcard);
+  if (wildcards.length > 2) return false; // Maximum 2 wildcards allowed
+
+  // Get non-wildcard cards
+  const numberCards = cards.filter((card) => !card.isWildcard);
+  const values = numberCards.map((card) => card.value);
+
+  // Check for duplicate values among number cards
   const uniqueValues = new Set(values);
   if (uniqueValues.size !== values.length) return false;
 
-  if (mode === GameMode.STANDARD) {
+  // If we have 2 or 3 wildcards, any combination is valid
+  if (wildcards.length >= 2) return true;
+
+  // If we have 1 wildcard, we need to check if the remaining numbers can form a valid equation
+  if (wildcards.length === 1) {
+    if (numberCards.length !== 2) return false;
     // For standard mode: a + b = c
-    // 尝试所有可能的组合
-    return (
-      values[0] + values[1] === values[2] ||
-      values[1] + values[2] === values[0] ||
-      values[0] + values[2] === values[1]
-    );
-  } else {
     // For advanced mode: a × b = c
-    // 尝试所有可能的组合
-    return (
-      values[0] * values[1] === values[2] ||
-      values[1] * values[2] === values[0] ||
-      values[0] * values[2] === values[1]
-    );
+    // We need to check if the two numbers can form a valid equation
+    const [a, b] = values;
+    const wildcardValue = wildcards[0].value;
+
+    console.log('Validating cards:', { a, b, wildcardValue, mode });
+
+    // Try all possible positions for the wildcard
+    if (mode === GameMode.STANDARD) {
+      // In standard mode, we need to check if the sum of the two numbers
+      // equals the wildcard value
+      const sum = a + b;
+      const isValid = sum === wildcardValue;
+      console.log('Standard mode equations:', {
+        'a + b': sum,
+        'wildcard value': wildcardValue,
+        isValid,
+      });
+      return isValid;
+    } else {
+      // In advanced mode, we need to check if the product of the two numbers
+      // is a valid value for the wildcard
+      const product = a * b;
+      const isValid = product >= 1 && product <= GameConfig.MAX_NUMBER_VALUE;
+      console.log('Advanced mode equations:', {
+        'a * b': product,
+        isValid,
+      });
+      return isValid;
+    }
+  }
+
+  // If we have no wildcards, validate the number combination
+  return validateNumberCombination(values[0], values[1], values[2], mode);
+}
+
+function validateNumberCombination(a: number, b: number, c: number, mode: GameMode): boolean {
+  if (mode === GameMode.STANDARD) {
+    return a + b === c || b + c === a || a + c === b;
+  } else {
+    return a * b === c || b * c === a || a * c === b;
   }
 }
 
@@ -33,15 +73,15 @@ export const validateCardReplacement = (
   placedCards: Card[],
   gameMode: GameMode
 ): boolean => {
-  // 找到要替换的卡牌在已放置卡牌中的位置
+  // Find the card to replace in placed cards
   const cardToReplaceIndex = placedCards.findIndex((card) => card.id === newCard.id);
   if (cardToReplaceIndex === -1) return false;
 
-  // 创建替换后的新卡牌组合
+  // Create new combination with replaced card
   const newCombination = [...placedCards];
   newCombination[cardToReplaceIndex] = newCard;
 
-  // 验证新的组合是否有效
+  // Validate the new combination
   return validateCardPlacement(newCombination, gameMode);
 };
 
