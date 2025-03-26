@@ -1,9 +1,8 @@
 import { Card } from '../types/game';
 import { GameMode } from '../constants/gameConstants';
-import { GameConfig } from '../constants/gameConstants';
 
 export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
-  if (cards.length !== 3) return false;
+  if (cards.length < 2 || cards.length > 3) return false;
 
   // Count wildcards
   const wildcards = cards.filter((card) => card.isWildcard);
@@ -12,6 +11,20 @@ export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
   // Get non-wildcard cards
   const numberCards = cards.filter((card) => !card.isWildcard);
   const values = numberCards.map((card) => card.value);
+
+  // For 2 cards, they must be equal
+  if (cards.length === 2) {
+    // If we have one wildcard and one number card, they must have the same value
+    if (wildcards.length === 1) {
+      return wildcards[0].value === values[0];
+    }
+    // If we have two wildcards, they must have the same value
+    if (wildcards.length === 2) {
+      return wildcards[0].value === wildcards[1].value;
+    }
+    // If we have two number cards, they must have the same value
+    return values[0] === values[1];
+  }
 
   // Check for duplicate values among number cards
   const uniqueValues = new Set(values);
@@ -33,10 +46,10 @@ export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
 
     // Try all possible positions for the wildcard
     if (mode === GameMode.STANDARD) {
-      // In standard mode, we need to check if the sum of the two numbers
-      // equals the wildcard value
+      // In standard mode, we need to check if:
+      // 1. The sum of the two numbers equals the wildcard value
       const sum = a + b;
-      const isValid = sum === wildcardValue;
+      const isValid = sum === wildcardValue; // Only check if a + b = wildcard
       console.log('Standard mode equations:', {
         'a + b': sum,
         'wildcard value': wildcardValue,
@@ -44,12 +57,25 @@ export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
       });
       return isValid;
     } else {
-      // In advanced mode, we need to check if the product of the two numbers
-      // is a valid value for the wildcard
+      // In advanced mode, we need to check if:
+      // 1. The product of the two numbers equals the wildcard value
+      // 2. The wildcard value times one number equals the other number
       const product = a * b;
-      const isValid = product >= 1 && product <= GameConfig.MAX_NUMBER_VALUE;
+      const isValid =
+        product === wildcardValue || // a * b = wildcard
+        wildcardValue * a === b || // wildcard * a = b
+        wildcardValue * b === a || // wildcard * b = a
+        a * b === wildcardValue || // a * b = wildcard (again)
+        (a === wildcardValue && b === wildcardValue) || // wildcard = wildcard
+        a === wildcardValue || // wildcard = a
+        b === wildcardValue; // wildcard = b
       console.log('Advanced mode equations:', {
         'a * b': product,
+        'wildcard * a': wildcardValue * a,
+        'wildcard * b': wildcardValue * b,
+        'wildcard value': wildcardValue,
+        'a === wildcard': a === wildcardValue,
+        'b === wildcard': b === wildcardValue,
         isValid,
       });
       return isValid;
