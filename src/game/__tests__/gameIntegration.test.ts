@@ -235,9 +235,9 @@ describe('Game Integration', () => {
       };
 
       // Validate invalid replacement
-      expect(
-        validateCardReplacement(invalidReplacement.oldCards, invalidReplacement.newCards)
-      ).toBe(false);
+      expect(validateCardReplacement(mockCard4, invalidReplacement.oldCards, state.mode)).toBe(
+        false
+      );
       expect(canReplaceCards(player, invalidReplacement.oldCards)).toBe(true);
 
       // Try to replace cards
@@ -246,6 +246,7 @@ describe('Game Integration', () => {
         payload: {
           playerId: player.id,
           cardId: mockCard4.id,
+          targetCardId: mockCard4.id,
         },
       };
       const newState = gameReducer(state, replaceAction);
