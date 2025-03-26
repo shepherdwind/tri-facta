@@ -5,9 +5,9 @@ export enum GameMode {
 
 export const GameConfig = {
   INITIAL_HAND_SIZE: 6,
-  MAX_CARDS: 42,
+  MAX_CARDS: 30,
   WILDCARDS_COUNT: 2,
-  MAX_NUMBER_VALUE: 20,
+  MAX_NUMBER_VALUE: 14,
   CARDS_PER_NUMBER: 2,
   CARDS_TO_MATCH: 3,
 } as const;

@@ -4,8 +4,6 @@ import { GameMode, CardType, ActionType } from '../../constants/gameConstants';
 import {
   validateCardPlacement,
   validateCardReplacement,
-  checkGameEnd,
-  canPlaceCards,
   canReplaceCards,
   canDrawCard,
 } from '../gameRules';
@@ -29,6 +27,13 @@ describe('Game Integration', () => {
     id: 'card3',
     type: CardType.NUMBER,
     value: 3,
+    isWildcard: false,
+  };
+
+  const mockCard4: Card = {
+    id: 'card4',
+    type: CardType.NUMBER,
+    value: 5,
     isWildcard: false,
   };
 
@@ -174,20 +179,45 @@ describe('Game Integration', () => {
 
   describe('Invalid Actions', () => {
     it('should handle invalid card placement', () => {
-      const state = createInitialState();
-      const player = state.players[0];
-      const invalidCards = [mockCard1, mockCard2];
+      const player = {
+        id: 'player1',
+        name: 'Player 1',
+        hand: [mockCard1, mockCard2, mockCard3],
+      };
+
+      const state: GameState = {
+        id: 'game1',
+        mode: GameMode.STANDARD,
+        players: [player],
+        currentPlayerIndex: 0,
+        deck: [],
+        placedCards: [],
+        stagingArea: [],
+        isGameStarted: true,
+        isGameEnded: false,
+        winner: null,
+        lastAction: {
+          type: ActionType.START_GAME,
+          payload: {
+            mode: GameMode.STANDARD,
+            players: [player],
+          },
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      const invalidCards = [mockCard1, mockCard2, mockCard4];
 
       // Validate invalid placement
       expect(validateCardPlacement(invalidCards, state.mode)).toBe(false);
-      expect(canPlaceCards(player, invalidCards)).toBe(true);
 
       // Try to place invalid cards
       const placeAction: GameAction = {
         type: ActionType.PLACE_CARD,
         payload: {
-          playerId: 'player1',
-          card: mockCard1,
+          playerId: player.id,
+          card: invalidCards[0],
         },
       };
       const newState = gameReducer(state, placeAction);
@@ -214,9 +244,8 @@ describe('Game Integration', () => {
       const replaceAction: GameAction = {
         type: ActionType.REPLACE_CARDS,
         payload: {
-          playerId: 'player1',
-          oldCards: invalidReplacement.oldCards,
-          newCards: invalidReplacement.newCards,
+          playerId: player.id,
+          cardId: mockCard4.id,
         },
       };
       const newState = gameReducer(state, replaceAction);
@@ -254,7 +283,6 @@ describe('Game Integration', () => {
 
     it('should handle empty deck', () => {
       const state = createInitialState();
-      const player = state.players[0];
 
       // Validate empty deck
       expect(canDrawCard(state.deck)).toBe(false);

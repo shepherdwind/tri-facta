@@ -46,8 +46,8 @@ export interface CommitCardsPayload {
 
 export interface ReplaceCardsPayload {
   playerId: string;
-  oldCards: Card[];
-  newCards: Card[];
+  cardId: string;
+  targetCardId: string;
 }
 
 export interface DrawCardPayload {
@@ -57,6 +57,10 @@ export interface DrawCardPayload {
 
 export interface EndGamePayload {
   winnerId: string;
+}
+
+export interface EndTurnPayload {
+  // Empty interface for consistency
 }
 
 export type GameAction =
@@ -82,7 +86,7 @@ export type GameAction =
     }
   | {
       type: ActionType.END_TURN;
-      payload: {};
+      payload: EndTurnPayload;
     }
   | {
       type: ActionType.END_GAME;

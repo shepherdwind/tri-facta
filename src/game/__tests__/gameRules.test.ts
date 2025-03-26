@@ -2,7 +2,6 @@ import {
   validateCardPlacement,
   validateCardReplacement,
   checkGameEnd,
-  canPlaceCards,
   canReplaceCards,
   canDrawCard,
 } from '../gameRules';
@@ -11,41 +10,43 @@ import { GameMode, CardType } from '../../constants/gameConstants';
 
 describe('gameRules', () => {
   const mockCard1: Card = {
-    id: 'card1',
+    id: '1',
     type: CardType.NUMBER,
     value: 1,
     isWildcard: false,
   };
 
   const mockCard2: Card = {
-    id: 'card2',
+    id: '2',
     type: CardType.NUMBER,
     value: 2,
     isWildcard: false,
   };
 
   const mockCard3: Card = {
-    id: 'card3',
+    id: '3',
     type: CardType.NUMBER,
     value: 3,
     isWildcard: false,
   };
 
   describe('validateCardPlacement', () => {
-    it('should validate addition mode correctly', () => {
-      const mode = GameMode.STANDARD;
+    it('should validate valid card combinations in standard mode', () => {
+      expect(validateCardPlacement([mockCard1, mockCard2, mockCard3], GameMode.STANDARD)).toBe(
+        true
+      );
+    });
 
-      // Valid: 1 + 2 = 3
-      expect(validateCardPlacement([mockCard1, mockCard2, mockCard3], mode)).toBe(true);
-
-      // Invalid: 1 + 2 ≠ 4
+    it('should reject invalid card combinations in standard mode', () => {
       const invalidCard: Card = {
-        id: 'card4',
+        id: '4',
         type: CardType.NUMBER,
-        value: 4,
+        value: 5,
         isWildcard: false,
       };
-      expect(validateCardPlacement([mockCard1, mockCard2, invalidCard], mode)).toBe(false);
+      expect(validateCardPlacement([mockCard1, mockCard2, invalidCard], GameMode.STANDARD)).toBe(
+        false
+      );
     });
 
     it('should validate multiplication mode correctly', () => {
@@ -78,20 +79,31 @@ describe('gameRules', () => {
   });
 
   describe('validateCardReplacement', () => {
-    it('should validate 2-card replacement', () => {
-      expect(validateCardReplacement([mockCard1, mockCard2], [mockCard3])).toBe(true);
+    it('should validate card replacement with valid combination', () => {
+      const placedCards = [mockCard1, mockCard2, mockCard3];
+      expect(validateCardReplacement(mockCard2, placedCards, GameMode.STANDARD)).toBe(true);
     });
 
-    it('should validate 3-card replacement', () => {
-      expect(validateCardReplacement([mockCard1, mockCard2, mockCard3], [mockCard1])).toBe(true);
+    it('should reject replacement with invalid combination', () => {
+      const placedCards = [mockCard1, mockCard2, mockCard3];
+      const invalidCard: Card = {
+        id: '4',
+        type: CardType.NUMBER,
+        value: 5,
+        isWildcard: false,
+      };
+      expect(validateCardReplacement(invalidCard, placedCards, GameMode.STANDARD)).toBe(false);
     });
 
-    it('should reject invalid card counts', () => {
-      expect(validateCardReplacement([mockCard1], [mockCard2])).toBe(false);
-      expect(
-        validateCardReplacement([mockCard1, mockCard2, mockCard3], [mockCard2, mockCard3])
-      ).toBe(false);
-      expect(validateCardReplacement([mockCard1, mockCard2], [mockCard2, mockCard3])).toBe(false);
+    it('should reject replacement with card not in placed cards', () => {
+      const placedCards = [mockCard1, mockCard2, mockCard3];
+      const newCard: Card = {
+        id: '4',
+        type: CardType.NUMBER,
+        value: 3,
+        isWildcard: false,
+      };
+      expect(validateCardReplacement(newCard, placedCards, GameMode.STANDARD)).toBe(false);
     });
   });
 
@@ -112,28 +124,6 @@ describe('gameRules', () => {
       ];
 
       expect(checkGameEnd(players)).toBeNull();
-    });
-  });
-
-  describe('canPlaceCards', () => {
-    it('should allow placing cards that are in player hand', () => {
-      const player = {
-        id: '1',
-        name: 'Player 1',
-        hand: [mockCard1, mockCard2, mockCard3],
-      };
-
-      expect(canPlaceCards(player, [mockCard1, mockCard2, mockCard3])).toBe(true);
-    });
-
-    it('should not allow placing cards that are not in player hand', () => {
-      const player = {
-        id: '1',
-        name: 'Player 1',
-        hand: [mockCard1, mockCard2],
-      };
-
-      expect(canPlaceCards(player, [mockCard1, mockCard2, mockCard3])).toBe(false);
     });
   });
 

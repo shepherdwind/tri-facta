@@ -11,6 +11,7 @@ export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
 
   if (mode === GameMode.STANDARD) {
     // For standard mode: a + b = c
+    // 尝试所有可能的组合
     return (
       values[0] + values[1] === values[2] ||
       values[1] + values[2] === values[0] ||
@@ -18,6 +19,7 @@ export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
     );
   } else {
     // For advanced mode: a × b = c
+    // 尝试所有可能的组合
     return (
       values[0] * values[1] === values[2] ||
       values[1] * values[2] === values[0] ||
@@ -26,13 +28,22 @@ export function validateCardPlacement(cards: Card[], mode: GameMode): boolean {
   }
 }
 
-export function validateCardReplacement(oldCards: Card[], newCards: Card[]): boolean {
-  // Must replace 2 or 3 cards with 1 card
-  if (oldCards.length < 2 || oldCards.length > 3) return false;
-  if (newCards.length !== 1) return false;
+export const validateCardReplacement = (
+  newCard: Card,
+  placedCards: Card[],
+  gameMode: GameMode
+): boolean => {
+  // 找到要替换的卡牌在已放置卡牌中的位置
+  const cardToReplaceIndex = placedCards.findIndex((card) => card.id === newCard.id);
+  if (cardToReplaceIndex === -1) return false;
 
-  return true;
-}
+  // 创建替换后的新卡牌组合
+  const newCombination = [...placedCards];
+  newCombination[cardToReplaceIndex] = newCard;
+
+  // 验证新的组合是否有效
+  return validateCardPlacement(newCombination, gameMode);
+};
 
 export function checkGameEnd(players: { id: string; hand: Card[] }[]): string | null {
   // Game ends when a player has no cards left
@@ -41,11 +52,6 @@ export function checkGameEnd(players: { id: string; hand: Card[] }[]): string | 
   if (winnerIndex === -1) return null;
 
   return players[winnerIndex].id;
-}
-
-export function canPlaceCards(player: { hand: Card[] }, cards: Card[]): boolean {
-  // Check if all cards are in player's hand
-  return cards.every((card) => player.hand.some((handCard) => handCard.id === card.id));
 }
 
 export function canReplaceCards(player: { hand: Card[] }, oldCards: Card[]): boolean {
