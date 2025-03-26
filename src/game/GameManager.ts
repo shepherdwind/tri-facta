@@ -144,26 +144,20 @@ export class GameManager {
 
     if (playerIndex === -1 || playerIndex !== state.currentPlayerIndex) return state;
 
-    // 检查暂存区是否有正确数量的卡牌
-    if (state.stagingArea.length !== GameConfig.CARDS_TO_MATCH) {
-      // 如果卡牌数量不足，将暂存区的卡牌返回给玩家
-      const updatedPlayers = [...state.players];
-      updatedPlayers[playerIndex] = {
-        ...state.players[playerIndex],
-        hand: [...state.players[playerIndex].hand, ...state.stagingArea],
-      };
-
-      return {
-        ...state,
-        players: updatedPlayers,
-        stagingArea: [],
-        lastAction: { type: ActionType.COMMIT_CARDS, payload },
-        updatedAt: new Date(),
-      };
+    // 检查暂存区是否有至少一张卡牌
+    if (state.stagingArea.length === 0) {
+      return state;
     }
 
     // 验证卡牌组合是否有效
-    if (!validateCardPlacement(state.stagingArea, state.mode)) {
+    console.log('Validating staging area:', {
+      cards: state.stagingArea,
+      mode: state.mode,
+    });
+    const isValid = validateCardPlacement(state.stagingArea, state.mode);
+    console.log('Validation result:', isValid);
+
+    if (!isValid) {
       // 如果组合无效，将卡牌返回给玩家
       const updatedPlayers = [...state.players];
       updatedPlayers[playerIndex] = {
