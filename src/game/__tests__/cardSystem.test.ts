@@ -13,7 +13,9 @@ describe('Card System', () => {
   describe('Card Generation', () => {
     it('should create a deck with correct number of cards', () => {
       const deck = gameManager['createDeck']();
-      expect(deck.length).toBe(GameConfig.MAX_CARDS);
+      const expectedSize =
+        GameConfig.MAX_NUMBER_VALUE * GameConfig.CARDS_PER_NUMBER + GameConfig.WILDCARDS_COUNT;
+      expect(deck.length).toBe(expectedSize);
     });
 
     it('should create correct number of number cards', () => {

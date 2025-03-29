@@ -87,7 +87,10 @@ describe('gameReducer', () => {
     expect(newState.isGameStarted).toBe(true);
     expect(newState.mode).toBe(GameMode.STANDARD);
     expect(newState.players.length).toBe(2);
-    // After dealing initial hands (6 cards each), the deck should have 30 cards
+    // After dealing initial hands (6 cards each), the deck should have remaining cards
+    // Total cards: 42 (20 numbers × 2 + 2 wildcards)
+    // Initial hands: 6 cards × 2 players = 12 cards
+    // Remaining: 42 - 12 = 30 cards
     expect(newState.deck.length).toBe(30);
   });
 
