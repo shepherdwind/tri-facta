@@ -8,13 +8,20 @@ import {
   Stack,
   Text,
   VStack,
+  useColorMode,
   useColorModeValue,
+  IconButton,
+  Select,
 } from '@chakra-ui/react';
-
-type GameMode = 'addition' | 'multiplication';
+import { SunIcon, MoonIcon } from '@chakra-ui/icons';
+import { useTranslation } from 'react-i18next';
+import { Logo } from '../components/Logo';
+import { GameMode } from '../game/types';
 
 export const StartPage: React.FC = () => {
-  const [selectedMode, setSelectedMode] = useState<GameMode>('addition');
+  const [selectedMode, setSelectedMode] = useState<GameMode>(GameMode.ADDITION);
+  const { colorMode, toggleColorMode } = useColorMode();
+  const { t, i18n } = useTranslation();
 
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const textColor = useColorModeValue('brand.text', 'white');
@@ -25,63 +32,69 @@ export const StartPage: React.FC = () => {
     console.log('Starting game in mode:', selectedMode);
   };
 
+  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    i18n.changeLanguage(event.target.value);
+  };
+
   return (
     <Container maxW="1200px" py={8}>
       <VStack spacing={8} align="stretch">
         {/* Header */}
         <Flex justify="space-between" align="center">
           <Heading size="lg" color={primaryColor}>
-            tri-FACTa!™
+            {t('header.title')}
           </Heading>
           <Stack direction="row" spacing={4}>
-            <Button variant="ghost">历史记录</Button>
-            <Button variant="ghost">帮助</Button>
-            <Button variant="ghost">设置</Button>
+            <Select size="sm" width="100px" value={i18n.language} onChange={handleLanguageChange}>
+              <option value="en">English</option>
+              <option value="zh">中文</option>
+            </Select>
+            <IconButton
+              aria-label={colorMode === 'light' ? t('header.darkMode') : t('header.lightMode')}
+              icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+              variant="ghost"
+            />
+            <Button variant="ghost">{t('common.help')}</Button>
+            <Button variant="ghost">{t('common.settings')}</Button>
           </Stack>
         </Flex>
 
         {/* Game Title */}
         <Box textAlign="center">
           <Heading size="2xl" mb={4}>
-            数学思维训练游戏
+            {t('game.title')}
           </Heading>
           <Text fontSize="xl" color={textColor}>
-            通过有趣的三角形卡片，提升你的数学运算能力！
+            {t('game.subtitle')}
           </Text>
         </Box>
 
         {/* Game Logo */}
-        <Box bg={cardBg} p={8} borderRadius="lg" boxShadow="lg" textAlign="center">
-          <Box
-            width="200px"
-            height="200px"
-            margin="0 auto"
-            bg={primaryColor}
-            clipPath="polygon(50% 0%, 0% 100%, 100% 100%)"
-            opacity={0.8}
-          />
+        <Box bg={cardBg} borderRadius="lg" boxShadow="lg" textAlign="center">
+          <Logo size={200} gameMode={selectedMode} />
         </Box>
 
         {/* Game Mode Selection */}
         <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="lg">
           <VStack spacing={4}>
             <Text fontSize="xl" fontWeight="bold">
-              选择游戏模式
+              {t('game.modeSelection')}
             </Text>
             <Stack direction="row" spacing={4}>
               <Button
-                colorScheme={selectedMode === 'addition' ? 'blue' : 'gray'}
-                onClick={() => setSelectedMode('addition')}
+                colorScheme={selectedMode === GameMode.ADDITION ? 'blue' : 'gray'}
+                onClick={() => setSelectedMode(GameMode.ADDITION)}
                 size="lg"
               >
-                加减法模式
+                {t('game.additionMode')}
               </Button>
               <Button
-                colorScheme={selectedMode === 'multiplication' ? 'blue' : 'gray'}
-                onClick={() => setSelectedMode('multiplication')}
+                colorScheme={selectedMode === GameMode.MULTIPLICATION ? 'blue' : 'gray'}
+                onClick={() => setSelectedMode(GameMode.MULTIPLICATION)}
                 size="lg"
               >
-                乘除法模式
+                {t('game.multiplicationMode')}
               </Button>
             </Stack>
           </VStack>
@@ -91,18 +104,18 @@ export const StartPage: React.FC = () => {
         <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="lg">
           <VStack align="start" spacing={2}>
             <Text fontSize="xl" fontWeight="bold">
-              游戏说明
+              {t('game.instructions')}
             </Text>
-            <Text>• 双人对战模式</Text>
-            <Text>• 清空手牌获胜</Text>
-            <Text>• 支持万能牌</Text>
+            <Text>{t('game.instructionItems.multiplayer')}</Text>
+            <Text>{t('game.instructionItems.winCondition')}</Text>
+            <Text>{t('game.instructionItems.wildcard')}</Text>
           </VStack>
         </Box>
 
         {/* Start Button */}
         <Box textAlign="center">
           <Button colorScheme="blue" size="lg" width="200px" onClick={handleStartGame}>
-            开始游戏
+            {t('common.startGame')}
           </Button>
         </Box>
       </VStack>

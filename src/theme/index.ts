@@ -1,6 +1,12 @@
-import { extendTheme } from '@chakra-ui/react';
+import { extendTheme, type ThemeConfig } from '@chakra-ui/react';
+
+const config: ThemeConfig = {
+  initialColorMode: 'light',
+  useSystemColorMode: true,
+};
 
 const theme = extendTheme({
+  config,
   colors: {
     brand: {
       primary: '#4A90E2',
@@ -9,6 +15,11 @@ const theme = extendTheme({
       text: '#333333',
       accent: '#FF6B6B',
       success: '#4CAF50',
+    },
+    dark: {
+      background: '#1A202C',
+      card: '#2D3748',
+      text: '#FFFFFF',
     },
   },
   fonts: {
@@ -35,6 +46,22 @@ const theme = extendTheme({
         borderRadius: 'md',
       },
     },
+  },
+  styles: {
+    global: (props: any) => ({
+      body: {
+        bg: props.colorMode === 'dark' ? 'dark.background' : 'brand.background',
+        color: props.colorMode === 'dark' ? 'dark.text' : 'brand.text',
+      },
+      '@keyframes float': {
+        '0%, 100%': {
+          transform: 'translateY(0)',
+        },
+        '50%': {
+          transform: 'translateY(-10px)',
+        },
+      },
+    }),
   },
 });
 
