@@ -1,10 +1,12 @@
-function App() {
-  return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-      <h1 className="text-4xl font-bold text-primary mb-4">tri-FACTa!™</h1>
-      <p className="text-text">数学卡牌游戏</p>
-    </div>
-  );
-}
+import React from 'react';
+import { ChakraProvider } from '@chakra-ui/react';
+import { StartPage } from './pages/StartPage';
+import theme from './theme';
 
-export default App;
+export const App: React.FC = () => {
+  return (
+    <ChakraProvider theme={theme}>
+      <StartPage />
+    </ChakraProvider>
+  );
+};
