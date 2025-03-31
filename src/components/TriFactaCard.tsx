@@ -21,7 +21,6 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
   const cardBg = useColorModeValue('#f3e9d2', '#2D3748');
   const strokeColor = useColorModeValue('#5d534a', '#63B3ED');
   const textColor = useColorModeValue('#5d534a', 'white');
-  const topTriangleFill = useColorModeValue('#e9c46a', '#4A90E2');
   const minusCircleFill = useColorModeValue('#e76f51', '#FC8181');
   const plusCircleFill = useColorModeValue('#7fb069', '#48BB78');
   const selectedTriangleFill = useColorModeValue('#a8d1ff', '#2B6CB0');

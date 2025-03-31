@@ -19,9 +19,7 @@ describe('Deck', () => {
 
       // Check for number cards (1-20)
       for (let i = 1; i <= 20; i++) {
-        const numberCards = cards.filter(
-          (card: Card) => !card.isWildcard && card.getValue() === i
-        );
+        const numberCards = cards.filter((card: Card) => !card.isWildcard && card.getValue() === i);
         expect(numberCards).toHaveLength(2); // Each number should appear 2 times
       }
 
@@ -115,7 +113,7 @@ describe('Deck', () => {
       // Check for number cards (1-20)
       for (let i = 1; i <= 20; i++) {
         const numberCards = cards.filter(
-          (card: Card) => !card.isWildCard()&& card.getValue() === i
+          (card: Card) => !card.isWildCard() && card.getValue() === i
         );
         expect(numberCards).toHaveLength(2); // Each number should appear 2 times
       }

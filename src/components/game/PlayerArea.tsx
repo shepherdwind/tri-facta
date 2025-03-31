@@ -18,13 +18,12 @@ import { GameCard } from '../GameCard';
 import { CardPosition } from '../../game/types';
 
 interface PositionSelectMenuProps {
-  card: Card;
   onPositionSelect: (position: CardPosition) => void;
   onClose: () => void;
 }
 
 const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
-  ({ card, onPositionSelect, onClose }) => {
+  ({ onPositionSelect, onClose }) => {
     const { t } = useTranslation();
 
     return (
@@ -82,7 +81,7 @@ export const PlayerArea = observer<PlayerAreaProps>(
 
     const handleCardClick = (card: Card) => {
       if (Array.from(selectedCards.values()).includes(card)) {
-        for (const [position, selectedCard] of selectedCards.entries()) {
+        for (const [, selectedCard] of selectedCards.entries()) {
           if (selectedCard === card) {
             onCardClick(card);
             return;
@@ -138,7 +137,6 @@ export const PlayerArea = observer<PlayerAreaProps>(
                 />
                 {selectedCard === card && !Array.from(selectedCards.values()).includes(card) && (
                   <PositionSelectMenu
-                    card={card}
                     onPositionSelect={handlePositionSelect}
                     onClose={() => setSelectedCard(null)}
                   />

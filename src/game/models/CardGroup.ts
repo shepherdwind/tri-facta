@@ -70,7 +70,7 @@ export class CardGroup {
    */
   private createTemporaryWorkingArea(cards: Map<CardPosition, Card>): CardGroupState {
     const tempWorkingArea = { ...this.workingArea };
-    
+
     // Copy all committed cards to temporary working area
     if (this.committedState.topCard !== null) {
       tempWorkingArea.topCard = this.committedState.topCard;

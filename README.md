@@ -1,72 +1,113 @@
-# tri-FACTa!™
+# Tri-Facta
 
-一个有趣的数学卡牌游戏，通过组合数字卡片来创建数学等式。
+A card game where players need to use their cards to form valid mathematical equations. The game combines strategy, mathematics, and fun!
 
-## 开发环境设置
+## Features
 
-### 前置要求
+- Real-time multiplayer gameplay
+- Mathematical equation validation
+- Card-based gameplay mechanics
+- Modern and responsive UI
+- Docker support for easy deployment
 
-- Node.js >= 18
-- npm >= 9
+## Quick Start
 
-### 安装依赖
+### Using Docker (Recommended)
+
+1. Pull the latest image:
+
+```bash
+docker pull shepherdwind/tri-facta:latest
+```
+
+2. Create a `docker-compose.yml` file with the following content:
+
+```yaml
+version: '3.8'
+
+services:
+  app:
+    image: shepherdwind/tri-facta:latest
+    ports:
+      - '80:80'
+    restart: unless-stopped
+```
+
+3. Start the application:
+
+```bash
+docker-compose up -d
+```
+
+4. Access the game at `http://localhost`
+
+### Manual Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/shepherdwind/tri-facta.git
+cd tri-facta
+```
+
+2. Install dependencies:
 
 ```bash
 npm install
 ```
 
-### 开发服务器
+3. Start the development server:
 
 ```bash
 npm run dev
 ```
 
-### 构建生产版本
+4. Access the game at `http://localhost:5173`
+
+## Development
+
+### Prerequisites
+
+- Node.js 18 or higher
+- npm 9 or higher
+
+### Building for Production
+
+1. Build the application:
 
 ```bash
 npm run build
 ```
 
-### 运行测试
+2. Preview the production build:
 
 ```bash
-npm test
+npm run preview
 ```
 
-### 代码格式化
+### Docker Build
+
+To build and push a new Docker image:
 
 ```bash
-npm run format
+# Build and push latest version
+./build.sh
+
+# Build and push specific version
+./build.sh v1.0.0
 ```
 
-## 项目结构
+## Game Rules
 
-```
-src/
-├── components/     # 可复用组件
-├── pages/         # 页面组件
-├── hooks/         # 自定义 Hooks
-├── utils/         # 工具函数
-├── types/         # TypeScript 类型定义
-├── assets/        # 静态资源
-└── styles/        # 样式文件
-```
+1. Each player starts with a set of cards
+2. Players take turns to play cards
+3. Cards must form valid mathematical equations
+4. The first player to use all their cards wins
 
-## 技术栈
+## Contributing
 
-- React 18
-- TypeScript
-- Vite
-- TailwindCSS
-- Jest + React Testing Library
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 开发规范
+## License
 
-- 使用 ESLint 进行代码检查
-- 使用 Prettier 进行代码格式化
-- 遵循 TypeScript 严格模式
-- 使用 Jest 进行单元测试
-
-## 许可证
-
-MIT
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -53,12 +53,12 @@ export class Player {
   commitToCardGroup(cardGroup: CardGroup): void {
     cardGroup.placeCards(this.getStagedCards(), this.id);
     cardGroup.commit();
-    
+
     // Remove cards from hand
     for (const card of this.stagingArea.values()) {
       this.removeCard(card);
     }
-    
+
     this.stagingArea.clear();
   }
 

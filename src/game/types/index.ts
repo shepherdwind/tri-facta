@@ -36,6 +36,9 @@ export interface GameEvent {
     | 'CardsDrawn'
     | 'CardsReplaced'
     | 'InvalidPlayAttempted'
-    | 'WildCardUsed';
+    | 'WildCardUsed'
+    | 'CardStaged'
+    | 'CardUnstaged'
+    | 'GameWon';
   payload?: Record<string, unknown>;
 }

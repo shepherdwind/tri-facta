@@ -1,15 +1,5 @@
 import React from 'react';
-import {
-  Container,
-  VStack,
-  Box,
-  useColorModeValue,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Button,
-} from '@chakra-ui/react';
+import { Container, VStack, useColorModeValue } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { Game } from '../game/models/Game';
@@ -20,6 +10,7 @@ import { WildcardModal } from '../components/game/WildcardModal';
 import { ErrorAlert } from '../components/game/ErrorAlert';
 import { GameStore } from '../stores/GameStore';
 import { CardPosition } from '../game/types';
+import { Card } from '../game/models/Card';
 
 interface GamePageProps {
   game: Game;
@@ -38,11 +29,11 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const currentPlayerBorderColor = useColorModeValue('blue.500', 'blue.300');
 
-  const handleCardClick = (card: any) => {
+  const handleCardClick = (card: Card) => {
     store.handleCardClick(card);
   };
 
-  const handlePositionSelect = (card: any, position: CardPosition) => {
+  const handlePositionSelect = (card: Card, position: CardPosition) => {
     store.handlePositionSelect(card, position);
   };
 

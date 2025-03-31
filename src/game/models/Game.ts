@@ -11,7 +11,6 @@ export class Game {
   private currentPlayerIndex: number;
   private cardGroup: CardGroup;
   private state: GameState;
-  private isFirstTurn: boolean;
   private eventListeners: ((event: GameEvent) => void)[];
 
   constructor(mode: GameMode, players: Player[]) {
@@ -24,7 +23,6 @@ export class Game {
     this.currentPlayerIndex = 0;
     this.cardGroup = new CardGroup(mode);
     this.state = GameState.INIT;
-    this.isFirstTurn = true;
     this.eventListeners = [];
   }
 
@@ -123,14 +121,14 @@ export class Game {
         this.cardGroup.commit();
         this.players[this.currentPlayerIndex].discardStagedCards();
         this.emitEvent({ type: 'CardPlayed', payload: { playerId, cards: stagedCards } });
-        
+
         // Check for winner
         if (this.players[this.currentPlayerIndex].hasWon()) {
           this.state = GameState.FINISHED;
           this.emitEvent({ type: 'GameWon', payload: { winnerId: playerId } });
           return;
         }
-        
+
         this.endTurn();
       } else {
         // Return cards to player's hand if invalid

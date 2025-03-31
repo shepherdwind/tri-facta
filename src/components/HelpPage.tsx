@@ -9,7 +9,6 @@ import {
   List,
   ListItem,
   ListIcon,
-  Divider,
   useColorModeValue,
   IconButton,
   Button,

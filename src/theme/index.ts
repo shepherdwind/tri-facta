@@ -5,6 +5,10 @@ const config: ThemeConfig = {
   useSystemColorMode: true,
 };
 
+interface ColorMode {
+  colorMode: 'light' | 'dark';
+}
+
 const theme = extendTheme({
   config,
   colors: {
@@ -48,7 +52,7 @@ const theme = extendTheme({
     },
   },
   styles: {
-    global: (props: any) => ({
+    global: (props: ColorMode) => ({
       body: {
         bg: props.colorMode === 'dark' ? 'dark.background' : 'brand.background',
         color: props.colorMode === 'dark' ? 'dark.text' : 'brand.text',

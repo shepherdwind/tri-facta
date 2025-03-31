@@ -1,4 +1,3 @@
-import React from 'react';
 import { HStack, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
