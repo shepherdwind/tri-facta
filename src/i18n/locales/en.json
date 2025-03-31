@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "TriFacta",
+    "title": "tri-FACTa!™",
     "darkMode": "Dark Mode",
     "lightMode": "Light Mode"
   },
@@ -8,12 +8,65 @@
     "help": "Help",
     "settings": "Settings",
     "exit": "Exit",
-    "start": "Start",
-    "cancel": "Cancel"
+    "start": "Start Game",
+    "cancel": "Cancel",
+    "back": "Back"
+  },
+  "help": {
+    "title": "How to Play tri-FACTa!™",
+    "introduction": {
+      "title": "Introduction",
+      "content": "tri-FACTa!™ is a two-player card game based on mathematical operations that develops logical thinking through fun mathematical calculations. The game supports both addition/subtraction and multiplication/division modes."
+    },
+    "basicRules": {
+      "title": "Basic Rules",
+      "players": "Number of Players: 2",
+      "duration": "Game Duration: 15-20 minutes per game",
+      "winCondition": "Win Condition: First player to use all their cards wins",
+      "initialCards": "Initial Cards: Each player gets 6 cards"
+    },
+    "gameFlow": {
+      "title": "Game Flow",
+      "setup": {
+        "title": "1. Setup Phase",
+        "shuffle": "• Place all cards face down on the table",
+        "draw": "• Each player draws 6 cards as their hand"
+      },
+      "turn": {
+        "title": "2. Turn Phase",
+        "replace": "• Players can replace 2 or 3 cards each turn",
+        "replaceExample": "Example: Replace 2 cards (8 and wildcard) or 3 cards (10, 5, and 5)",
+        "mathRelation": "• Replaced cards must form a valid mathematical relationship",
+        "mathExample": "Example: 12 = 5 + 7 or 24 = 6 × 4",
+        "priority": "• If multiple players can play, the player with the highest number goes first"
+      },
+      "noPlay": {
+        "title": "3. When Unable to Play",
+        "draw": "• Draw a new card to add to your hand",
+        "continue": "• If you can play after drawing, continue playing",
+        "pass": "• If still unable to play, pass to the next player"
+      }
+    },
+    "examples": {
+      "title": "Game Examples",
+      "additionMode": "Addition Mode",
+      "multiplicationMode": "Multiplication Mode",
+      "inExamples": "In the examples above:",
+      "additionExample": "Addition Mode: 12 = 5 + 7",
+      "multiplicationExample": "Multiplication Mode: 24 = 6 × 4"
+    },
+    "specialRules": {
+      "title": "Special Rules",
+      "wildcardValue": "• Wildcards can represent any number from 1 to 20",
+      "wildcardDeclaration": "• Must declare the value when using a wildcard",
+      "wildcardPersistence": "• Once a wildcard's value is determined, it remains the same for the entire game"
+    }
   },
   "game": {
-    "title": "TriFacta Game",
-    "subtitle": "A Fun Math Card Game",
+    "title": "tri-FACTa!™",
+    "subtitle": "Improve your math skills through gaming",
+    "player1": "Player One",
+    "player2": "Player Two",
     "modeSelection": "Select Game Mode",
     "modes": {
       "addition": "Addition Mode",
@@ -26,7 +79,10 @@
       "addition": "Addition Mode",
       "additionDesc": "The sum of the top two numbers must equal the bottom number.",
       "multiplication": "Multiplication Mode",
-      "multiplicationDesc": "The product of the top two numbers must equal the bottom number."
+      "multiplicationDesc": "The product of the top two numbers must equal the bottom number.",
+      "multiplayer": "This is a two-player game where players take turns",
+      "winCondition": "The first player to complete all cards wins",
+      "wildcard": "Use wildcards to skip any card"
     },
     "instructionItems": {
       "multiplayer": "• Two-player battle mode",

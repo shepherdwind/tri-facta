@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "三角数学",
+    "title": "tri-FACTa!™",
     "darkMode": "深色模式",
     "lightMode": "浅色模式"
   },
@@ -8,12 +8,65 @@
     "help": "帮助",
     "settings": "设置",
     "exit": "退出",
-    "start": "开始",
-    "cancel": "取消"
+    "start": "开始游戏",
+    "cancel": "取消",
+    "back": "返回"
+  },
+  "help": {
+    "title": "如何玩 tri-FACTa!™",
+    "introduction": {
+      "title": "游戏简介",
+      "content": "tri-FACTa!™ 是一款基于数学运算的双人对战卡牌游戏，通过趣味性的数学计算来培养玩家的逻辑思维能力。游戏支持加减法和乘除法两种模式。"
+    },
+    "basicRules": {
+      "title": "基本规则",
+      "players": "游戏人数：2人",
+      "duration": "游戏时长：15-20分钟/局",
+      "winCondition": "胜利条件：最先用完手牌的玩家获胜",
+      "initialCards": "卡牌数量：每位玩家初始获得6张手牌"
+    },
+    "gameFlow": {
+      "title": "游戏流程",
+      "setup": {
+        "title": "1. 准备阶段",
+        "shuffle": "• 将所有卡牌正面朝下放在桌上",
+        "draw": "• 每位玩家抽取6张卡牌作为手牌"
+      },
+      "turn": {
+        "title": "2. 回合进行",
+        "replace": "• 玩家每次可以替换2或3张卡牌",
+        "replaceExample": "例如：替换2张卡（8和万能牌）或3张卡（10、5和5）",
+        "mathRelation": "• 替换的卡牌必须能形成正确的数学关系",
+        "mathExample": "例如：12 = 5 + 7 或 24 = 6 × 4",
+        "priority": "• 如果多个玩家可以放置，使用最大数字的玩家先手"
+      },
+      "noPlay": {
+        "title": "3. 无法出牌时",
+        "draw": "• 抽取一张新卡牌加入手牌",
+        "continue": "• 如果抽牌后可以出牌，则继续出牌",
+        "pass": "• 如果仍然无法出牌，轮到下一位玩家"
+      }
+    },
+    "examples": {
+      "title": "游戏示例",
+      "additionMode": "加减法模式",
+      "multiplicationMode": "乘除法模式",
+      "inExamples": "在上面的例子中：",
+      "additionExample": "加减法模式：12 = 5 + 7",
+      "multiplicationExample": "乘除法模式：24 = 6 × 4"
+    },
+    "specialRules": {
+      "title": "特殊规则",
+      "wildcardValue": "• 万能牌可以代表1-20中的任意数字",
+      "wildcardDeclaration": "• 使用万能牌时必须声明其代表的数字",
+      "wildcardPersistence": "• 万能牌一旦确定数值，在该局游戏中保持不变"
+    }
   },
   "game": {
-    "title": "三角数学游戏",
-    "subtitle": "趣味数学卡牌游戏",
+    "title": "tri-FACTa!™",
+    "subtitle": "通过游戏提高你的数学能力",
+    "player1": "玩家一",
+    "player2": "玩家二",
     "modeSelection": "选择游戏模式",
     "additionMode": "加减法模式",
     "multiplicationMode": "乘除法模式",
@@ -28,7 +81,10 @@
       "addition": "加法模式",
       "additionDesc": "上方两个数字的和必须等于下方数字。",
       "multiplication": "乘法模式",
-      "multiplicationDesc": "上方两个数字的积必须等于下方数字。"
+      "multiplicationDesc": "上方两个数字的积必须等于下方数字。",
+      "multiplayer": "这是一个双人游戏，每个玩家轮流进行",
+      "winCondition": "第一个完成所有卡片的玩家获胜",
+      "wildcard": "使用通配符可以跳过任何卡片"
     },
     "currentPlayer": "当前玩家",
     "playerTurn": "{{player}}的回合",

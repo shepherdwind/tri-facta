@@ -13,9 +13,11 @@ import {
   IconButton,
   Select,
 } from '@chakra-ui/react';
-import { SunIcon, MoonIcon } from '@chakra-ui/icons';
+import { SunIcon, MoonIcon, QuestionIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
+import { GameSettings } from '../components/GameSettings';
 import { GameMode } from '../game/types';
 import { Game } from '../game/models/Game';
 import { Player } from '../game/models/Player';
@@ -24,16 +26,19 @@ import { GamePage } from './GamePage';
 export const StartPage: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<GameMode>(GameMode.ADDITION);
   const [game, setGame] = useState<Game | null>(null);
+  const [player1Name, setPlayer1Name] = useState('Player 1');
+  const [player2Name, setPlayer2Name] = useState('Player 2');
   const { colorMode, toggleColorMode } = useColorMode();
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const textColor = useColorModeValue('brand.text', 'white');
   const primaryColor = useColorModeValue('brand.primary', 'blue.400');
 
   const handleStartGame = () => {
-    const player1 = new Player('player1', 'Player 1');
-    const player2 = new Player('player2', 'Player 2');
+    const player1 = new Player('player1', player1Name);
+    const player2 = new Player('player2', player2Name);
     const newGame = new Game(selectedMode, [player1, player2]);
     newGame.start();
     setGame(newGame);
@@ -47,6 +52,10 @@ export const StartPage: React.FC = () => {
     setGame(null);
   };
 
+  const handleHelpClick = () => {
+    navigate('/help');
+  };
+
   if (game) {
     return <GamePage game={game} onExit={handleExitGame} />;
   }
@@ -55,11 +64,11 @@ export const StartPage: React.FC = () => {
     <Container maxW="1200px" py={8}>
       <VStack spacing={8} align="stretch">
         {/* Header */}
-        <Flex justify="space-between" align="center">
+        <Flex justify="space-between" align="center" flexWrap="wrap" gap={2}>
           <Heading size="lg" color={primaryColor}>
             {t('header.title')}
           </Heading>
-          <Stack direction="row" spacing={4}>
+          <Stack direction="row" spacing={2}>
             <Select size="sm" width="100px" value={i18n.language} onChange={handleLanguageChange}>
               <option value="en">English</option>
               <option value="zh">中文</option>
@@ -70,8 +79,12 @@ export const StartPage: React.FC = () => {
               onClick={toggleColorMode}
               variant="ghost"
             />
-            <Button variant="ghost">{t('common.help')}</Button>
-            <Button variant="ghost">{t('common.settings')}</Button>
+            <IconButton
+              aria-label={t('common.help')}
+              icon={<QuestionIcon />}
+              onClick={handleHelpClick}
+              variant="ghost"
+            />
           </Stack>
         </Flex>
 
@@ -90,29 +103,17 @@ export const StartPage: React.FC = () => {
           <Logo size={200} gameMode={selectedMode} />
         </Box>
 
-        {/* Game Mode Selection */}
-        <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="lg">
-          <VStack spacing={4}>
-            <Text fontSize="xl" fontWeight="bold">
-              {t('game.modeSelection')}
-            </Text>
-            <Stack direction="row" spacing={4}>
-              <Button
-                colorScheme={selectedMode === GameMode.ADDITION ? 'blue' : 'gray'}
-                onClick={() => setSelectedMode(GameMode.ADDITION)}
-                size="lg"
-              >
-                {t('game.modes.addition')}
-              </Button>
-              <Button
-                colorScheme={selectedMode === GameMode.MULTIPLICATION ? 'blue' : 'gray'}
-                onClick={() => setSelectedMode(GameMode.MULTIPLICATION)}
-                size="lg"
-              >
-                {t('game.modes.multiplication')}
-              </Button>
-            </Stack>
-          </VStack>
+        {/* Game Settings */}
+        <Box bg={cardBg}>
+          <GameSettings
+            player1Name={player1Name}
+            player2Name={player2Name}
+            selectedMode={selectedMode}
+            onPlayer1NameChange={setPlayer1Name}
+            onPlayer2NameChange={setPlayer2Name}
+            onModeChange={setSelectedMode}
+            onStartGame={handleStartGame}
+          />
         </Box>
 
         {/* Game Instructions */}
@@ -125,13 +126,6 @@ export const StartPage: React.FC = () => {
             <Text>{t('game.instructionItems.winCondition')}</Text>
             <Text>{t('game.instructionItems.wildcard')}</Text>
           </VStack>
-        </Box>
-
-        {/* Start Button */}
-        <Box textAlign="center">
-          <Button colorScheme="blue" size="lg" width="200px" onClick={handleStartGame}>
-            {t('common.start')}
-          </Button>
         </Box>
       </VStack>
     </Container>
