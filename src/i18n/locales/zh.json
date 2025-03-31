@@ -12,6 +12,9 @@
     "cancel": "取消",
     "back": "返回"
   },
+  "footer": {
+    "sourceCode": "查看源码："
+  },
   "help": {
     "title": "如何玩 tri-FACTa!™",
     "introduction": {

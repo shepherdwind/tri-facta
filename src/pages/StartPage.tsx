@@ -10,9 +10,10 @@ import {
   useColorMode,
   useColorModeValue,
   IconButton,
-  Select,
+  Tooltip,
 } from '@chakra-ui/react';
 import { SunIcon, MoonIcon, QuestionIcon } from '@chakra-ui/icons';
+import { I18nIcon } from '../components/icons/I18nIcon';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
@@ -43,8 +44,8 @@ export const StartPage: React.FC = () => {
     setGame(newGame);
   };
 
-  const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    i18n.changeLanguage(event.target.value);
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language === 'en' ? 'zh' : 'en');
   };
 
   const handleExitGame = () => {
@@ -67,23 +68,34 @@ export const StartPage: React.FC = () => {
           <Heading size="lg" color={primaryColor}>
             {t('header.title')}
           </Heading>
-          <Stack direction="row" spacing={2}>
-            <Select size="sm" width="100px" value={i18n.language} onChange={handleLanguageChange}>
-              <option value="en">English</option>
-              <option value="zh">中文</option>
-            </Select>
-            <IconButton
-              aria-label={colorMode === 'light' ? t('header.darkMode') : t('header.lightMode')}
-              icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-              onClick={toggleColorMode}
-              variant="ghost"
-            />
-            <IconButton
-              aria-label={t('common.help')}
-              icon={<QuestionIcon />}
-              onClick={handleHelpClick}
-              variant="ghost"
-            />
+          <Stack direction="row" spacing={0}>
+            <Tooltip label={i18n.language === 'en' ? '切换到中文' : 'Switch to English'}>
+              <IconButton
+                aria-label={i18n.language === 'en' ? 'Switch to Chinese' : 'Switch to English'}
+                icon={<I18nIcon />}
+                onClick={toggleLanguage}
+                variant="ghost"
+                size="sm"
+              />
+            </Tooltip>
+            <Tooltip label={colorMode === 'light' ? t('header.darkMode') : t('header.lightMode')}>
+              <IconButton
+                aria-label={colorMode === 'light' ? t('header.darkMode') : t('header.lightMode')}
+                icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                onClick={toggleColorMode}
+                variant="ghost"
+                size="sm"
+              />
+            </Tooltip>
+            <Tooltip label={t('common.help')}>
+              <IconButton
+                aria-label={t('common.help')}
+                icon={<QuestionIcon />}
+                onClick={handleHelpClick}
+                variant="ghost"
+                size="sm"
+              />
+            </Tooltip>
           </Stack>
         </Flex>
 

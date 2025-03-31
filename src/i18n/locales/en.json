@@ -12,6 +12,9 @@
     "cancel": "Cancel",
     "back": "Back"
   },
+  "footer": {
+    "sourceCode": "View source code:"
+  },
   "help": {
     "title": "How to Play tri-FACTa!™",
     "introduction": {

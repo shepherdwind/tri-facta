@@ -2,7 +2,10 @@ version: '3.8'
 
 services:
   app:
-    image: shepherdwind/tri-facta:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tri-facta:latest
     ports:
       - '80:80'
     restart: unless-stopped
