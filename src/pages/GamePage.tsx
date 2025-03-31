@@ -52,6 +52,7 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
           isCurrentPlayer={player1.isCurrentPlayer()}
           cardBg={cardBg}
           currentPlayerBorderColor={currentPlayerBorderColor}
+          store={store}
         />
 
         <GameCenter store={store} />
@@ -65,6 +66,7 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
           isCurrentPlayer={player2.isCurrentPlayer()}
           cardBg={cardBg}
           currentPlayerBorderColor={currentPlayerBorderColor}
+          store={store}
         />
       </VStack>
 

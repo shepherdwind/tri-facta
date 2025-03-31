@@ -29,8 +29,58 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
   const rightNumber =
     stagedCards.get(CardPosition.BOTTOM_RIGHT)?.getValue() ?? committedRightCard?.getValue() ?? 0;
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent, position: CardPosition) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 从 store 中获取当前拖拽的卡片
+    const card = store.draggedCard;
+
+    if (card) {
+      store.setSelectedCard(card, position);
+      store.setDraggedCard(null); // 清除拖拽的卡片
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent, position: CardPosition) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 从 store 中获取当前拖拽的卡片
+    const card = store.draggedCard;
+    if (card) {
+      store.setSelectedCard(card, position);
+      store.setDraggedCard(null); // 清除拖拽的卡片
+    }
+  };
+
   return (
-    <Box bg={cardBg} p={4} borderRadius="lg" boxShadow="lg">
+    <Box
+      bg={cardBg}
+      p={4}
+      borderRadius="lg"
+      boxShadow="lg"
+      onDragOver={handleDragOver}
+      onDrop={(e) => handleDrop(e, CardPosition.TOP)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={(e) => handleTouchEnd(e, CardPosition.TOP)}
+    >
       <VStack spacing={4}>
         <TriFactaCard
           topNumber={topNumber}
@@ -38,6 +88,8 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
           rightNumber={rightNumber}
           gameMode={store.game.getGameMode()}
           selectedCards={store.selectedCards}
+          onDrop={(e, position) => handleDrop(e, position)}
+          onTouchEnd={(e, position) => handleTouchEnd(e, position)}
         />
         <GameControls store={store} />
       </VStack>

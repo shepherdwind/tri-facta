@@ -13,6 +13,7 @@ export class GameStore {
   selectedWildcard: Card | null;
   wildcardValue: number;
   hasDrawnCard: boolean;
+  draggedCard: Card | null;
 
   constructor(game: Game) {
     this.game = game;
@@ -23,6 +24,7 @@ export class GameStore {
     this.selectedWildcard = null;
     this.wildcardValue = 1;
     this.hasDrawnCard = false;
+    this.draggedCard = null;
 
     makeAutoObservable(this);
   }
@@ -144,5 +146,25 @@ export class GameStore {
 
   setWildcardValueInput(value: number) {
     this.wildcardValue = value;
+  }
+
+  setSelectedCard(card: Card, position: CardPosition) {
+    if (this.currentPlayer.getId() !== this.game.getCurrentPlayer().getId()) {
+      this.errorMessage = 'game.errors.notYourTurn';
+      return;
+    }
+
+    try {
+      this.game.stageCard(this.currentPlayer, card, position);
+      this.selectedCards = new Map(this.game.getCurrentPlayer().getStagedCards());
+      this.errorMessage = null;
+    } catch (error) {
+      this.errorMessage = 'game.errors.invalidCard';
+      console.error('Failed to stage card:', error);
+    }
+  }
+
+  setDraggedCard(card: Card | null) {
+    this.draggedCard = card;
   }
 }

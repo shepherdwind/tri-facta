@@ -11,9 +11,7 @@ import {
   ListIcon,
   useColorModeValue,
   IconButton,
-  Button,
   Tooltip,
-  Flex,
 } from '@chakra-ui/react';
 import { CheckIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { I18nIcon } from './icons/I18nIcon';

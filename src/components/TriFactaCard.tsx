@@ -1,7 +1,120 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import { GameMode, CardPosition } from '../game/types';
 import { Card } from '../game/models/Card';
+
+// 样式常量
+const useTriFactaStyles = () => {
+  const cardBg = useColorModeValue('#f3e9d2', '#2D3748');
+  const strokeColor = useColorModeValue('#5d534a', '#63B3ED');
+  const textColor = useColorModeValue('#5d534a', 'white');
+  const minusCircleFill = useColorModeValue('#e76f51', '#FC8181');
+  const plusCircleFill = useColorModeValue('#7fb069', '#48BB78');
+  const selectedTriangleFill = useColorModeValue('#a8d1ff', '#2B6CB0');
+  const dragOverTriangleFill = useColorModeValue('#e2e8f0', '#4A5568');
+
+  return {
+    cardBg,
+    strokeColor,
+    textColor,
+    minusCircleFill,
+    plusCircleFill,
+    selectedTriangleFill,
+    dragOverTriangleFill,
+  };
+};
+
+// 运算符圆圈组件
+interface OperatorCircleProps {
+  cx: number;
+  cy: number;
+  operator: string;
+  fill: string;
+  strokeColor: string;
+  isMultiplication: boolean;
+}
+
+const OperatorCircle: React.FC<OperatorCircleProps> = ({
+  cx,
+  cy,
+  operator,
+  fill,
+  strokeColor,
+  isMultiplication,
+}) => (
+  <>
+    <circle cx={cx} cy={cy} r="18" fill={fill} stroke={strokeColor} strokeWidth="2" />
+    {isMultiplication ? (
+      <text
+        x={cx}
+        y={cy + 8}
+        fontFamily="Arial, sans-serif"
+        fontSize="24"
+        fontWeight="bold"
+        textAnchor="middle"
+        fill={strokeColor}
+      >
+        {operator}
+      </text>
+    ) : (
+      <line x1={cx - 10} y1={cy} x2={cx + 10} y2={cy} stroke={strokeColor} strokeWidth="2.5" />
+    )}
+  </>
+);
+
+// 数字区域组件
+interface NumberAreaProps {
+  position: CardPosition;
+  number: number;
+  fill: string;
+  strokeColor: string;
+  textColor: string;
+  textX: number;
+  textY: number;
+  trianglePath: string;
+  onDragOver: (e: React.DragEvent, position: CardPosition) => void;
+  onDragLeave: () => void;
+  onDrop: (e: React.DragEvent, position: CardPosition) => void;
+  onTouchMove: (e: React.TouchEvent, position: CardPosition) => void;
+  onTouchEnd: (e: React.TouchEvent, position: CardPosition) => void;
+}
+
+const NumberArea: React.FC<NumberAreaProps> = ({
+  position,
+  number,
+  fill,
+  strokeColor,
+  textColor,
+  textX,
+  textY,
+  trianglePath,
+  onDragOver,
+  onDragLeave,
+  onDrop,
+  onTouchMove,
+  onTouchEnd,
+}) => (
+  <g
+    onDragOver={(e) => onDragOver(e, position)}
+    onDragLeave={onDragLeave}
+    onDrop={(e) => onDrop(e, position)}
+    onTouchMove={(e) => onTouchMove(e, position)}
+    onTouchEnd={(e) => onTouchEnd(e, position)}
+  >
+    <path d={trianglePath} fill={fill} stroke={strokeColor} strokeWidth="2" />
+    <text
+      x={textX}
+      y={textY}
+      fontFamily="Arial, sans-serif"
+      fontSize="36"
+      fontWeight="bold"
+      textAnchor="middle"
+      fill={textColor}
+    >
+      {number}
+    </text>
+  </g>
+);
 
 interface TriFactaCardProps {
   topNumber: number;
@@ -9,6 +122,8 @@ interface TriFactaCardProps {
   rightNumber: number;
   gameMode: GameMode;
   selectedCards?: Map<CardPosition, Card>;
+  onDrop?: (e: React.DragEvent, position: CardPosition) => void;
+  onTouchEnd?: (e: React.TouchEvent, position: CardPosition) => void;
 }
 
 const TriFactaCard: React.FC<TriFactaCardProps> = ({
@@ -17,15 +132,16 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
   rightNumber,
   gameMode,
   selectedCards = new Map(),
+  onDrop,
+  onTouchEnd,
 }) => {
-  const cardBg = useColorModeValue('#f3e9d2', '#2D3748');
-  const strokeColor = useColorModeValue('#5d534a', '#63B3ED');
-  const textColor = useColorModeValue('#5d534a', 'white');
-  const minusCircleFill = useColorModeValue('#e76f51', '#FC8181');
-  const plusCircleFill = useColorModeValue('#7fb069', '#48BB78');
-  const selectedTriangleFill = useColorModeValue('#a8d1ff', '#2B6CB0');
-
+  const [dragOverPosition, setDragOverPosition] = useState<CardPosition | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [lastPosition, setLastPosition] = useState<CardPosition | null>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const styles = useTriFactaStyles();
   const isMultiplication = gameMode === GameMode.MULTIPLICATION;
+
   const operatorSymbols = {
     left: isMultiplication ? '÷' : '−',
     right: isMultiplication ? '÷' : '−',
@@ -33,150 +149,178 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
   };
 
   const getTriangleFill = (position: CardPosition) => {
-    return selectedCards.has(position) ? selectedTriangleFill : cardBg;
+    if (dragOverPosition === position) {
+      return styles.dragOverTriangleFill;
+    }
+    return selectedCards.has(position) ? styles.selectedTriangleFill : styles.cardBg;
+  };
+
+  const handleDragOver = (e: React.DragEvent, position: CardPosition) => {
+    if (isTouchDevice) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (dragOverPosition !== position) {
+      setDragOverPosition(position);
+    }
+  };
+
+  const handleDragLeave = () => {
+    if (isTouchDevice) return;
+    setDragOverPosition(null);
+    setLastPosition(null);
+  };
+
+  const handleDrop = (e: React.DragEvent, position: CardPosition) => {
+    if (isTouchDevice) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverPosition(null);
+    setLastPosition(null);
+    setIsDragging(false);
+    onDrop?.(e, position);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsTouchDevice(true);
+    setIsDragging(true);
+    setLastPosition(null);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent, position: CardPosition) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 只在位置发生变化时更新
+    if (lastPosition !== position) {
+      setLastPosition(position);
+      setDragOverPosition(position);
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent, position: CardPosition) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    e.stopPropagation();
+
+    // 确保在触摸结束时使用最后的位置
+    const finalPosition = lastPosition || position;
+
+    // 直接调用 onTouchEnd 回调
+    onTouchEnd?.(e, finalPosition);
+
+    // 清理状态
+    setDragOverPosition(null);
+    setLastPosition(null);
+    setIsDragging(false);
+    setIsTouchDevice(false);
+  };
+
+  const handleTouchCancel = () => {
+    setIsDragging(false);
+    setDragOverPosition(null);
+    setLastPosition(null);
+    setIsTouchDevice(false);
   };
 
   return (
     <Box width="100%" display="flex" justifyContent="center" alignItems="center" p={4}>
       <Box position="relative" p={2}>
-        <svg viewBox="50 50 300 275" width="100%" height="100%">
+        <svg
+          viewBox="50 50 300 275"
+          width="100%"
+          height="100%"
+          onTouchStart={handleTouchStart}
+          onTouchCancel={handleTouchCancel}
+        >
           {/* 主三角形背景 */}
-          <path d="M200 50 L50 325 L350 325 Z" fill={cardBg} stroke={strokeColor} strokeWidth="3" />
-
-          {/* 顶部小三角形 */}
           <path
-            d="M200 120 L160 185 L240 185 Z"
+            d="M200 50 L50 325 L350 325 Z"
+            fill={styles.cardBg}
+            stroke={styles.strokeColor}
+            strokeWidth="3"
+          />
+
+          {/* 顶部区域 */}
+          <NumberArea
+            position={CardPosition.TOP}
+            number={topNumber}
             fill={getTriangleFill(CardPosition.TOP)}
-            stroke={strokeColor}
-            strokeWidth="2"
+            strokeColor={styles.strokeColor}
+            textColor={styles.textColor}
+            textX={200}
+            textY={175}
+            trianglePath="M200 120 L160 185 L240 185 Z"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           />
-          <text
-            x="200"
-            y="175"
-            fontFamily="Arial, sans-serif"
-            fontSize="36"
-            fontWeight="bold"
-            textAnchor="middle"
-            fill={textColor}
-          >
-            {topNumber}
-          </text>
 
-          {/* 左下角小三角形 */}
-          <path
-            d="M125 250 L85 310 L165 310 Z"
+          {/* 左下角区域 */}
+          <NumberArea
+            position={CardPosition.BOTTOM_LEFT}
+            number={leftNumber}
             fill={getTriangleFill(CardPosition.BOTTOM_LEFT)}
-            stroke={strokeColor}
-            strokeWidth="2"
+            strokeColor={styles.strokeColor}
+            textColor={styles.textColor}
+            textX={125}
+            textY={300}
+            trianglePath="M125 250 L85 310 L165 310 Z"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           />
-          <text
-            x="125"
-            y="300"
-            fontFamily="Arial, sans-serif"
-            fontSize="36"
-            fontWeight="bold"
-            textAnchor="middle"
-            fill={textColor}
-          >
-            {leftNumber}
-          </text>
 
-          {/* 右下角小三角形 */}
-          <path
-            d="M275 250 L235 310 L315 310 Z"
+          {/* 右下角区域 */}
+          <NumberArea
+            position={CardPosition.BOTTOM_RIGHT}
+            number={rightNumber}
             fill={getTriangleFill(CardPosition.BOTTOM_RIGHT)}
-            stroke={strokeColor}
-            strokeWidth="2"
+            strokeColor={styles.strokeColor}
+            textColor={styles.textColor}
+            textX={275}
+            textY={300}
+            trianglePath="M275 250 L235 310 L315 310 Z"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           />
-          <text
-            x="275"
-            y="300"
-            fontFamily="Arial, sans-serif"
-            fontSize="36"
-            fontWeight="bold"
-            textAnchor="middle"
-            fill={textColor}
-          >
-            {rightNumber}
-          </text>
 
-          {/* 左侧减号圆圈 */}
-          <circle
-            cx="165"
-            cy="215"
-            r="18"
-            fill={minusCircleFill}
-            stroke={strokeColor}
-            strokeWidth="2"
+          {/* 运算符圆圈 */}
+          <OperatorCircle
+            cx={165}
+            cy={215}
+            operator={operatorSymbols.left}
+            fill={styles.minusCircleFill}
+            strokeColor={styles.strokeColor}
+            isMultiplication={isMultiplication}
           />
-          {isMultiplication ? (
-            <text
-              x="165"
-              y="223"
-              fontFamily="Arial, sans-serif"
-              fontSize="24"
-              fontWeight="bold"
-              textAnchor="middle"
-              fill={strokeColor}
-            >
-              {operatorSymbols.left}
-            </text>
-          ) : (
-            <line x1="155" y1="215" x2="175" y2="215" stroke={strokeColor} strokeWidth="2.5" />
-          )}
 
-          {/* 右侧减号圆圈 */}
-          <circle
-            cx="235"
-            cy="215"
-            r="18"
-            fill={minusCircleFill}
-            stroke={strokeColor}
-            strokeWidth="2"
+          <OperatorCircle
+            cx={235}
+            cy={215}
+            operator={operatorSymbols.right}
+            fill={styles.minusCircleFill}
+            strokeColor={styles.strokeColor}
+            isMultiplication={isMultiplication}
           />
-          {isMultiplication ? (
-            <text
-              x="235"
-              y="223"
-              fontFamily="Arial, sans-serif"
-              fontSize="24"
-              fontWeight="bold"
-              textAnchor="middle"
-              fill={strokeColor}
-            >
-              {operatorSymbols.right}
-            </text>
-          ) : (
-            <line x1="225" y1="215" x2="245" y2="215" stroke={strokeColor} strokeWidth="2.5" />
-          )}
 
-          {/* 底部加号圆圈 */}
-          <circle
-            cx="200"
-            cy="275"
-            r="18"
-            fill={plusCircleFill}
-            stroke={strokeColor}
-            strokeWidth="2"
+          <OperatorCircle
+            cx={200}
+            cy={275}
+            operator={operatorSymbols.bottom}
+            fill={styles.plusCircleFill}
+            strokeColor={styles.strokeColor}
+            isMultiplication={isMultiplication}
           />
-          {isMultiplication ? (
-            <text
-              x="200"
-              y="283"
-              fontFamily="Arial, sans-serif"
-              fontSize="24"
-              fontWeight="bold"
-              textAnchor="middle"
-              fill={strokeColor}
-            >
-              {operatorSymbols.bottom}
-            </text>
-          ) : (
-            <>
-              <line x1="190" y1="275" x2="210" y2="275" stroke={strokeColor} strokeWidth="2.5" />
-              <line x1="200" y1="265" x2="200" y2="285" stroke={strokeColor} strokeWidth="2.5" />
-            </>
-          )}
         </svg>
       </Box>
     </Box>

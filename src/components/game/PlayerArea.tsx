@@ -16,6 +16,7 @@ import { Player } from '../../game/models/Player';
 import { Card } from '../../game/models/Card';
 import { GameCard } from '../GameCard';
 import { CardPosition } from '../../game/types';
+import { GameStore } from '../../stores/GameStore';
 
 interface PositionSelectMenuProps {
   onPositionSelect: (position: CardPosition) => void;
@@ -64,6 +65,7 @@ interface PlayerAreaProps {
   isCurrentPlayer: boolean;
   cardBg: string;
   currentPlayerBorderColor: string;
+  store: GameStore;
 }
 
 export const PlayerArea = observer<PlayerAreaProps>(
@@ -75,6 +77,7 @@ export const PlayerArea = observer<PlayerAreaProps>(
     isCurrentPlayer,
     cardBg,
     currentPlayerBorderColor,
+    store,
   }) => {
     const { t } = useTranslation();
     const [selectedCard, setSelectedCard] = React.useState<Card | null>(null);
@@ -134,6 +137,7 @@ export const PlayerArea = observer<PlayerAreaProps>(
                   onClick={() => handleCardClick(card)}
                   isCurrentPlayer={isCurrentPlayer}
                   targetPosition={getCardTargetPosition(card)}
+                  store={store}
                 />
                 {selectedCard === card && !Array.from(selectedCards.values()).includes(card) && (
                   <PositionSelectMenu

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '../game/models/Card';
 import { CardPosition } from '../game/types';
+import { GameStore } from '../stores/GameStore';
 
 interface GameCardProps {
   card: Card;
@@ -10,6 +11,9 @@ interface GameCardProps {
   onClick?: () => void;
   isCurrentPlayer?: boolean;
   targetPosition?: CardPosition;
+  onDragStart?: (e: React.DragEvent, card: Card) => void;
+  onDragEnd?: (e: React.DragEvent) => void;
+  store: GameStore;
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
@@ -18,8 +22,18 @@ export const GameCard: React.FC<GameCardProps> = ({
   onClick,
   isCurrentPlayer = false,
   targetPosition,
+  onDragStart,
+  onDragEnd,
+  store,
 }) => {
   const { t } = useTranslation();
+  const [isDragging, setIsDragging] = useState(false);
+  const [touchStartTime, setTouchStartTime] = useState<number>(0);
+  const [touchStartPosition, setTouchStartPosition] = useState<{ x: number; y: number } | null>(
+    null
+  );
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const cardBg = useColorModeValue('white', 'gray.700');
   const selectedBg = useColorModeValue('blue.100', 'blue.700');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
@@ -41,10 +55,112 @@ export const GameCard: React.FC<GameCardProps> = ({
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, card: Card) => {
+    setIsDragging(true);
+    e.dataTransfer.setData('cardString', card.toString());
+    store.setDraggedCard(card);
+    onDragStart?.(e, card);
+  };
+
+  const handleDragEnd = (e: React.DragEvent) => {
+    setIsDragging(false);
+    store.setDraggedCard(null);
+    onDragEnd?.(e);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    setTouchStartTime(Date.now());
+    setTouchStartPosition({ x: touch.clientX, y: touch.clientY });
+    setIsDragging(false);
+
+    // 设置长按计时器
+    const timer = setTimeout(() => {
+      setIsDragging(true);
+      store.setDraggedCard(card);
+
+      // 创建一个自定义的拖拽事件
+      const dragEvent = new DragEvent('dragstart', {
+        bubbles: true,
+        cancelable: true,
+      });
+      const dataTransfer = new DataTransfer();
+      dataTransfer.setData('cardString', card.toString());
+      Object.defineProperty(dragEvent, 'dataTransfer', {
+        value: dataTransfer,
+      });
+      cardRef.current?.dispatchEvent(dragEvent);
+      onDragStart?.(dragEvent as unknown as React.DragEvent, card);
+    }, 500); // 500ms 长按阈值
+
+    setLongPressTimer(timer);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!touchStartPosition) return;
+
+    const touch = e.touches[0];
+    const deltaX = Math.abs(touch.clientX - touchStartPosition.x);
+    const deltaY = Math.abs(touch.clientY - touchStartPosition.y);
+
+    // 如果移动距离太大，取消长按计时器
+    if (deltaX > 10 || deltaY > 10) {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        setLongPressTimer(null);
+      }
+      e.preventDefault(); // 只在移动距离大时阻止默认行为
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    // 清除长按计时器
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+
+    const touchEndTime = Date.now();
+    const touchDuration = touchEndTime - touchStartTime;
+
+    // 如果不是拖拽状态，且触摸时间小于长按阈值，则认为是点击
+    if (!isDragging && touchDuration < 500) {
+      e.preventDefault(); // 阻止默认行为，防止触发其他事件
+      onClick?.();
+    }
+
+    // 如果正在拖拽，触发拖拽结束事件
+    if (isDragging) {
+      const dragEndEvent = new DragEvent('dragend', {
+        bubbles: true,
+        cancelable: true,
+      });
+      cardRef.current?.dispatchEvent(dragEndEvent);
+      onDragEnd?.(dragEndEvent as unknown as React.DragEvent);
+    }
+
+    // 重置状态
+    setIsDragging(false);
+    setTouchStartTime(0);
+    setTouchStartPosition(null);
+    store.setDraggedCard(null);
+  };
+
+  const getTransform = () => {
+    if (isDragging) {
+      return 'scale(0.8)';
+    }
+    if (isSelected) {
+      return 'translateY(-4px)';
+    }
+    return 'translateY(0)';
+  };
+
   return (
     <Box
-      width="80px"
-      height="120px"
+      ref={cardRef}
+      width="60px"
+      height="80px"
       bg={isSelected ? selectedBg : cardBg}
       borderWidth="2px"
       borderColor={isSelected ? selectedBorderColor : borderColor}
@@ -58,23 +174,34 @@ export const GameCard: React.FC<GameCardProps> = ({
       onClick={onClick}
       position="relative"
       transition="all 0.2s"
-      transform={isSelected ? 'translateY(-8px)' : 'translateY(0)'}
+      transform={getTransform()}
+      draggable={!!onClick}
+      onDragStart={(e) => handleDragStart(e, card)}
+      onDragEnd={handleDragEnd}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      opacity={isDragging ? 0.5 : 1}
+      sx={{
+        touchAction: 'none',
+        WebkitTapHighlightColor: 'transparent', // 移除移动端点击高亮
+      }}
       _hover={
         onClick
-          ? { transform: isSelected ? 'translateY(-8px)' : 'translateY(-4px)', boxShadow: 'lg' }
+          ? { transform: isSelected ? 'translateY(-4px)' : 'translateY(-2px)', boxShadow: 'lg' }
           : {}
       }
-      _active={onClick ? { transform: isSelected ? 'translateY(-8px)' : 'translateY(0)' } : {}}
+      _active={onClick ? { transform: isSelected ? 'translateY(-4px)' : 'translateY(0)' } : {}}
     >
-      <Box fontSize="2xl" fontWeight="bold" color={textColor} textAlign="center">
+      <Box fontSize="xl" fontWeight="bold" color={textColor} textAlign="center">
         {card.getValue() === null ? '?' : card.getValue()}
       </Box>
       {isSelected && targetPosition && (
         <Box
-          fontSize="xs"
+          fontSize="2xs"
           color={positionTextColor}
           position="absolute"
-          bottom="4px"
+          bottom="2px"
           textAlign="center"
         >
           {getPositionText(targetPosition)}
@@ -85,11 +212,11 @@ export const GameCard: React.FC<GameCardProps> = ({
           position="absolute"
           top="0"
           right="0"
-          width="12px"
-          height="12px"
+          width="6px"
+          height="6px"
           bg="green.500"
           borderRadius="full"
-          transform="translate(4px, -4px)"
+          transform="translate(2px, -2px)"
         />
       )}
     </Box>
