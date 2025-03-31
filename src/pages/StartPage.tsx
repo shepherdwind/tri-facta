@@ -102,14 +102,14 @@ export const StartPage: React.FC = () => {
                 onClick={() => setSelectedMode(GameMode.ADDITION)}
                 size="lg"
               >
-                {t('game.additionMode')}
+                {t('game.modes.addition')}
               </Button>
               <Button
                 colorScheme={selectedMode === GameMode.MULTIPLICATION ? 'blue' : 'gray'}
                 onClick={() => setSelectedMode(GameMode.MULTIPLICATION)}
                 size="lg"
               >
-                {t('game.multiplicationMode')}
+                {t('game.modes.multiplication')}
               </Button>
             </Stack>
           </VStack>
@@ -119,7 +119,7 @@ export const StartPage: React.FC = () => {
         <Box bg={cardBg} p={6} borderRadius="lg" boxShadow="lg">
           <VStack align="start" spacing={2}>
             <Text fontSize="xl" fontWeight="bold">
-              {t('game.instructions')}
+              {t('game.instructions.title')}
             </Text>
             <Text>{t('game.instructionItems.multiplayer')}</Text>
             <Text>{t('game.instructionItems.winCondition')}</Text>
@@ -130,7 +130,7 @@ export const StartPage: React.FC = () => {
         {/* Start Button */}
         <Box textAlign="center">
           <Button colorScheme="blue" size="lg" width="200px" onClick={handleStartGame}>
-            {t('common.startGame')}
+            {t('common.start')}
           </Button>
         </Box>
       </VStack>

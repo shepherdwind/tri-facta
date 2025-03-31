@@ -30,6 +30,11 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
   const { t } = useTranslation();
   const store = React.useMemo(() => new GameStore(game), [game]);
 
+  // 使用 useMemo 来保持玩家顺序不变
+  const players = React.useMemo(() => game.getPlayers(), [game]);
+  const player1 = players[0];
+  const player2 = players[1];
+
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const currentPlayerBorderColor = useColorModeValue('blue.500', 'blue.300');
 
@@ -49,11 +54,11 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
 
         <PlayerArea
           key="player1"
-          player={store.currentPlayer}
+          player={player1}
           selectedCards={store.selectedCards}
           onCardClick={handleCardClick}
           onPositionSelect={handlePositionSelect}
-          isCurrentPlayer={store.currentPlayer.isCurrentPlayer()}
+          isCurrentPlayer={player1.isCurrentPlayer()}
           cardBg={cardBg}
           currentPlayerBorderColor={currentPlayerBorderColor}
         />
@@ -62,14 +67,11 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
 
         <PlayerArea
           key="player2"
-          player={game.getPlayers().find((p) => p !== store.currentPlayer)!}
+          player={player2}
           selectedCards={store.selectedCards}
           onCardClick={handleCardClick}
           onPositionSelect={handlePositionSelect}
-          isCurrentPlayer={game
-            .getPlayers()
-            .find((p) => p !== store.currentPlayer)!
-            .isCurrentPlayer()}
+          isCurrentPlayer={player2.isCurrentPlayer()}
           cardBg={cardBg}
           currentPlayerBorderColor={currentPlayerBorderColor}
         />

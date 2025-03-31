@@ -1,5 +1,6 @@
 import React from 'react';
 import { Box, VStack } from '@chakra-ui/react';
+import { observer } from 'mobx-react-lite';
 import TriFactaCard from '../TriFactaCard';
 import { GameControls } from './GameControls';
 import { GameStore } from '../../stores/GameStore';
@@ -9,7 +10,7 @@ interface GameCenterProps {
   store: GameStore;
 }
 
-export const GameCenter: React.FC<GameCenterProps> = ({ store }) => {
+export const GameCenter = observer<GameCenterProps>(({ store }) => {
   const triFactaCard = store.game.getTriFactaCard();
 
   // 获取已提交的卡片
@@ -38,12 +39,8 @@ export const GameCenter: React.FC<GameCenterProps> = ({ store }) => {
           gameMode={store.game.getGameMode()}
           selectedCards={store.selectedCards}
         />
-        <GameControls
-          onDrawCard={() => store.drawCard()}
-          onPlayCards={() => store.playCards()}
-          onEndTurn={() => store.endTurn()}
-        />
+        <GameControls store={store} />
       </VStack>
     </Box>
   );
-};
+});

@@ -14,6 +14,7 @@ export class GameStore {
   selectedWildcard: Card | null;
   wildcardValue: number;
   cardBg: string;
+  hasDrawnCard: boolean;
 
   constructor(game: Game) {
     this.game = game;
@@ -24,8 +25,17 @@ export class GameStore {
     this.selectedWildcard = null;
     this.wildcardValue = 1;
     this.cardBg = useColorModeValue('brand.card', 'gray.700');
+    this.hasDrawnCard = false;
 
     makeAutoObservable(this);
+  }
+
+  get canDrawCard(): boolean {
+    return !this.hasDrawnCard;
+  }
+
+  get canEndTurn(): boolean {
+    return this.hasDrawnCard;
   }
 
   getTriFactaCard() {
@@ -34,8 +44,13 @@ export class GameStore {
 
   drawCard() {
     try {
+      if (this.hasDrawnCard) {
+        this.errorMessage = 'game.errors.alreadyDrawn';
+        return;
+      }
       this.game.drawCard(this.currentPlayer.getId());
       this.currentPlayer = this.game.getCurrentPlayer();
+      this.hasDrawnCard = true;
       this.errorMessage = null;
     } catch (error) {
       this.errorMessage = 'game.errors.deckEmpty';
@@ -45,9 +60,14 @@ export class GameStore {
 
   playCards() {
     try {
+      if (this.selectedCards.size < 2) {
+        this.errorMessage = 'game.errors.minimumCards';
+        return;
+      }
       this.game.playCards(this.currentPlayer.getId());
       this.currentPlayer = this.game.getCurrentPlayer();
       this.selectedCards = new Map();
+      this.hasDrawnCard = false;
       this.errorMessage = null;
     } catch (error) {
       this.errorMessage = 'game.errors.invalidPlay';
@@ -56,9 +76,14 @@ export class GameStore {
   }
 
   endTurn() {
+    if (!this.hasDrawnCard) {
+      this.errorMessage = 'game.errors.mustDrawFirst';
+      return;
+    }
     this.game.endTurn();
     this.currentPlayer = this.game.getCurrentPlayer();
     this.selectedCards = new Map();
+    this.hasDrawnCard = false;
     this.errorMessage = null;
   }
 
