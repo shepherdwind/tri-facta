@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
 import { GameMode, CardPosition } from '../game/types';
 import { Card } from '../game/models/Card';
@@ -200,32 +200,59 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
     setIsTouchDevice(true);
     setIsDragging(true);
     setLastPosition(null);
+    // 添加一个标志来追踪触摸是否有效
+    const touch = e.touches[0];
+    if (touch) {
+      const position = getPositionFromTouch(touch);
+      if (position) {
+        setDragOverPosition(position);
+      }
+    }
   };
 
-  const handleTouchMove = (e: React.TouchEvent, position: CardPosition) => {
+  const getPositionFromTouch = (touch: React.Touch): CardPosition | null => {
+    const svgElement = document.querySelector('svg');
+    if (!svgElement) return null;
+
+    const rect = svgElement.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+
+    // 根据坐标判断位置
+    if (y < 200 && x > 160 && x < 240) return CardPosition.TOP;
+    if (y > 230 && y < 330) {
+      if (x > 85 && x < 165) return CardPosition.BOTTOM_LEFT;
+      if (x > 235 && x < 315) return CardPosition.BOTTOM_RIGHT;
+    }
+    return null;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
     if (!isDragging) return;
     e.preventDefault();
     e.stopPropagation();
 
-    // 只在位置发生变化时更新
-    if (lastPosition !== position) {
+    const touch = e.touches[0];
+    if (!touch) return;
+
+    const position = getPositionFromTouch(touch);
+    if (position && lastPosition !== position) {
       setLastPosition(position);
       setDragOverPosition(position);
     }
   };
 
-  const handleTouchEnd = (e: React.TouchEvent, position: CardPosition) => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
     if (!isDragging) return;
     e.preventDefault();
     e.stopPropagation();
 
-    // 确保在触摸结束时使用最后的位置
-    const finalPosition = lastPosition || position;
+    const finalPosition = lastPosition;
+    if (finalPosition) {
+      onTouchEnd?.(e, finalPosition);
+    }
 
-    // 直接调用 onTouchEnd 回调
-    onTouchEnd?.(e, finalPosition);
-
-    // 清理状态
+    // 清理所有状态
     setDragOverPosition(null);
     setLastPosition(null);
     setIsDragging(false);
@@ -233,11 +260,33 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
   };
 
   const handleTouchCancel = () => {
-    setIsDragging(false);
+    // 清理所有状态
     setDragOverPosition(null);
     setLastPosition(null);
+    setIsDragging(false);
     setIsTouchDevice(false);
   };
+
+  // 添加全局触摸事件监听器
+  useEffect(() => {
+    const handleGlobalTouchEnd = (e: TouchEvent) => {
+      if (isDragging) {
+        handleTouchEnd(e as unknown as React.TouchEvent);
+      }
+    };
+
+    const handleGlobalTouchCancel = () => {
+      handleTouchCancel();
+    };
+
+    document.addEventListener('touchend', handleGlobalTouchEnd);
+    document.addEventListener('touchcancel', handleGlobalTouchCancel);
+
+    return () => {
+      document.removeEventListener('touchend', handleGlobalTouchEnd);
+      document.removeEventListener('touchcancel', handleGlobalTouchCancel);
+    };
+  }, [isDragging]);
 
   return (
     <Box width="100%" display="flex" justifyContent="center" alignItems="center" p={4}>
@@ -247,7 +296,10 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
           width="100%"
           height="100%"
           onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
           onTouchCancel={handleTouchCancel}
+          style={{ touchAction: 'none' }}
         >
           {/* 主三角形背景 */}
           <path

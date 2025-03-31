@@ -120,6 +120,8 @@ export const PlayerArea = observer<PlayerAreaProps>(
         borderWidth="2px"
         borderColor={isCurrentPlayer ? currentPlayerBorderColor : 'transparent'}
         transition="all 0.2s"
+        opacity={isCurrentPlayer ? 1 : 0.7}
+        pointerEvents={isCurrentPlayer ? 'auto' : 'none'}
       >
         <VStack spacing={2}>
           <Text fontSize="lg" fontWeight="bold">
@@ -134,17 +136,19 @@ export const PlayerArea = observer<PlayerAreaProps>(
                 <GameCard
                   card={card}
                   isSelected={Array.from(selectedCards.values()).includes(card)}
-                  onClick={() => handleCardClick(card)}
+                  onClick={() => isCurrentPlayer && handleCardClick(card)}
                   isCurrentPlayer={isCurrentPlayer}
                   targetPosition={getCardTargetPosition(card)}
                   store={store}
                 />
-                {selectedCard === card && !Array.from(selectedCards.values()).includes(card) && (
-                  <PositionSelectMenu
-                    onPositionSelect={handlePositionSelect}
-                    onClose={() => setSelectedCard(null)}
-                  />
-                )}
+                {selectedCard === card &&
+                  !Array.from(selectedCards.values()).includes(card) &&
+                  isCurrentPlayer && (
+                    <PositionSelectMenu
+                      onPositionSelect={handlePositionSelect}
+                      onClose={() => setSelectedCard(null)}
+                    />
+                  )}
               </Box>
             ))}
           </HStack>

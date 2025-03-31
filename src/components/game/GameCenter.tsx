@@ -63,6 +63,7 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
 
     // 从 store 中获取当前拖拽的卡片
     const card = store.draggedCard;
+    // store.showError(`Dropped: ${card?.getValue()} ${position}`);
     if (card) {
       store.setSelectedCard(card, position);
       store.setDraggedCard(null); // 清除拖拽的卡片
@@ -70,27 +71,26 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
   };
 
   return (
-    <Box
-      bg={cardBg}
-      p={4}
-      borderRadius="lg"
-      boxShadow="lg"
-      onDragOver={handleDragOver}
-      onDrop={(e) => handleDrop(e, CardPosition.TOP)}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={(e) => handleTouchEnd(e, CardPosition.TOP)}
-    >
+    <Box bg={cardBg} p={4} borderRadius="lg" boxShadow="lg">
       <VStack spacing={4}>
-        <TriFactaCard
-          topNumber={topNumber}
-          leftNumber={leftNumber}
-          rightNumber={rightNumber}
-          gameMode={store.game.getGameMode()}
-          selectedCards={store.selectedCards}
-          onDrop={(e, position) => handleDrop(e, position)}
-          onTouchEnd={(e, position) => handleTouchEnd(e, position)}
-        />
+        <Box
+          onDragOver={handleDragOver}
+          //   onDrop={(e) => handleDrop(e, CardPosition.TOP)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          //   onTouchEnd={(e) => handleTouchEnd(e, CardPosition.TOP)}
+        >
+          <TriFactaCard
+            topNumber={topNumber}
+            leftNumber={leftNumber}
+            rightNumber={rightNumber}
+            gameMode={store.game.getGameMode()}
+            selectedCards={store.selectedCards}
+            onDrop={(e, position) => handleDrop(e, position)}
+            onTouchEnd={(e, position) => handleTouchEnd(e, position)}
+          />
+        </Box>
+
         <GameControls store={store} />
       </VStack>
     </Box>
