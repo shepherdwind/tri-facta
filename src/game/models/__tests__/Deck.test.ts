@@ -20,13 +20,13 @@ describe('Deck', () => {
       // Check for number cards (1-20)
       for (let i = 1; i <= 20; i++) {
         const numberCards = cards.filter(
-          (card: Card) => !card.isWildCard() && card.getValue() === i
+          (card: Card) => !card.isWildcard && card.getValue() === i
         );
         expect(numberCards).toHaveLength(2); // Each number should appear 2 times
       }
 
       // Check for wild cards
-      const wildCards = cards.filter((card: Card) => card.isWildCard());
+      const wildCards = cards.filter((card: Card) => card.isWildcard);
       expect(wildCards).toHaveLength(2); // 2 wild cards
     });
   });
@@ -115,7 +115,7 @@ describe('Deck', () => {
       // Check for number cards (1-20)
       for (let i = 1; i <= 20; i++) {
         const numberCards = cards.filter(
-          (card: Card) => !card.isWildCard() && card.getValue() === i
+          (card: Card) => !card.isWildCard()&& card.getValue() === i
         );
         expect(numberCards).toHaveLength(2); // Each number should appear 2 times
       }

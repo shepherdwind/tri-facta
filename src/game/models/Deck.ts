@@ -43,4 +43,14 @@ export class Deck {
   getRemainingCards(): number {
     return this.cards.length;
   }
+
+  getCards(): Card[] {
+    return this.cards;
+  }
+
+  reset(): void {
+    this.cards = [];
+    this.initialize();
+    this.shuffle();
+  }
 }

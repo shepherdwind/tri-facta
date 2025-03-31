@@ -2,9 +2,9 @@ export class Card {
   private value: number | null;
   isWildcard: boolean;
 
-  constructor(value: number | null = null) {
+  constructor(value: number | null = null, isWildcard: boolean = false) {
     this.value = value;
-    this.isWildcard = value === null;
+    this.isWildcard = !value || isWildcard;
   }
 
   getValue(): number | null {
@@ -19,6 +19,17 @@ export class Card {
       throw new Error('Value must be between 1 and 20');
     }
     this.value = value;
+  }
+
+  isWildCard(): boolean {
+    return this.isWildcard;
+  }
+
+  setWildValue(value: number) {
+    if (!this.isWildcard) {
+      throw new Error('Cannot set wild value for non-wild card');
+    }
+    return new Card(value, true);
   }
 
   toString(): string {

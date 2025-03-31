@@ -111,16 +111,16 @@ describe('Game Integration', () => {
     // Round 1: Player 1's turn with wild card
     const card1 = new Card(5);
     const card2 = new Card(2);
-    const wildCard = new Card(0, true);
-    const wildCardWithValue = wildCard.setWildValue(3);
+    const wildCard = new Card(null, true);
+    wildCard.setValue(3);
     player1.addCard(card1);
     player1.addCard(card2);
-    player1.addCard(wildCardWithValue);
+    player1.addCard(wildCard);
 
     // Player 1 stages cards
     game.stageCard(player1, card1, CardPosition.TOP);
     game.stageCard(player1, card2, CardPosition.BOTTOM_LEFT);
-    game.stageCard(player1, wildCardWithValue, CardPosition.BOTTOM_RIGHT);
+    game.stageCard(player1, wildCard, CardPosition.BOTTOM_RIGHT);
 
     // Commit cards
     game.playCards(player1.getId());

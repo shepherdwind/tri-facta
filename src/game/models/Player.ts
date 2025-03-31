@@ -33,6 +33,9 @@ export class Player {
   }
 
   stageCard(card: Card, position: CardPosition): void {
+    if (!this.hasCard(card)) {
+      throw new Error('Player does not have this card');
+    }
     if (this.stagingArea.has(position)) {
       throw new Error('Position already has a card');
     }
@@ -50,6 +53,12 @@ export class Player {
   commitToCardGroup(cardGroup: CardGroup): void {
     cardGroup.placeCards(this.getStagedCards(), this.id);
     cardGroup.commit();
+    
+    // Remove cards from hand
+    for (const card of this.stagingArea.values()) {
+      this.removeCard(card);
+    }
+    
     this.stagingArea.clear();
   }
 
@@ -58,11 +67,11 @@ export class Player {
   }
 
   hasCard(card: Card): boolean {
-    return this.hand.includes(card);
+    return this.hand.includes(card) || Array.from(this.stagingArea.values()).includes(card);
   }
 
   getHand(): Card[] {
-    return this.hand;
+    return [...this.hand];
   }
 
   setCurrentTurn(isCurrent: boolean): void {

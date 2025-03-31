@@ -12,6 +12,7 @@ describe('Game', () => {
     player1 = new Player('player1', 'Player 1');
     player2 = new Player('player2', 'Player 2');
     game = new Game(GameMode.ADDITION, [player1, player2]);
+    game.start(); // Initialize game state
   });
 
   describe('constructor and initialization', () => {
@@ -37,6 +38,8 @@ describe('Game', () => {
       const card2 = new Card(2);
       const card3 = new Card(3);
 
+      // Clear existing hands and add new cards
+      player1.clearHand();
       player1.addCard(card1);
       player1.addCard(card2);
       player1.addCard(card3);
@@ -44,18 +47,18 @@ describe('Game', () => {
       // Verify initial hand size
       expect(player1.getHand()).toHaveLength(3);
 
-      player1.stageCard(card1, CardPosition.TOP);
-      player1.stageCard(card2, CardPosition.BOTTOM_LEFT);
-      player1.stageCard(card3, CardPosition.BOTTOM_RIGHT);
+      game.stageCard(player1, card1, CardPosition.TOP);
+      game.stageCard(player1, card2, CardPosition.BOTTOM_LEFT);
+      game.stageCard(player1, card3, CardPosition.BOTTOM_RIGHT);
 
-      // Verify hand size after staging
-      expect(player1.getHand()).toHaveLength(0);
+      // Cards should still be in hand after staging
+      expect(player1.getHand()).toHaveLength(3);
 
       game.commitCards(player1);
 
-      // Verify final state
+      // After commit, cards should be removed from both staging area and hand
       expect(player1.getStagedCards().size).toBe(0);
-      expect(player1.getHand()).toHaveLength(0); // Hand should remain empty after commit
+      expect(player1.getHand()).toHaveLength(0);
       expect(game.getCurrentPlayer()).toBe(player2);
     });
 
@@ -66,15 +69,16 @@ describe('Game', () => {
       const card3 = new Card(3);
 
       // Player 1's turn
+      player1.clearHand();
       player1.addCard(card1);
       player1.addCard(card2);
       player1.addCard(card3);
       expect(player1.getHand()).toHaveLength(3);
 
-      player1.stageCard(card1, CardPosition.TOP);
-      player1.stageCard(card2, CardPosition.BOTTOM_LEFT);
-      player1.stageCard(card3, CardPosition.BOTTOM_RIGHT);
-      expect(player1.getHand()).toHaveLength(0);
+      game.stageCard(player1, card1, CardPosition.TOP);
+      game.stageCard(player1, card2, CardPosition.BOTTOM_LEFT);
+      game.stageCard(player1, card3, CardPosition.BOTTOM_RIGHT);
+      expect(player1.getHand()).toHaveLength(3);
 
       game.commitCards(player1);
       expect(player1.getStagedCards().size).toBe(0);
@@ -84,15 +88,16 @@ describe('Game', () => {
       const card4 = new Card(6);
       const card5 = new Card(2);
       const card6 = new Card(4);
+      player2.clearHand();
       player2.addCard(card4);
       player2.addCard(card5);
       player2.addCard(card6);
       expect(player2.getHand()).toHaveLength(3);
 
-      player2.stageCard(card4, CardPosition.TOP);
-      player2.stageCard(card5, CardPosition.BOTTOM_LEFT);
-      player2.stageCard(card6, CardPosition.BOTTOM_RIGHT);
-      expect(player2.getHand()).toHaveLength(0);
+      game.stageCard(player2, card4, CardPosition.TOP);
+      game.stageCard(player2, card5, CardPosition.BOTTOM_LEFT);
+      game.stageCard(player2, card6, CardPosition.BOTTOM_RIGHT);
+      expect(player2.getHand()).toHaveLength(3);
 
       game.commitCards(player2);
       expect(player2.getStagedCards().size).toBe(0);
@@ -105,15 +110,17 @@ describe('Game', () => {
   describe('card operations', () => {
     it('should allow staging cards', () => {
       const card = new Card(5);
+      player1.clearHand();
       player1.addCard(card);
       game.stageCard(player1, card, CardPosition.TOP);
 
       expect(player1.getStagedCards().get(CardPosition.TOP)).toBe(card);
-      expect(player1.getHand()).not.toContain(card);
+      expect(player1.getHand()).toContain(card);
     });
 
     it('should allow unstaging cards', () => {
       const card = new Card(5);
+      player1.clearHand();
       player1.addCard(card);
       game.stageCard(player1, card, CardPosition.TOP);
       game.unstageCard(player1, CardPosition.TOP);
@@ -127,6 +134,7 @@ describe('Game', () => {
       const card2 = new Card(2);
       const card3 = new Card(3);
 
+      player1.clearHand();
       player1.addCard(card1);
       player1.addCard(card2);
       player1.addCard(card3);
@@ -138,14 +146,14 @@ describe('Game', () => {
       game.stageCard(player1, card2, CardPosition.BOTTOM_LEFT);
       game.stageCard(player1, card3, CardPosition.BOTTOM_RIGHT);
 
-      // Verify hand size after staging
-      expect(player1.getHand()).toHaveLength(0);
+      // Cards should still be in hand after staging
+      expect(player1.getHand()).toHaveLength(3);
 
       game.commitCards(player1);
 
-      // Verify final state
+      // After commit, cards should be removed from both staging area and hand
       expect(player1.getStagedCards().size).toBe(0);
-      expect(player1.getHand()).toHaveLength(0); // Hand should remain empty after commit
+      expect(player1.getHand()).toHaveLength(0);
       expect(game.getCurrentPlayer()).toBe(player2);
     });
   });
@@ -157,6 +165,7 @@ describe('Game', () => {
       const card2 = new Card(2);
       const card3 = new Card(3);
 
+      player1.clearHand();
       player1.addCard(card1);
       player1.addCard(card2);
       player1.addCard(card3);
@@ -173,6 +182,7 @@ describe('Game', () => {
     it('should return false when player has not won', () => {
       // Add a card to player1's hand
       const card = new Card(5);
+      player1.clearHand();
       player1.addCard(card);
       expect(game.hasPlayerWon(player1)).toBe(false);
     });
@@ -181,6 +191,7 @@ describe('Game', () => {
   describe('error handling', () => {
     it('should throw error when staging card not in player hand', () => {
       const card = new Card(5);
+      player1.clearHand();
       expect(() => game.stageCard(player1, card, CardPosition.TOP)).toThrow(
         'Player does not have this card'
       );
@@ -195,6 +206,7 @@ describe('Game', () => {
       const card2 = new Card(2);
       const card3 = new Card(4); // Invalid equation: 5 != 2 + 4
 
+      player1.clearHand();
       player1.addCard(card1);
       player1.addCard(card2);
       player1.addCard(card3);

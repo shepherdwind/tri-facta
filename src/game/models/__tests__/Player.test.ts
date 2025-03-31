@@ -25,13 +25,13 @@ describe('Player', () => {
   });
 
   describe('stageCard', () => {
-    it('should remove card from hand when staging', () => {
+    it('should keep card in hand when staging', () => {
       const card = player.getHand()[0];
       player.stageCard(card, CardPosition.TOP);
 
-      expect(player.getHand()).not.toContain(card);
+      expect(player.getHand()).toContain(card);
       expect(player.getStagedCards().get(CardPosition.TOP)).toBe(card);
-      expect(player.getHand()).toHaveLength(INITIAL_HAND_SIZE - 1);
+      expect(player.getHand()).toHaveLength(INITIAL_HAND_SIZE);
     });
 
     it('should throw error when staging a card not in hand', () => {
@@ -43,10 +43,10 @@ describe('Player', () => {
   });
 
   describe('unstageCard', () => {
-    it('should move card back to hand when unstaging', () => {
+    it('should remove card from staging area when unstaging', () => {
       const card = player.getHand()[0];
       player.stageCard(card, CardPosition.TOP);
-      expect(player.getHand()).toHaveLength(INITIAL_HAND_SIZE - 1);
+      expect(player.getStagedCards().has(CardPosition.TOP)).toBe(true);
 
       player.unstageCard(CardPosition.TOP);
 
@@ -57,7 +57,7 @@ describe('Player', () => {
   });
 
   describe('clearStagingArea', () => {
-    it('should move all cards back to hand', () => {
+    it('should clear staging area while keeping cards in hand', () => {
       // Stage three cards
       const card1 = player.getHand()[0];
       const card2 = player.getHand()[1];
@@ -67,7 +67,7 @@ describe('Player', () => {
       player.stageCard(card2, CardPosition.BOTTOM_LEFT);
       player.stageCard(card3, CardPosition.BOTTOM_RIGHT);
 
-      expect(player.getHand()).toHaveLength(INITIAL_HAND_SIZE - 3);
+      expect(player.getHand()).toHaveLength(INITIAL_HAND_SIZE);
       expect(player.getStagedCards().size).toBe(3);
 
       player.clearStagingArea();
@@ -81,7 +81,7 @@ describe('Player', () => {
   });
 
   describe('commit to CardGroup', () => {
-    it('should clear staging area after commit', () => {
+    it('should remove cards from hand and clear staging area after commit', () => {
       const cardGroup = new CardGroup(GameMode.ADDITION);
 
       // Stage three cards that form a valid equation (e.g., 5 = 2 + 3)
@@ -102,8 +102,11 @@ describe('Player', () => {
       // Commit to card group
       player.commitToCardGroup(cardGroup);
 
-      // Verify staging area is cleared
+      // Verify staging area is cleared and cards are removed from hand
       expect(player.getStagedCards().size).toBe(0);
+      expect(player.getHand()).not.toContain(topCard);
+      expect(player.getHand()).not.toContain(bottomLeftCard);
+      expect(player.getHand()).not.toContain(bottomRightCard);
       expect(player.getHand()).toHaveLength(INITIAL_HAND_SIZE);
     });
   });
