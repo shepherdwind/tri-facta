@@ -12,8 +12,11 @@ import {
   useColorModeValue,
   IconButton,
   Button,
+  Tooltip,
+  Flex,
 } from '@chakra-ui/react';
 import { CheckIcon, ArrowBackIcon } from '@chakra-ui/icons';
+import { I18nIcon } from './icons/I18nIcon';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import TriFactaCard from './TriFactaCard';
@@ -30,12 +33,11 @@ const HelpPage: React.FC = () => {
   };
 
   const toggleLanguage = () => {
-    const newLang = i18n.language === 'en' ? 'zh' : 'en';
-    i18n.changeLanguage(newLang);
+    i18n.changeLanguage(i18n.language === 'en' ? 'zh' : 'en');
   };
 
   return (
-    <Container maxW="container.lg" py={8}>
+    <Container maxW="1200px" py={8}>
       <VStack spacing={8} align="stretch">
         <HStack justify="space-between">
           <IconButton
@@ -48,14 +50,15 @@ const HelpPage: React.FC = () => {
           <Heading textAlign="center" color={headingColor} flex="1">
             {t('help.title')}
           </Heading>
-          <Button
-            onClick={toggleLanguage}
-            variant="ghost"
-            size="lg"
-            aria-label={i18n.language === 'en' ? '切换到中文' : 'Switch to English'}
-          >
-            {i18n.language === 'en' ? '中文' : 'English'}
-          </Button>
+          <Tooltip label={i18n.language === 'en' ? '切换到中文' : 'Switch to English'}>
+            <IconButton
+              aria-label={i18n.language === 'en' ? 'Switch to Chinese' : 'Switch to English'}
+              icon={<I18nIcon />}
+              onClick={toggleLanguage}
+              variant="ghost"
+              size="lg"
+            />
+          </Tooltip>
         </HStack>
 
         <Box>

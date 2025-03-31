@@ -15,6 +15,11 @@
   "footer": {
     "sourceCode": "View source code:"
   },
+  "pwa": {
+    "installTitle": "Install tri-FACTa!™",
+    "installDescription": "Install on your device to play anytime, anywhere!",
+    "install": "Install"
+  },
   "help": {
     "title": "How to Play tri-FACTa!™",
     "introduction": {

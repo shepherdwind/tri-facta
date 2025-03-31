@@ -15,6 +15,11 @@
   "footer": {
     "sourceCode": "查看源码："
   },
+  "pwa": {
+    "installTitle": "安装 tri-FACTa!™",
+    "installDescription": "安装到您的设备上，随时随地玩游戏！",
+    "install": "安装"
+  },
   "help": {
     "title": "如何玩 tri-FACTa!™",
     "introduction": {
