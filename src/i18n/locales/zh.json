@@ -68,6 +68,12 @@
       "wildcardValue": "• 万能牌可以代表1-20中的任意数字",
       "wildcardDeclaration": "• 使用万能牌时必须声明其代表的数字",
       "wildcardPersistence": "• 万能牌一旦确定数值，在该局游戏中保持不变"
+    },
+    "interaction": {
+      "title": "操作交互",
+      "dragAndDrop": "• 长按拖拽卡牌到中间三角形区域",
+      "clickToSelect": "• 点击选中三角形中的位置",
+      "clickToDeselect": "• 点击选中的卡牌取消选中"
     }
   },
   "game": {
@@ -92,7 +98,15 @@
       "multiplicationDesc": "上方两个数字的积必须等于下方数字。",
       "multiplayer": "这是一个双人游戏，每个玩家轮流进行",
       "winCondition": "第一个完成所有卡片的玩家获胜",
-      "wildcard": "使用通配符可以跳过任何卡片"
+      "wildcard": "使用通配符可以跳过任何卡片",
+      "interaction": "• 长按拖拽卡牌到中间三角形区域\n• 点击选中三角形中的位置\n• 点击选中的卡牌取消选中"
+    },
+    "instructionItems": {
+      "multiplayer": "• 双人对战模式",
+      "winCondition": "• 清空手牌即可获胜",
+      "dragAndDrop": "• 长按拖拽卡牌到中间三角形区域",
+      "clickToSelect": "• 点击选中三角形中的位置",
+      "clickToDeselect": "• 点击选中的卡牌取消选中"
     },
     "currentPlayer": "当前玩家",
     "playerTurn": "{{player}}的回合",

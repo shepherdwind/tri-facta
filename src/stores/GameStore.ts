@@ -8,25 +8,49 @@ export class GameStore {
   game: Game;
   currentPlayer: Player;
   selectedCards: Map<CardPosition, Card>;
-  errorMessage: string | null;
   isWildcardModalOpen: boolean;
   selectedWildcard: Card | null;
   wildcardValue: number;
   hasDrawnCard: boolean;
   draggedCard: Card | null;
+  draggedCardPosition: CardPosition | null;
+  toast: any;
+  isVictoryAnimationPlaying: boolean;
+  winner: Player | null;
 
   constructor(game: Game) {
     this.game = game;
     this.currentPlayer = game.getCurrentPlayer();
     this.selectedCards = new Map();
-    this.errorMessage = null;
     this.isWildcardModalOpen = false;
     this.selectedWildcard = null;
     this.wildcardValue = 1;
     this.hasDrawnCard = false;
     this.draggedCard = null;
+    this.draggedCardPosition = null;
+    this.toast = null;
+    this.isVictoryAnimationPlaying = false;
+    this.winner = null;
 
     makeAutoObservable(this);
+  }
+
+  setToast(toast: any) {
+    this.toast = toast;
+  }
+
+  showError(message: string) {
+    if (this.toast) {
+      this.toast({
+        title: 'Error',
+        description: message,
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+        variant: 'solid',
+      });
+    }
   }
 
   get canDrawCard(): boolean {
@@ -44,15 +68,14 @@ export class GameStore {
   drawCard() {
     try {
       if (this.hasDrawnCard) {
-        this.errorMessage = 'game.errors.alreadyDrawn';
+        this.showError('game.errors.alreadyDrawn');
         return;
       }
       this.game.drawCard(this.currentPlayer.getId());
       this.currentPlayer = this.game.getCurrentPlayer();
       this.hasDrawnCard = true;
-      this.errorMessage = null;
     } catch (error) {
-      this.errorMessage = 'game.errors.deckEmpty';
+      this.showError('game.errors.deckEmpty');
       console.error('Failed to draw card:', error);
     }
   }
@@ -60,35 +83,51 @@ export class GameStore {
   playCards() {
     try {
       if (this.selectedCards.size < 2) {
-        this.errorMessage = 'game.errors.minimumCards';
+        this.showError('game.errors.minimumCards');
         return;
       }
       this.game.playCards(this.currentPlayer.getId());
       this.currentPlayer = this.game.getCurrentPlayer();
       this.selectedCards = new Map();
       this.hasDrawnCard = false;
-      this.errorMessage = null;
+
+      // Check for winner
+      if (this.currentPlayer.hasWon()) {
+        this.winner = this.currentPlayer;
+        this.isVictoryAnimationPlaying = true;
+        // Show victory toast
+        if (this.toast) {
+          this.toast({
+            title: 'Victory!',
+            description: `${this.currentPlayer.getName()} has won the game!`,
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
+            position: 'top',
+            variant: 'solid',
+          });
+        }
+      }
     } catch (error) {
-      this.errorMessage = 'game.errors.invalidPlay';
+      this.showError('game.errors.invalidPlay');
       console.error('Failed to play cards:', error);
     }
   }
 
   endTurn() {
     if (!this.hasDrawnCard) {
-      this.errorMessage = 'game.errors.mustDrawFirst';
+      this.showError('game.errors.mustDrawFirst');
       return;
     }
     this.game.endTurn();
     this.currentPlayer = this.game.getCurrentPlayer();
     this.selectedCards = new Map();
     this.hasDrawnCard = false;
-    this.errorMessage = null;
   }
 
   handleCardClick(card: Card) {
     if (this.currentPlayer.getId() !== this.game.getCurrentPlayer().getId()) {
-      this.errorMessage = 'game.errors.notYourTurn';
+      this.showError('game.errors.notYourTurn');
       return;
     }
 
@@ -111,16 +150,30 @@ export class GameStore {
 
   handlePositionSelect(card: Card, position: CardPosition) {
     if (this.currentPlayer.getId() !== this.game.getCurrentPlayer().getId()) {
-      this.errorMessage = 'game.errors.notYourTurn';
+      this.showError('game.errors.notYourTurn');
       return;
+    }
+
+    // 如果卡片正在被拖拽，检查是否放在正确的位置
+    if (this.draggedCard && this.draggedCardPosition) {
+      if (position !== this.draggedCardPosition) {
+        this.showError('game.errors.invalidDropPosition');
+        return;
+      }
     }
 
     try {
       this.game.stageCard(this.currentPlayer, card, position);
       this.selectedCards = new Map(this.game.getCurrentPlayer().getStagedCards());
-      this.errorMessage = null;
+      // 放置成功后清除拖拽状态
+      this.draggedCard = null;
+      this.draggedCardPosition = null;
     } catch (error) {
-      this.errorMessage = 'game.errors.invalidCard';
+      if (error instanceof Error) {
+        this.showError(error.message);
+      } else {
+        this.showError('game.errors.invalidCard');
+      }
       console.error('Failed to stage card:', error);
     }
   }
@@ -134,7 +187,11 @@ export class GameStore {
       this.isWildcardModalOpen = false;
       this.selectedWildcard = null;
     } catch (error) {
-      this.errorMessage = 'game.errors.invalidWildcardValue';
+      if (error instanceof Error) {
+        this.showError(error.message);
+      } else {
+        this.showError('game.errors.invalidWildcardValue');
+      }
       console.error('Failed to set wildcard value:', error);
     }
   }
@@ -150,21 +207,40 @@ export class GameStore {
 
   setSelectedCard(card: Card, position: CardPosition) {
     if (this.currentPlayer.getId() !== this.game.getCurrentPlayer().getId()) {
-      this.errorMessage = 'game.errors.notYourTurn';
+      this.showError('game.errors.notYourTurn');
       return;
+    }
+
+    // 如果卡片正在被拖拽，检查是否放在正确的位置
+    if (this.draggedCard && this.draggedCardPosition) {
+      if (position !== this.draggedCardPosition) {
+        this.showError('game.errors.invalidDropPosition');
+        return;
+      }
     }
 
     try {
       this.game.stageCard(this.currentPlayer, card, position);
       this.selectedCards = new Map(this.game.getCurrentPlayer().getStagedCards());
-      this.errorMessage = null;
+      // 放置成功后清除拖拽状态
+      this.draggedCard = null;
+      this.draggedCardPosition = null;
     } catch (error) {
-      this.errorMessage = 'game.errors.invalidCard';
+      if (error instanceof Error) {
+        this.showError(error.message);
+      } else {
+        this.showError('game.errors.invalidCard');
+      }
       console.error('Failed to stage card:', error);
     }
   }
 
-  setDraggedCard(card: Card | null) {
+  setDraggedCard(card: Card | null, position: CardPosition | null = null) {
     this.draggedCard = card;
+    this.draggedCardPosition = position;
+  }
+
+  endVictoryAnimation() {
+    this.isVictoryAnimationPlaying = false;
   }
 }

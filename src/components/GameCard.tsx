@@ -175,7 +175,7 @@ export const GameCard: React.FC<GameCardProps> = ({
       position="relative"
       transition="all 0.2s"
       transform={getTransform()}
-      draggable={!!onClick}
+      draggable={!!onClick && !isSelected}
       onDragStart={(e) => handleDragStart(e, card)}
       onDragEnd={handleDragEnd}
       onTouchStart={handleTouchStart}

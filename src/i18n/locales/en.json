@@ -68,6 +68,12 @@
       "wildcardValue": "• Wildcards can represent any number from 1 to 20",
       "wildcardDeclaration": "• Must declare the value when using a wildcard",
       "wildcardPersistence": "• Once a wildcard's value is determined, it remains the same for the entire game"
+    },
+    "interaction": {
+      "title": "Interaction Controls",
+      "dragAndDrop": "• Long press and drag cards to the center triangle area",
+      "clickToSelect": "• Click to select a position in the triangle",
+      "clickToDeselect": "• Click a selected card to deselect it"
     }
   },
   "game": {
@@ -90,7 +96,8 @@
       "multiplicationDesc": "The product of the top two numbers must equal the bottom number.",
       "multiplayer": "This is a two-player game where players take turns",
       "winCondition": "The first player to complete all cards wins",
-      "wildcard": "Use wildcards to skip any card"
+      "wildcard": "Use wildcards to skip any card",
+      "interaction": "• Long press and drag cards to the center triangle area\n• Click to select a position in the triangle\n• Click a selected card to deselect it"
     },
     "instructionItems": {
       "multiplayer": "• Two-player battle mode",
@@ -109,7 +116,8 @@
       "invalidPlay": "Invalid card combination. Please try again.",
       "notYourTurn": "It's not your turn!",
       "invalidCard": "Invalid card selection.",
-      "invalidWildcardValue": "Invalid wildcard value."
+      "invalidWildcardValue": "Invalid wildcard value.",
+      "invalidDropPosition": "You can only drop the card in the selected position."
     },
     "wildcard": {
       "title": "Select Wildcard Value",

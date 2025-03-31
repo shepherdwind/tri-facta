@@ -72,6 +72,8 @@ interface NumberAreaProps {
   textX: number;
   textY: number;
   trianglePath: string;
+  rectanglePath: string;
+  dragOverPosition: CardPosition | null;
   onDragOver: (e: React.DragEvent, position: CardPosition) => void;
   onDragLeave: () => void;
   onDrop: (e: React.DragEvent, position: CardPosition) => void;
@@ -88,6 +90,8 @@ const NumberArea: React.FC<NumberAreaProps> = ({
   textX,
   textY,
   trianglePath,
+  rectanglePath,
+  dragOverPosition,
   onDragOver,
   onDragLeave,
   onDrop,
@@ -102,6 +106,16 @@ const NumberArea: React.FC<NumberAreaProps> = ({
     onTouchEnd={(e) => onTouchEnd(e, position)}
   >
     <path d={trianglePath} fill={fill} stroke={strokeColor} strokeWidth="2" />
+    <path
+      d={rectanglePath}
+      fill={fill}
+      stroke={strokeColor}
+      strokeWidth="2"
+      style={{
+        opacity: dragOverPosition === position ? 1 : 0,
+        transition: 'opacity 0.2s ease-in-out',
+      }}
+    />
     <text
       x={textX}
       y={textY}
@@ -253,6 +267,8 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
             textX={200}
             textY={175}
             trianglePath="M200 120 L160 185 L240 185 Z"
+            rectanglePath="M160 100 L240 100 L240 200 L160 200 Z"
+            dragOverPosition={dragOverPosition}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -270,6 +286,8 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
             textX={125}
             textY={300}
             trianglePath="M125 250 L85 310 L165 310 Z"
+            rectanglePath="M85 230 L165 230 L165 330 L85 330 Z"
+            dragOverPosition={dragOverPosition}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -287,6 +305,8 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
             textX={275}
             textY={300}
             trianglePath="M275 250 L235 310 L315 310 Z"
+            rectanglePath="M235 230 L315 230 L315 330 L235 330 Z"
+            dragOverPosition={dragOverPosition}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}

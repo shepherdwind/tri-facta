@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, VStack, useColorModeValue } from '@chakra-ui/react';
+import { Container, VStack, useColorModeValue, useToast } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { Game } from '../game/models/Game';
@@ -7,7 +7,6 @@ import { Header } from '../components/game/Header';
 import { PlayerArea } from '../components/game/PlayerArea';
 import { GameCenter } from '../components/game/GameCenter';
 import { WildcardModal } from '../components/game/WildcardModal';
-import { ErrorAlert } from '../components/game/ErrorAlert';
 import { GameStore } from '../stores/GameStore';
 import { CardPosition } from '../game/types';
 import { Card } from '../game/models/Card';
@@ -19,6 +18,7 @@ interface GamePageProps {
 
 export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
   const { t } = useTranslation();
+  const toast = useToast();
   const store = React.useMemo(() => new GameStore(game), [game]);
 
   // 使用 useMemo 来保持玩家顺序不变
@@ -28,6 +28,15 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
 
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const currentPlayerBorderColor = useColorModeValue('blue.500', 'blue.300');
+
+  React.useEffect(() => {
+    store.setToast((options: any) => {
+      toast({
+        ...options,
+        description: t(options.description),
+      });
+    });
+  }, [store, toast, t]);
 
   const handleCardClick = (card: Card) => {
     store.handleCardClick(card);
@@ -41,7 +50,6 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
     <Container maxW="1200px" py={8}>
       <VStack spacing={8} align="stretch">
         <Header onExit={onExit} />
-        <ErrorAlert message={store.errorMessage ? t(store.errorMessage) : null} />
 
         <PlayerArea
           key="player1"

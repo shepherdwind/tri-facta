@@ -135,7 +135,9 @@ export const StartPage: React.FC = () => {
             </Text>
             <Text>{t('game.instructionItems.multiplayer')}</Text>
             <Text>{t('game.instructionItems.winCondition')}</Text>
-            <Text>{t('game.instructionItems.wildcard')}</Text>
+            <Text>{t('game.instructionItems.dragAndDrop')}</Text>
+            <Text>{t('game.instructionItems.clickToSelect')}</Text>
+            <Text>{t('game.instructionItems.clickToDeselect')}</Text>
           </VStack>
         </Box>
       </VStack>

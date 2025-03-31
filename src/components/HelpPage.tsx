@@ -131,6 +131,26 @@ const HelpPage: React.FC = () => {
 
         <Box>
           <Heading size="md" mb={4} color={headingColor}>
+            {t('help.interaction.title')}
+          </Heading>
+          <List spacing={3}>
+            <ListItem>
+              <ListIcon as={CheckIcon} color="green.500" />
+              {t('help.interaction.dragAndDrop')}
+            </ListItem>
+            <ListItem>
+              <ListIcon as={CheckIcon} color="green.500" />
+              {t('help.interaction.clickToSelect')}
+            </ListItem>
+            <ListItem>
+              <ListIcon as={CheckIcon} color="green.500" />
+              {t('help.interaction.clickToDeselect')}
+            </ListItem>
+          </List>
+        </Box>
+
+        <Box>
+          <Heading size="md" mb={4} color={headingColor}>
             {t('help.examples.title')}
           </Heading>
           <HStack spacing={8} justify="center" mb={4}>
