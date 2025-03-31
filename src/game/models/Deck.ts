@@ -4,26 +4,22 @@ export class Deck {
   private cards: Card[];
 
   constructor() {
-    this.cards = this.createDeck();
-    this.shuffle();
+    this.cards = [];
+    this.initialize();
   }
 
-  private createDeck(): Card[] {
-    const cards: Card[] = [];
-
-    // Add number cards (1-20, each number appears 2 times)
+  private initialize(): void {
+    // Add number cards (1-20, each twice)
     for (let i = 1; i <= 20; i++) {
       for (let j = 0; j < 2; j++) {
-        cards.push(new Card(i));
+        this.cards.push(new Card(i));
       }
     }
 
-    // Add wild cards (2 wild cards)
+    // Add wildcards (2 cards)
     for (let i = 0; i < 2; i++) {
-      cards.push(new Card(0, true));
+      this.cards.push(new Card(null));
     }
-
-    return cards;
   }
 
   shuffle(): void {
@@ -34,14 +30,9 @@ export class Deck {
   }
 
   draw(count: number): Card[] {
-    if (count === 0) {
-      return [];
-    }
-
     if (count > this.cards.length) {
       throw new Error('Not enough cards in deck');
     }
-
     return this.cards.splice(0, count);
   }
 
@@ -49,12 +40,7 @@ export class Deck {
     return this.cards.length === 0;
   }
 
-  reset(): void {
-    this.cards = this.createDeck();
-    this.shuffle();
-  }
-
-  getCards(): Card[] {
-    return [...this.cards];
+  getRemainingCards(): number {
+    return this.cards.length;
   }
 }

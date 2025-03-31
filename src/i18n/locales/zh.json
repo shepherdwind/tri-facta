@@ -1,0 +1,59 @@
+{
+  "header": {
+    "title": "三角数学",
+    "darkMode": "深色模式",
+    "lightMode": "浅色模式"
+  },
+  "common": {
+    "help": "帮助",
+    "settings": "设置",
+    "exit": "退出",
+    "start": "开始",
+    "cancel": "取消"
+  },
+  "game": {
+    "title": "三角数学游戏",
+    "subtitle": "趣味数学卡牌游戏",
+    "modeSelection": "选择游戏模式",
+    "additionMode": "加减法模式",
+    "multiplicationMode": "乘除法模式",
+    "modes": {
+      "addition": "加法模式",
+      "multiplication": "乘法模式"
+    },
+    "instructions": {
+      "title": "游戏说明",
+      "basic": "基本规则",
+      "basicDesc": "放置2-3张卡片形成有效的数学关系。最先用完手牌的玩家获胜！",
+      "addition": "加法模式",
+      "additionDesc": "上方两个数字的和必须等于下方数字。",
+      "multiplication": "乘法模式",
+      "multiplicationDesc": "上方两个数字的积必须等于下方数字。"
+    },
+    "currentPlayer": "当前玩家",
+    "playerTurn": "{{player}}的回合",
+    "cardsRemaining": "剩余卡牌",
+    "drawCard": "抽牌",
+    "playCards": "出牌",
+    "endTurn": "结束回合",
+    "error": "错误",
+    "errors": {
+      "deckEmpty": "牌堆已空！",
+      "invalidPlay": "无效的卡牌组合。请重试。",
+      "notYourTurn": "还没到你的回合！",
+      "invalidCard": "无效的卡牌选择。",
+      "invalidWildcardValue": "无效的万能牌数值。"
+    },
+    "wildcard": {
+      "title": "选择万能牌数值",
+      "selectValue": "选择1到20之间的数值",
+      "confirm": "确认"
+    },
+    "selectPosition": "选择位置",
+    "position": {
+      "top": "顶部",
+      "bottomLeft": "左下角",
+      "bottomRight": "右下角"
+    }
+  }
+}

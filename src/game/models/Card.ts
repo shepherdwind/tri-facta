@@ -1,30 +1,34 @@
 export class Card {
-  private value: number;
-  private isWild: boolean;
-  private wildValue?: number;
+  private value: number | null;
+  private isWildcard: boolean;
 
-  constructor(value: number, isWild: boolean = false) {
+  constructor(value: number | null = null) {
     this.value = value;
-    this.isWild = isWild;
+    this.isWildcard = value === null;
   }
 
-  setWildValue(value: number): Card {
-    if (!this.isWild) {
-      throw new Error('Cannot set wild value for non-wild card');
-    }
-    const newCard = new Card(this.value, true);
-    newCard.wildValue = value;
-    return newCard;
-  }
-
-  getValue(): number {
-    if (this.isWild && this.wildValue !== undefined) {
-      return this.wildValue;
-    }
+  getValue(): number | null {
     return this.value;
   }
 
-  isWildCard(): boolean {
-    return this.isWild;
+  isWildcard(): boolean {
+    return this.isWildcard;
+  }
+
+  setValue(value: number): void {
+    if (!this.isWildcard) {
+      throw new Error('Cannot set value for non-wildcard');
+    }
+    if (value < 1 || value > 20) {
+      throw new Error('Value must be between 1 and 20');
+    }
+    this.value = value;
+  }
+
+  toString(): string {
+    if (this.isWildcard) {
+      return 'Wildcard';
+    }
+    return this.value?.toString() || '';
   }
 }

@@ -41,9 +41,9 @@ export class Game {
       player.clearStagingArea();
     }
 
-    // Deal initial cards (3 cards per player)
+    // Deal initial cards (6 cards per player)
     for (const player of this.players) {
-      const cards = this.deck.draw(3);
+      const cards = this.deck.draw(6);
       for (const card of cards) {
         player.addCard(card);
       }
@@ -73,6 +73,36 @@ export class Game {
     return card;
   }
 
+  stageCard(player: Player, card: Card, position: CardPosition): void {
+    if (this.state !== GameState.PLAYING) {
+      throw new Error('Game is not in PLAYING state');
+    }
+
+    if (!player.isCurrentPlayer()) {
+      throw new Error("Not current player's turn");
+    }
+
+    if (!player.hasCard(card)) {
+      throw new Error('Player does not have this card');
+    }
+
+    player.stageCard(card, position);
+    this.emitEvent({ type: 'CardStaged', payload: { playerId: player.getId(), card, position } });
+  }
+
+  unstageCard(player: Player, position: CardPosition): void {
+    if (this.state !== GameState.PLAYING) {
+      throw new Error('Game is not in PLAYING state');
+    }
+
+    if (!player.isCurrentPlayer()) {
+      throw new Error("Not current player's turn");
+    }
+
+    player.unstageCard(position);
+    this.emitEvent({ type: 'CardUnstaged', payload: { playerId: player.getId(), position } });
+  }
+
   playCards(playerId: string): void {
     if (this.state !== GameState.PLAYING) {
       throw new Error('Game is not in PLAYING state');
@@ -83,8 +113,8 @@ export class Game {
     }
 
     const stagedCards = this.players[this.currentPlayerIndex].getStagedCards();
-    if (stagedCards.size === 0) {
-      throw new Error('No cards staged to play');
+    if (stagedCards.size < 2 || stagedCards.size > 3) {
+      throw new Error('Must stage 2 or 3 cards');
     }
 
     try {
@@ -93,6 +123,14 @@ export class Game {
         this.cardGroup.commit();
         this.players[this.currentPlayerIndex].discardStagedCards();
         this.emitEvent({ type: 'CardPlayed', payload: { playerId, cards: stagedCards } });
+        
+        // Check for winner
+        if (this.players[this.currentPlayerIndex].hasWon()) {
+          this.state = GameState.FINISHED;
+          this.emitEvent({ type: 'GameWon', payload: { winnerId: playerId } });
+          return;
+        }
+        
         this.endTurn();
       } else {
         // Return cards to player's hand if invalid
@@ -185,20 +223,6 @@ export class Game {
 
   getPlayers(): Player[] {
     return [...this.players];
-  }
-
-  stageCard(player: Player, card: Card, position: CardPosition): void {
-    if (player !== this.getCurrentPlayer()) {
-      throw new Error("Not current player's turn");
-    }
-    player.stageCard(card, position);
-  }
-
-  unstageCard(player: Player, position: CardPosition): void {
-    if (player !== this.getCurrentPlayer()) {
-      throw new Error("Not current player's turn");
-    }
-    player.unstageCard(position);
   }
 
   commitCards(player: Player): void {

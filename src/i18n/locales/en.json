@@ -1,0 +1,62 @@
+{
+  "header": {
+    "title": "TriFacta",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode"
+  },
+  "common": {
+    "help": "Help",
+    "settings": "Settings",
+    "exit": "Exit",
+    "start": "Start",
+    "cancel": "Cancel"
+  },
+  "game": {
+    "title": "TriFacta Game",
+    "subtitle": "A Fun Math Card Game",
+    "modeSelection": "Select Game Mode",
+    "modes": {
+      "addition": "Addition Mode",
+      "multiplication": "Multiplication Mode"
+    },
+    "instructions": {
+      "title": "Game Instructions",
+      "basic": "Basic Rules",
+      "basicDesc": "Place 2-3 cards to form a valid mathematical relationship. The first player to use all their cards wins!",
+      "addition": "Addition Mode",
+      "additionDesc": "The sum of the top two numbers must equal the bottom number.",
+      "multiplication": "Multiplication Mode",
+      "multiplicationDesc": "The product of the top two numbers must equal the bottom number."
+    },
+    "instructionItems": {
+      "multiplayer": "• Two-player battle mode",
+      "winCondition": "• Win by clearing your hand",
+      "wildcard": "• Wild cards are supported"
+    },
+    "currentPlayer": "Current Player",
+    "playerTurn": "{{player}}'s Turn",
+    "cardsRemaining": "Cards Remaining",
+    "drawCard": "Draw Card",
+    "playCards": "Play Cards",
+    "endTurn": "End Turn",
+    "error": "Error",
+    "errors": {
+      "deckEmpty": "The deck is empty!",
+      "invalidPlay": "Invalid card combination. Please try again.",
+      "notYourTurn": "It's not your turn!",
+      "invalidCard": "Invalid card selection.",
+      "invalidWildcardValue": "Invalid wildcard value."
+    },
+    "wildcard": {
+      "title": "Select Wildcard Value",
+      "selectValue": "Choose a value between 1 and 20",
+      "confirm": "Confirm"
+    },
+    "selectPosition": "Select Position",
+    "position": {
+      "top": "Top",
+      "bottomLeft": "Bottom Left",
+      "bottomRight": "Bottom Right"
+    }
+  }
+}

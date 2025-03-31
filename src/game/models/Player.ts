@@ -8,6 +8,7 @@ export class Player {
   private hand: Card[];
   private isCurrentTurn: boolean;
   private stagingArea: Map<CardPosition, Card>;
+  private wildcardValues: Map<Card, number>;
 
   constructor(id: string, name: string) {
     this.id = id;
@@ -15,32 +16,32 @@ export class Player {
     this.hand = [];
     this.isCurrentTurn = false;
     this.stagingArea = new Map();
+    this.wildcardValues = new Map();
   }
 
   addCard(card: Card): void {
     this.hand.push(card);
   }
 
+  removeCard(card: Card): void {
+    const index = this.hand.findIndex((c) => c === card);
+    if (index !== -1) {
+      this.hand.splice(index, 1);
+    }
+  }
+
   stageCard(card: Card, position: CardPosition): void {
-    if (!this.hasCard(card)) {
-      throw new Error('Player does not have this card');
+    if (this.stagingArea.has(position)) {
+      throw new Error('Position already has a card');
     }
     this.stagingArea.set(position, card);
-    this.hand = this.hand.filter((c) => c !== card);
   }
 
   unstageCard(position: CardPosition): void {
-    const card = this.stagingArea.get(position);
-    if (card) {
-      this.hand.push(card);
-      this.stagingArea.delete(position);
-    }
+    this.stagingArea.delete(position);
   }
 
   clearStagingArea(): void {
-    for (const [, card] of this.stagingArea) {
-      this.hand.push(card);
-    }
     this.stagingArea.clear();
   }
 
@@ -55,7 +56,7 @@ export class Player {
   }
 
   hasCard(card: Card): boolean {
-    return this.hand.includes(card) || Array.from(this.stagingArea.values()).includes(card);
+    return this.hand.includes(card);
   }
 
   getHand(): Card[] {
@@ -67,7 +68,7 @@ export class Player {
   }
 
   hasWon(): boolean {
-    return this.hand.length === 0 && this.stagingArea.size === 0;
+    return this.hand.length === 0;
   }
 
   getId(): string {
@@ -82,11 +83,29 @@ export class Player {
     return this.isCurrentTurn;
   }
 
-  clearHand(): void {
-    this.hand = [];
+  discardStagedCards(): void {
+    for (const card of this.stagingArea.values()) {
+      this.removeCard(card);
+    }
+    this.stagingArea.clear();
   }
 
-  discardStagedCards(): void {
-    this.stagingArea.clear();
+  setWildcardValue(card: Card, value: number): void {
+    if (!card.isWildcard()) {
+      throw new Error('Card is not a wildcard');
+    }
+    if (value < 1 || value > 20) {
+      throw new Error('Wildcard value must be between 1 and 20');
+    }
+    this.wildcardValues.set(card, value);
+  }
+
+  getWildcardValue(card: Card): number | undefined {
+    return this.wildcardValues.get(card);
+  }
+
+  clearHand(): void {
+    this.hand = [];
+    this.wildcardValues.clear();
   }
 }

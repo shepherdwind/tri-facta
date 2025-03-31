@@ -1,12 +1,14 @@
 import React from 'react';
 import { Box, useColorModeValue } from '@chakra-ui/react';
-import { GameMode } from '../game/types';
+import { GameMode, CardPosition } from '../game/types';
+import { Card } from '../game/models/Card';
 
 interface TriFactaCardProps {
   topNumber: number;
   leftNumber: number;
   rightNumber: number;
   gameMode: GameMode;
+  selectedCards?: Map<CardPosition, Card>;
 }
 
 const TriFactaCard: React.FC<TriFactaCardProps> = ({
@@ -14,6 +16,7 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
   leftNumber,
   rightNumber,
   gameMode,
+  selectedCards = new Map(),
 }) => {
   const cardBg = useColorModeValue('#f3e9d2', '#2D3748');
   const strokeColor = useColorModeValue('#5d534a', '#63B3ED');
@@ -21,12 +24,17 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
   const topTriangleFill = useColorModeValue('#e9c46a', '#4A90E2');
   const minusCircleFill = useColorModeValue('#e76f51', '#FC8181');
   const plusCircleFill = useColorModeValue('#7fb069', '#48BB78');
+  const selectedTriangleFill = useColorModeValue('#a8d1ff', '#2B6CB0');
 
   const isMultiplication = gameMode === GameMode.MULTIPLICATION;
   const operatorSymbols = {
     left: isMultiplication ? '÷' : '−',
     right: isMultiplication ? '÷' : '−',
     bottom: isMultiplication ? '×' : '+',
+  };
+
+  const getTriangleFill = (position: CardPosition) => {
+    return selectedCards.has(position) ? selectedTriangleFill : cardBg;
   };
 
   return (
@@ -39,7 +47,7 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
           {/* 顶部小三角形 */}
           <path
             d="M200 120 L160 185 L240 185 Z"
-            fill={topTriangleFill}
+            fill={getTriangleFill(CardPosition.TOP)}
             stroke={strokeColor}
             strokeWidth="2"
           />
@@ -58,7 +66,7 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
           {/* 左下角小三角形 */}
           <path
             d="M125 250 L85 310 L165 310 Z"
-            fill={cardBg}
+            fill={getTriangleFill(CardPosition.BOTTOM_LEFT)}
             stroke={strokeColor}
             strokeWidth="2"
           />
@@ -77,7 +85,7 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
           {/* 右下角小三角形 */}
           <path
             d="M275 250 L235 310 L315 310 Z"
-            fill={cardBg}
+            fill={getTriangleFill(CardPosition.BOTTOM_RIGHT)}
             stroke={strokeColor}
             strokeWidth="2"
           />

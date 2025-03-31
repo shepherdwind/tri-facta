@@ -17,9 +17,13 @@ import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { useTranslation } from 'react-i18next';
 import { Logo } from '../components/Logo';
 import { GameMode } from '../game/types';
+import { Game } from '../game/models/Game';
+import { Player } from '../game/models/Player';
+import { GamePage } from './GamePage';
 
 export const StartPage: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<GameMode>(GameMode.ADDITION);
+  const [game, setGame] = useState<Game | null>(null);
   const { colorMode, toggleColorMode } = useColorMode();
   const { t, i18n } = useTranslation();
 
@@ -28,13 +32,24 @@ export const StartPage: React.FC = () => {
   const primaryColor = useColorModeValue('brand.primary', 'blue.400');
 
   const handleStartGame = () => {
-    // TODO: Implement game start logic
-    console.log('Starting game in mode:', selectedMode);
+    const player1 = new Player('player1', 'Player 1');
+    const player2 = new Player('player2', 'Player 2');
+    const newGame = new Game(selectedMode, [player1, player2]);
+    newGame.start();
+    setGame(newGame);
   };
 
   const handleLanguageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     i18n.changeLanguage(event.target.value);
   };
+
+  const handleExitGame = () => {
+    setGame(null);
+  };
+
+  if (game) {
+    return <GamePage game={game} onExit={handleExitGame} />;
+  }
 
   return (
     <Container maxW="1200px" py={8}>
