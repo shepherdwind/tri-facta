@@ -1,6 +1,6 @@
 export class Card {
   private value: number | null;
-  private isWildcard: boolean;
+  isWildcard: boolean;
 
   constructor(value: number | null = null) {
     this.value = value;
@@ -9,10 +9,6 @@ export class Card {
 
   getValue(): number | null {
     return this.value;
-  }
-
-  isWildcard(): boolean {
-    return this.isWildcard;
   }
 
   setValue(value: number): void {

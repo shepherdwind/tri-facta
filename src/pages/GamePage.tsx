@@ -12,11 +12,10 @@ import {
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
-import TriFactaCard from '../components/TriFactaCard';
 import { Game } from '../game/models/Game';
 import { Header } from '../components/game/Header';
 import { PlayerArea } from '../components/game/PlayerArea';
-import { GameControls } from '../components/game/GameControls';
+import { GameCenter } from '../components/game/GameCenter';
 import { WildcardModal } from '../components/game/WildcardModal';
 import { ErrorAlert } from '../components/game/ErrorAlert';
 import { GameStore } from '../stores/GameStore';
@@ -35,11 +34,11 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
   const currentPlayerBorderColor = useColorModeValue('blue.500', 'blue.300');
 
   const handleCardClick = (card: any) => {
-    // This is now just a placeholder since the position selection is handled in PlayerArea
+    store.handleCardClick(card);
   };
 
   const handlePositionSelect = (card: any, position: CardPosition) => {
-    store.handleCardClick(card, position);
+    store.handlePositionSelect(card, position);
   };
 
   return (
@@ -49,38 +48,28 @@ export const GamePage = observer<GamePageProps>(({ game, onExit }) => {
         <ErrorAlert message={store.errorMessage ? t(store.errorMessage) : null} />
 
         <PlayerArea
-          player={game.getPlayers()[0]}
+          key="player1"
+          player={store.currentPlayer}
           selectedCards={store.selectedCards}
           onCardClick={handleCardClick}
           onPositionSelect={handlePositionSelect}
-          isCurrentPlayer={game.getPlayers()[0].isCurrentPlayer()}
+          isCurrentPlayer={store.currentPlayer.isCurrentPlayer()}
           cardBg={cardBg}
           currentPlayerBorderColor={currentPlayerBorderColor}
         />
 
-        <Box bg={cardBg} p={4} borderRadius="lg" boxShadow="lg">
-          <VStack spacing={4}>
-            <TriFactaCard
-              topNumber={9}
-              leftNumber={5}
-              rightNumber={4}
-              gameMode={game.getGameMode()}
-              selectedCards={store.selectedCards}
-            />
-            <GameControls
-              onDrawCard={() => store.drawCard()}
-              onPlayCards={() => store.playCards()}
-              onEndTurn={() => store.endTurn()}
-            />
-          </VStack>
-        </Box>
+        <GameCenter store={store} />
 
         <PlayerArea
-          player={game.getPlayers()[1]}
+          key="player2"
+          player={game.getPlayers().find((p) => p !== store.currentPlayer)!}
           selectedCards={store.selectedCards}
           onCardClick={handleCardClick}
           onPositionSelect={handlePositionSelect}
-          isCurrentPlayer={game.getPlayers()[1].isCurrentPlayer()}
+          isCurrentPlayer={game
+            .getPlayers()
+            .find((p) => p !== store.currentPlayer)!
+            .isCurrentPlayer()}
           cardBg={cardBg}
           currentPlayerBorderColor={currentPlayerBorderColor}
         />

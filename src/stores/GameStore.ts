@@ -3,6 +3,7 @@ import { Game } from '../game/models/Game';
 import { Player } from '../game/models/Player';
 import { Card } from '../game/models/Card';
 import { CardPosition } from '../game/types';
+import { useColorModeValue } from '@chakra-ui/react';
 
 export class GameStore {
   game: Game;
@@ -12,6 +13,7 @@ export class GameStore {
   isWildcardModalOpen: boolean;
   selectedWildcard: Card | null;
   wildcardValue: number;
+  cardBg: string;
 
   constructor(game: Game) {
     this.game = game;
@@ -21,8 +23,13 @@ export class GameStore {
     this.isWildcardModalOpen = false;
     this.selectedWildcard = null;
     this.wildcardValue = 1;
+    this.cardBg = useColorModeValue('brand.card', 'gray.700');
 
     makeAutoObservable(this);
+  }
+
+  getTriFactaCard() {
+    return this.game.getTriFactaCard();
   }
 
   drawCard() {
@@ -55,19 +62,36 @@ export class GameStore {
     this.errorMessage = null;
   }
 
-  handleCardClick(card: Card, position: CardPosition) {
+  handleCardClick(card: Card) {
+    if (this.currentPlayer.getId() !== this.game.getCurrentPlayer().getId()) {
+      this.errorMessage = 'game.errors.notYourTurn';
+      return;
+    }
+
+    // 检查卡片是否已经被选中
+    for (const [position, selectedCard] of this.selectedCards.entries()) {
+      if (selectedCard === card) {
+        // 如果卡片已经被选中，则取消选中
+        this.game.getCurrentPlayer().unstageCard(position);
+        this.selectedCards = new Map(this.game.getCurrentPlayer().getStagedCards());
+        return;
+      }
+    }
+
+    // 如果卡片未被选中，则显示万能牌选择框或位置选择菜单
+    if (card.getValue() === null) {
+      this.selectedWildcard = card;
+      this.isWildcardModalOpen = true;
+    }
+  }
+
+  handlePositionSelect(card: Card, position: CardPosition) {
     if (this.currentPlayer.getId() !== this.game.getCurrentPlayer().getId()) {
       this.errorMessage = 'game.errors.notYourTurn';
       return;
     }
 
     try {
-      if (card.getValue() === null) {
-        this.selectedWildcard = card;
-        this.isWildcardModalOpen = true;
-        return;
-      }
-
       this.game.stageCard(this.currentPlayer, card, position);
       this.selectedCards = new Map(this.game.getCurrentPlayer().getStagedCards());
       this.errorMessage = null;

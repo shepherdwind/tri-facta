@@ -217,6 +217,10 @@ export class Game {
     return this.cardGroup;
   }
 
+  getTriFactaCard(): CardGroup {
+    return this.cardGroup;
+  }
+
   getDeck(): Deck {
     return this.deck;
   }

@@ -118,21 +118,30 @@ export class CardGroup {
    * Check if any of the cards is a wild card
    */
   private hasWildCard(cards: Card[]): boolean {
-    return cards.some((card) => card.isWildCard());
+    return cards.some((card) => card !== null && card.isWildcard);
   }
 
   /**
    * Check if the mathematical equation is valid
    */
   private isValidMathEquation(workingArea: CardGroupState): boolean {
-    const top = workingArea.topCard!.getValue();
-    const bottomLeft = workingArea.bottomLeftCard!.getValue();
-    const bottomRight = workingArea.bottomRightCard!.getValue();
+    const top = workingArea.topCard?.getValue();
+    const bottomLeft = workingArea.bottomLeftCard?.getValue();
+    const bottomRight = workingArea.bottomRightCard?.getValue();
+
+    if (top === null || bottomLeft === null || bottomRight === null) {
+      return false;
+    }
+
+    // At this point, TypeScript knows these values are not null
+    const topValue = top as number;
+    const bottomLeftValue = bottomLeft as number;
+    const bottomRightValue = bottomRight as number;
 
     if (this.gameMode === GameMode.ADDITION) {
-      return top === bottomLeft + bottomRight;
+      return topValue === bottomLeftValue + bottomRightValue;
     } else {
-      return top === bottomLeft * bottomRight;
+      return topValue === bottomLeftValue * bottomRightValue;
     }
   }
 
@@ -209,14 +218,23 @@ export class CardGroup {
       return false;
     }
 
-    const top = this.workingArea.topCard!.getValue();
-    const bottomLeft = this.workingArea.bottomLeftCard!.getValue();
-    const bottomRight = this.workingArea.bottomRightCard!.getValue();
+    const top = this.workingArea.topCard?.getValue();
+    const bottomLeft = this.workingArea.bottomLeftCard?.getValue();
+    const bottomRight = this.workingArea.bottomRightCard?.getValue();
+
+    if (top === null || bottomLeft === null || bottomRight === null) {
+      return false;
+    }
+
+    // At this point, TypeScript knows these values are not null
+    const topValue = top as number;
+    const bottomLeftValue = bottomLeft as number;
+    const bottomRightValue = bottomRight as number;
 
     if (this.gameMode === GameMode.ADDITION) {
-      return top === bottomLeft + bottomRight;
+      return topValue === bottomLeftValue + bottomRightValue;
     } else {
-      return top === bottomLeft * bottomRight;
+      return topValue === bottomLeftValue * bottomRightValue;
     }
   }
 

@@ -1,6 +1,7 @@
 import { Card } from './Card';
 import { CardPosition } from '../types';
 import { CardGroup } from './CardGroup';
+import { makeAutoObservable } from 'mobx';
 
 export class Player {
   private id: string;
@@ -17,6 +18,7 @@ export class Player {
     this.isCurrentTurn = false;
     this.stagingArea = new Map();
     this.wildcardValues = new Map();
+    makeAutoObservable(this);
   }
 
   addCard(card: Card): void {
@@ -60,7 +62,7 @@ export class Player {
   }
 
   getHand(): Card[] {
-    return [...this.hand];
+    return this.hand;
   }
 
   setCurrentTurn(isCurrent: boolean): void {
@@ -91,7 +93,7 @@ export class Player {
   }
 
   setWildcardValue(card: Card, value: number): void {
-    if (!card.isWildcard()) {
+    if (!card.isWildcard) {
       throw new Error('Card is not a wildcard');
     }
     if (value < 1 || value > 20) {
