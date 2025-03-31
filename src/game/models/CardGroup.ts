@@ -70,10 +70,19 @@ export class CardGroup {
    */
   private createTemporaryWorkingArea(cards: Map<CardPosition, Card>): CardGroupState {
     const tempWorkingArea = { ...this.workingArea };
+    
+    // Copy all committed cards to temporary working area
     if (this.committedState.topCard !== null) {
       tempWorkingArea.topCard = this.committedState.topCard;
     }
+    if (this.committedState.bottomLeftCard !== null) {
+      tempWorkingArea.bottomLeftCard = this.committedState.bottomLeftCard;
+    }
+    if (this.committedState.bottomRightCard !== null) {
+      tempWorkingArea.bottomRightCard = this.committedState.bottomRightCard;
+    }
 
+    // Place new cards in the temporary working area
     for (const [position, card] of cards) {
       const propertyName = this.getCardPropertyName(position);
       tempWorkingArea[propertyName] = card;
@@ -154,12 +163,18 @@ export class CardGroup {
       throw new Error('Invalid card combination');
     }
 
-    // If there's a committed state, copy the top card to working area
-    if (this.committedState.topCard) {
+    // Copy all committed cards to working area
+    if (this.committedState.topCard !== null) {
       this.workingArea.topCard = this.committedState.topCard;
     }
+    if (this.committedState.bottomLeftCard !== null) {
+      this.workingArea.bottomLeftCard = this.committedState.bottomLeftCard;
+    }
+    if (this.committedState.bottomRightCard !== null) {
+      this.workingArea.bottomRightCard = this.committedState.bottomRightCard;
+    }
 
-    // Place cards in working area
+    // Place new cards in working area
     for (const [position, card] of cards) {
       switch (position) {
         case CardPosition.TOP:
