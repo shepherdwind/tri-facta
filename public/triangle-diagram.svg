@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 250">
+  <!-- 主三角形背景 -->
+  <polygon points="150,0 300,250 0,250" fill="#f5e0c0" stroke="#4a3c30" stroke-width="8"/>
+  
+  <!-- 顶部小三角形 -->
+  <polygon points="150,50 200,130 100,130" fill="#f9d56e" stroke="#4a3c30" stroke-width="5"/>
+  <text x="150" y="115" font-family="Arial" font-size="32" font-weight="bold" text-anchor="middle" fill="#4a3c30">20</text>
+  
+  <!-- 左下角小三角形（倒置）-->
+  <polygon points="75,180 115,230 35,230" fill="#f5e0c0" stroke="#4a3c30" stroke-width="5"/>
+  <text x="75" y="225" font-family="Arial" font-size="32" font-weight="bold" text-anchor="middle" fill="#4a3c30">15</text>
+  
+  <!-- 右下角小三角形（倒置）-->
+  <polygon points="225,180 265,230 185,230" fill="#f5e0c0" stroke="#4a3c30" stroke-width="5"/>
+  <text x="225" y="225" font-family="Arial" font-size="32" font-weight="bold" text-anchor="middle" fill="#4a3c30">5</text>
+  
+  <!-- 左上红色圆圈 -->
+  <circle cx="100" cy="160" r="11" fill="#e85d45" stroke="#4a3c30" stroke-width="3"/>
+  <line x1="95" y1="160" x2="105" y2="160" stroke="#4a3c30" stroke-width="3"/>
+  
+  <!-- 右上红色圆圈 -->
+  <circle cx="200" cy="160" r="11" fill="#e85d45" stroke="#4a3c30" stroke-width="3"/>
+  <line x1="195" y1="160" x2="205" y2="160" stroke="#4a3c30" stroke-width="3"/>
+  
+  <!-- 中间绿色圆圈 -->
+  <circle cx="150" cy="200" r="11" fill="#8bc16e" stroke="#4a3c30" stroke-width="3"/>
+  <line x1="145" y1="200" x2="155" y2="200" stroke="#4a3c30" stroke-width="3"/>
+  <line x1="150" y1="195" x2="150" y2="205" stroke="#4a3c30" stroke-width="3"/>
+</svg>

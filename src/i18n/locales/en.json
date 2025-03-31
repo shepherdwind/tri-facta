@@ -94,7 +94,7 @@
     "cardsRemaining": "Cards Remaining",
     "drawCard": "Draw Card",
     "playCards": "Play Cards",
-    "endTurn": "End Turn",
+    "endTurn": "Next",
     "error": "Error",
     "errors": {
       "deckEmpty": "The deck is empty!",

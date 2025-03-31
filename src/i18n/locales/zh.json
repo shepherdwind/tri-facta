@@ -91,7 +91,7 @@
     "cardsRemaining": "剩余卡牌",
     "drawCard": "抽牌",
     "playCards": "出牌",
-    "endTurn": "结束回合",
+    "endTurn": "换人",
     "error": "错误",
     "errors": {
       "deckEmpty": "牌堆已空！",
