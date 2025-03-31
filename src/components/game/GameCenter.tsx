@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, VStack } from '@chakra-ui/react';
+import { Box, VStack, useColorModeValue } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import TriFactaCard from '../TriFactaCard';
 import { GameControls } from './GameControls';
@@ -12,6 +12,7 @@ interface GameCenterProps {
 
 export const GameCenter = observer<GameCenterProps>(({ store }) => {
   const triFactaCard = store.game.getTriFactaCard();
+  const cardBg = useColorModeValue('brand.card', 'gray.700');
 
   // 获取已提交的卡片
   const committedTopCard = triFactaCard.getCard(CardPosition.TOP);
@@ -30,7 +31,7 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
     stagedCards.get(CardPosition.BOTTOM_RIGHT)?.getValue() ?? committedRightCard?.getValue() ?? 0;
 
   return (
-    <Box bg={store.cardBg} p={4} borderRadius="lg" boxShadow="lg">
+    <Box bg={cardBg} p={4} borderRadius="lg" boxShadow="lg">
       <VStack spacing={4}>
         <TriFactaCard
           topNumber={topNumber}

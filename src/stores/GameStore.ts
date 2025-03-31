@@ -3,7 +3,6 @@ import { Game } from '../game/models/Game';
 import { Player } from '../game/models/Player';
 import { Card } from '../game/models/Card';
 import { CardPosition } from '../game/types';
-import { useColorModeValue } from '@chakra-ui/react';
 
 export class GameStore {
   game: Game;
@@ -13,7 +12,6 @@ export class GameStore {
   isWildcardModalOpen: boolean;
   selectedWildcard: Card | null;
   wildcardValue: number;
-  cardBg: string;
   hasDrawnCard: boolean;
 
   constructor(game: Game) {
@@ -24,7 +22,6 @@ export class GameStore {
     this.isWildcardModalOpen = false;
     this.selectedWildcard = null;
     this.wildcardValue = 1;
-    this.cardBg = useColorModeValue('brand.card', 'gray.700');
     this.hasDrawnCard = false;
 
     makeAutoObservable(this);
