@@ -9,6 +9,7 @@ import {
   MenuList,
   MenuItem,
   Button,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
@@ -28,27 +29,51 @@ const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
     const { t } = useTranslation();
 
     return (
-      <Menu isOpen={true} onClose={onClose}>
+      <Menu isOpen={true} onClose={onClose} placement="top" offset={[0, 8]}>
         <MenuButton
-          as={Button}
-          size="sm"
+          as={Box}
           position="absolute"
-          top="-40px"
+          top="-8px"
           left="50%"
           transform="translateX(-50%)"
-          colorScheme="blue"
-          zIndex={1}
+          width="0"
+          height="0"
+          borderLeft="8px solid transparent"
+          borderRight="8px solid transparent"
+          borderTop="8px solid"
+          borderTopColor="blue.500"
+          borderBottom="none"
+          cursor="pointer"
+          _hover={{
+            borderTopColor: 'blue.600',
+          }}
+        />
+        <MenuList
+          borderWidth="2px"
+          borderColor="blue.500"
+          boxShadow="lg"
+          bg={useColorModeValue('white', 'gray.800')}
+          _hover={{ bg: useColorModeValue('gray.50', 'gray.700') }}
+          minW="120px"
+          maxW="150px"
+          marginBottom="-8px"
         >
-          {t('game.selectPosition')}
-        </MenuButton>
-        <MenuList>
-          <MenuItem onClick={() => onPositionSelect(CardPosition.TOP)}>
+          <MenuItem
+            onClick={() => onPositionSelect(CardPosition.TOP)}
+            _hover={{ bg: useColorModeValue('blue.50', 'blue.900') }}
+          >
             {t('game.position.top')}
           </MenuItem>
-          <MenuItem onClick={() => onPositionSelect(CardPosition.BOTTOM_LEFT)}>
+          <MenuItem
+            onClick={() => onPositionSelect(CardPosition.BOTTOM_LEFT)}
+            _hover={{ bg: useColorModeValue('blue.50', 'blue.900') }}
+          >
             {t('game.position.bottomLeft')}
           </MenuItem>
-          <MenuItem onClick={() => onPositionSelect(CardPosition.BOTTOM_RIGHT)}>
+          <MenuItem
+            onClick={() => onPositionSelect(CardPosition.BOTTOM_RIGHT)}
+            _hover={{ bg: useColorModeValue('blue.50', 'blue.900') }}
+          >
             {t('game.position.bottomRight')}
           </MenuItem>
         </MenuList>

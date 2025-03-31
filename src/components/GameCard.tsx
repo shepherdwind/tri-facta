@@ -34,12 +34,12 @@ export const GameCard: React.FC<GameCardProps> = ({
   );
   const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const selectedBg = useColorModeValue('blue.100', 'blue.700');
-  const borderColor = useColorModeValue('gray.200', 'gray.600');
-  const selectedBorderColor = useColorModeValue('blue.500', 'blue.300');
-  const textColor = useColorModeValue('gray.800', 'white');
-  const positionTextColor = useColorModeValue('blue.500', 'blue.300');
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const selectedBg = useColorModeValue('blue.200', 'blue.800');
+  const borderColor = useColorModeValue('gray.300', 'gray.500');
+  const selectedBorderColor = useColorModeValue('blue.600', 'blue.400');
+  const textColor = useColorModeValue('gray.900', 'white');
+  const positionTextColor = useColorModeValue('blue.600', 'blue.400');
 
   const getPositionText = (position?: CardPosition) => {
     if (!position) return '';

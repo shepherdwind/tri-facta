@@ -102,7 +102,10 @@
     "instructionItems": {
       "multiplayer": "• Two-player battle mode",
       "winCondition": "• Win by clearing your hand",
-      "wildcard": "• Wild cards are supported"
+      "wildcard": "• Wild cards are supported",
+      "dragAndDrop": "• Long press and drag cards to the center triangle area",
+      "clickToSelect": "• Click to select a position in the triangle",
+      "clickToDeselect": "• Click a selected card to deselect it"
     },
     "currentPlayer": "Current Player",
     "playerTurn": "{{player}}'s Turn",
