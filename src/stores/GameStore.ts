@@ -2,11 +2,10 @@ import { makeAutoObservable } from 'mobx';
 import { Game } from '../game/models/Game';
 import { Player } from '../game/models/Player';
 import { Card } from '../game/models/Card';
-import { CardPosition } from '../game/types';
+import { CardPosition, GameMode } from '../game/types';
 
 export class GameStore {
   private static instance: GameStore | null = null;
-  private static game: Game | null = null;
 
   game: Game;
   currentPlayer: Player;
@@ -40,10 +39,12 @@ export class GameStore {
 
   public static getInstance(): GameStore {
     if (!GameStore.instance) {
-      if (!GameStore.game) {
-        throw new Error('Game must be initialized before getting GameStore instance');
-      }
-      GameStore.instance = new GameStore(GameStore.game);
+      const game = new Game(GameMode.ADDITION, [
+        new Player('player1', 'Player 1'),
+        new Player('player2', 'Player 2'),
+      ]);
+      GameStore.instance = new GameStore(game);
+      game.start();
     }
     return GameStore.instance;
   }
@@ -52,13 +53,12 @@ export class GameStore {
     if (GameStore.instance) {
       throw new Error('GameStore has already been initialized');
     }
-    GameStore.game = game;
+    GameStore.instance = new GameStore(game);
     game.start();
   }
 
   public static reset() {
     GameStore.instance = null;
-    GameStore.game = null;
   }
 
   setToast(toast: any) {
@@ -210,6 +210,7 @@ export class GameStore {
     try {
       this.currentPlayer.setWildcardValue(this.selectedWildcard, this.wildcardValue);
       this.selectedWildcard.setValue(this.wildcardValue);
+      this.selectedCards = new Map(this.currentPlayer.getStagedCards());
       this.isWildcardModalOpen = false;
       this.selectedWildcard = null;
     } catch (error) {

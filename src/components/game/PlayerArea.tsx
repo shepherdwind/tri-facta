@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
-import { Player } from '../../game/models/Player';
 import { Card } from '../../game/models/Card';
 import { GameCard } from '../GameCard';
 import { CardPosition } from '../../game/types';
@@ -82,102 +81,84 @@ const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
 );
 
 interface PlayerAreaProps {
-  player: Player;
-  selectedCards: Map<CardPosition, Card>;
-  onCardClick: (card: Card) => void;
-  onPositionSelect: (card: Card, position: CardPosition) => void;
-  isCurrentPlayer: boolean;
   cardBg: string;
   currentPlayerBorderColor: string;
-  store: GameStore;
 }
 
-export const PlayerArea = observer<PlayerAreaProps>(
-  ({
-    player,
-    selectedCards,
-    onCardClick,
-    onPositionSelect,
-    isCurrentPlayer,
-    cardBg,
-    currentPlayerBorderColor,
-    store,
-  }) => {
-    const { t } = useTranslation();
-    const [selectedCard, setSelectedCard] = React.useState<Card | null>(null);
+export const PlayerArea = observer<PlayerAreaProps>(({ cardBg, currentPlayerBorderColor }) => {
+  const { t } = useTranslation();
+  const [selectedCard, setSelectedCard] = React.useState<Card | null>(null);
+  const store = GameStore.getInstance();
+  const player = store.game.getCurrentPlayer();
 
-    const handleCardClick = (card: Card) => {
-      if (Array.from(selectedCards.values()).includes(card)) {
-        for (const [, selectedCard] of selectedCards.entries()) {
-          if (selectedCard === card) {
-            onCardClick(card);
-            return;
-          }
-        }
-      }
-      setSelectedCard(card);
-      onCardClick(card);
-    };
-
-    const handlePositionSelect = (position: CardPosition) => {
-      if (selectedCard) {
-        onPositionSelect(selectedCard, position);
-        setSelectedCard(null);
-      }
-    };
-
-    const getCardTargetPosition = (card: Card): CardPosition | undefined => {
-      for (const [position, selectedCard] of selectedCards.entries()) {
+  const handleCardClick = (card: Card) => {
+    if (Array.from(store.selectedCards.values()).includes(card)) {
+      for (const [, selectedCard] of store.selectedCards.entries()) {
         if (selectedCard === card) {
-          return position;
+          store.handleCardClick(card);
+          return;
         }
       }
-      return undefined;
-    };
+    }
+    setSelectedCard(card);
+    store.handleCardClick(card);
+  };
 
-    return (
-      <Box
-        bg={cardBg}
-        p={4}
-        borderRadius="lg"
-        boxShadow="lg"
-        borderWidth="2px"
-        borderColor={isCurrentPlayer ? currentPlayerBorderColor : 'transparent'}
-        transition="all 0.2s"
-        opacity={isCurrentPlayer ? 1 : 0.7}
-        pointerEvents={isCurrentPlayer ? 'auto' : 'none'}
-      >
-        <VStack spacing={2}>
-          <Text fontSize="lg" fontWeight="bold">
-            {player.getName()}
-          </Text>
-          <Text>
-            {t('game.cardsRemaining')}: {player.getHand().length}
-          </Text>
-          <HStack spacing={2} wrap="wrap" justify="center">
-            {player.getHand().map((card, index) => (
-              <Box key={index} position="relative">
-                <GameCard
-                  card={card}
-                  isSelected={Array.from(selectedCards.values()).includes(card)}
-                  onClick={() => isCurrentPlayer && handleCardClick(card)}
-                  isCurrentPlayer={isCurrentPlayer}
-                  targetPosition={getCardTargetPosition(card)}
-                  store={store}
-                />
-                {selectedCard === card &&
-                  !Array.from(selectedCards.values()).includes(card) &&
-                  isCurrentPlayer && (
-                    <PositionSelectMenu
-                      onPositionSelect={handlePositionSelect}
-                      onClose={() => setSelectedCard(null)}
-                    />
-                  )}
-              </Box>
-            ))}
-          </HStack>
-        </VStack>
-      </Box>
-    );
-  }
-);
+  const handlePositionSelect = (position: CardPosition) => {
+    if (selectedCard) {
+      store.handlePositionSelect(selectedCard, position);
+      setSelectedCard(null);
+    }
+  };
+
+  const getCardTargetPosition = (card: Card): CardPosition | undefined => {
+    for (const [position, selectedCard] of store.selectedCards.entries()) {
+      if (selectedCard === card) {
+        return position;
+      }
+    }
+    return undefined;
+  };
+
+  return (
+    <Box
+      bg={cardBg}
+      p={4}
+      borderRadius="lg"
+      boxShadow="lg"
+      borderWidth="2px"
+      borderColor={currentPlayerBorderColor}
+      transition="all 0.2s"
+      opacity={1}
+      pointerEvents="auto"
+    >
+      <VStack spacing={2}>
+        <Text fontSize="lg" fontWeight="bold">
+          {player.getName()}
+        </Text>
+        <Text>
+          {t('game.cardsRemaining')}: {player.getHand().length}
+        </Text>
+        <HStack spacing={2} wrap="wrap" justify="center">
+          {player.getHand().map((card, index) => (
+            <Box key={index} position="relative">
+              <GameCard
+                card={card}
+                isSelected={Array.from(store.selectedCards.values()).includes(card)}
+                onClick={() => handleCardClick(card)}
+                targetPosition={getCardTargetPosition(card)}
+              />
+              {selectedCard === card &&
+                !Array.from(store.selectedCards.values()).includes(card) && (
+                  <PositionSelectMenu
+                    onPositionSelect={handlePositionSelect}
+                    onClose={() => setSelectedCard(null)}
+                  />
+                )}
+            </Box>
+          ))}
+        </HStack>
+      </VStack>
+    </Box>
+  );
+});

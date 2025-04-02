@@ -8,16 +8,12 @@ import { PlayerArea } from '../components/game/PlayerArea';
 import { GameCenter } from '../components/game/GameCenter';
 import { WildcardModal } from '../components/game/WildcardModal';
 import { GameStore } from '../stores/GameStore';
-import { CardPosition } from '../game/types';
-import { Card } from '../game/models/Card';
 
 export const GamePage = observer(() => {
   const { t } = useTranslation();
   const toast = useToast();
   const navigate = useNavigate();
   const store = GameStore.getInstance();
-
-  const currentPlayer = store.game.getCurrentPlayer();
 
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const currentPlayerBorderColor = useColorModeValue('blue.500', 'blue.300');
@@ -31,14 +27,6 @@ export const GamePage = observer(() => {
     });
   }, [store, toast, t]);
 
-  const handleCardClick = (card: Card) => {
-    store.handleCardClick(card);
-  };
-
-  const handlePositionSelect = (card: Card, position: CardPosition) => {
-    store.handlePositionSelect(card, position);
-  };
-
   const handleExit = () => {
     GameStore.reset();
     navigate('/');
@@ -49,17 +37,7 @@ export const GamePage = observer(() => {
       <VStack spacing={8} align="stretch">
         <Header onExit={handleExit} />
 
-        <PlayerArea
-          key={currentPlayer.getId()}
-          player={currentPlayer}
-          selectedCards={store.selectedCards}
-          onCardClick={handleCardClick}
-          onPositionSelect={handlePositionSelect}
-          isCurrentPlayer={true}
-          cardBg={cardBg}
-          currentPlayerBorderColor={currentPlayerBorderColor}
-          store={store}
-        />
+        <PlayerArea cardBg={cardBg} currentPlayerBorderColor={currentPlayerBorderColor} />
 
         <GameCenter store={store} />
       </VStack>

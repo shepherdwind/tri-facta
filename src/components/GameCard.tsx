@@ -9,22 +9,18 @@ interface GameCardProps {
   card: Card;
   isSelected?: boolean;
   onClick?: () => void;
-  isCurrentPlayer?: boolean;
   targetPosition?: CardPosition;
   onDragStart?: (e: React.DragEvent, card: Card) => void;
   onDragEnd?: (e: React.DragEvent) => void;
-  store: GameStore;
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
   card,
   isSelected = false,
   onClick,
-  isCurrentPlayer = false,
   targetPosition,
   onDragStart,
   onDragEnd,
-  store,
 }) => {
   const { t } = useTranslation();
   const [isDragging, setIsDragging] = useState(false);
@@ -40,6 +36,7 @@ export const GameCard: React.FC<GameCardProps> = ({
   const selectedBorderColor = useColorModeValue('blue.600', 'blue.400');
   const textColor = useColorModeValue('gray.900', 'white');
   const positionTextColor = useColorModeValue('blue.600', 'blue.400');
+  const store = GameStore.getInstance();
 
   const getPositionText = (position?: CardPosition) => {
     if (!position) return '';
@@ -207,18 +204,16 @@ export const GameCard: React.FC<GameCardProps> = ({
           {getPositionText(targetPosition)}
         </Box>
       )}
-      {isCurrentPlayer && (
-        <Box
-          position="absolute"
-          top="0"
-          right="0"
-          width="6px"
-          height="6px"
-          bg="green.500"
-          borderRadius="full"
-          transform="translate(2px, -2px)"
-        />
-      )}
+      <Box
+        position="absolute"
+        top="0"
+        right="0"
+        width="6px"
+        height="6px"
+        bg="green.500"
+        borderRadius="full"
+        transform="translate(2px, -2px)"
+      />
     </Box>
   );
 };
