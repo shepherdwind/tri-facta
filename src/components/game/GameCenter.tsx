@@ -1,6 +1,6 @@
 import { Box, VStack, useColorModeValue } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
-import TriFactaCard from '../TriFactaCard';
+import TriFactaCard from '../TriFacta/TriFactaCard';
 import { GameControls } from './GameControls';
 import { GameStore } from '../../stores/GameStore';
 import { CardPosition } from '../../game/types';

@@ -1,0 +1,45 @@
+# Core Principles
+
+```mdc
+principles:
+  - progressive_implementation:
+      description: "Break down large tasks into smaller modules"
+      priority: 1
+      required: true
+  - feature_driven:
+      description: "Build for functionality, not just to pass tests"
+      priority: 1
+      required: true
+  - test_driven:
+      description: "Ensure each module has test coverage"
+      priority: 1
+      required: true
+  - behavior_parity:
+      description: "New implementations must match original behavior"
+      priority: 1
+      required: true
+  - no_hacks:
+      description: "Avoid code that specifically targets test cases"
+      priority: 1
+      required: true
+  - clean_implementation:
+      description: "Don't mock or bypass real logic"
+      priority: 1
+      required: true
+  - english_comments:
+      description: "Use English for all documentation and comments"
+      priority: 2
+      required: true
+  - structured_tasks:
+      description: "Track progress with Markdown todo lists"
+      priority: 2
+      required: true
+  - function_design:
+      description: "Functions should be 3-150 lines, with proper abstraction"
+      priority: 1
+      required: true
+  - string_constants:
+      description: "Centralize string constants in dedicated files"
+      priority: 2
+      required: true
+``` 

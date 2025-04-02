@@ -17,7 +17,7 @@ import { CheckIcon, ArrowBackIcon } from '@chakra-ui/icons';
 import { I18nIcon } from './icons/I18nIcon';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import TriFactaCard from './TriFactaCard';
+import TriFactaCard from './TriFacta/TriFactaCard';
 import { GameMode } from '../game/types';
 
 const HelpPage: React.FC = () => {

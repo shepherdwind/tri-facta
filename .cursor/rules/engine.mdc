@@ -1,0 +1,59 @@
+# Rule Engine Configuration
+
+```mdc
+rule_engine:
+  enabled: true
+  mode: "strict"
+  
+  enforcement:
+    pre_commit:
+      enabled: true
+      checks:
+        - type: "code_structure"
+          rules: ["functions", "files", "constants"]
+        - type: "testing"
+          rules: ["coverage", "validation"]
+        - type: "practices"
+          rules: ["prohibited_practices"]
+    
+    continuous_integration:
+      enabled: true
+      checks:
+        - type: "all"
+          rules: ["*"]
+    
+    editor_integration:
+      enabled: true
+      real_time_checks: true
+      auto_fix: true
+      suggestions: true
+
+  validation:
+    on_save: true
+    on_build: true
+    on_test: true
+
+  reporting:
+    format: "markdown"
+    output: ".cursor/reports"
+    include_details: true
+    include_suggestions: true
+
+  actions:
+    on_violation:
+      - type: "warning"
+        action: "notify"
+      - type: "error"
+        action: "block"
+      - type: "info"
+        action: "suggest"
+
+  integration:
+    with:
+      - type: "git"
+        hooks: ["pre-commit", "pre-push"]
+      - type: "ci"
+        platforms: ["github", "gitlab"]
+      - type: "editor"
+        plugins: ["vscode", "cursor"]
+``` 

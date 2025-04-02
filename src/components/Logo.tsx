@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box } from '@chakra-ui/react';
 import { GameMode } from '../game/types';
-import TriFactaCard from './TriFactaCard';
+import TriFactaCard from './TriFacta/TriFactaCard';
 
 interface LogoProps {
   size?: number;
