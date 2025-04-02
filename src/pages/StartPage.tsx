@@ -30,7 +30,7 @@ export const StartPage: React.FC = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-
+  const textColor = useColorModeValue('brand.text', 'white');
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const primaryColor = useColorModeValue('brand.primary', 'blue.400');
 
@@ -52,7 +52,7 @@ export const StartPage: React.FC = () => {
   };
 
   return (
-    <Container maxW="container.md" py={8}>
+    <Container maxW="1200px" py={8}>
       <VStack spacing={8} align="stretch">
         {/* Header */}
         <Flex justify="space-between" align="center">
@@ -90,9 +90,18 @@ export const StartPage: React.FC = () => {
           </HStack>
         </Flex>
 
-        {/* Logo */}
-        <Box>
-          <Logo size={300} gameMode={selectedMode} />
+        {/* Game Title */}
+        <Box textAlign="center">
+          <Heading size="2xl" mb={4}>
+            {t('game.title')}
+          </Heading>
+          <Text fontSize="xl" color={textColor}>
+            {t('game.subtitle')}
+          </Text>
+        </Box>
+        {/* Game Logo */}
+        <Box bg={cardBg} borderRadius="lg" boxShadow="lg" textAlign="center">
+          <Logo size={200} gameMode={selectedMode} />
         </Box>
 
         {/* Game Settings */}
