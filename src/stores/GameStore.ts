@@ -5,6 +5,9 @@ import { Card } from '../game/models/Card';
 import { CardPosition } from '../game/types';
 
 export class GameStore {
+  private static instance: GameStore | null = null;
+  private static game: Game | null = null;
+
   game: Game;
   currentPlayer: Player;
   selectedCards: Map<CardPosition, Card>;
@@ -18,7 +21,7 @@ export class GameStore {
   isVictoryAnimationPlaying: boolean;
   winner: Player | null;
 
-  constructor(game: Game) {
+  private constructor(game: Game) {
     this.game = game;
     this.currentPlayer = game.getCurrentPlayer();
     this.selectedCards = new Map();
@@ -33,6 +36,29 @@ export class GameStore {
     this.winner = null;
 
     makeAutoObservable(this);
+  }
+
+  public static getInstance(): GameStore {
+    if (!GameStore.instance) {
+      if (!GameStore.game) {
+        throw new Error('Game must be initialized before getting GameStore instance');
+      }
+      GameStore.instance = new GameStore(GameStore.game);
+    }
+    return GameStore.instance;
+  }
+
+  public static initialize(game: Game): void {
+    if (GameStore.instance) {
+      throw new Error('GameStore has already been initialized');
+    }
+    GameStore.game = game;
+    game.start();
+  }
+
+  public static reset() {
+    GameStore.instance = null;
+    GameStore.game = null;
   }
 
   setToast(toast: any) {

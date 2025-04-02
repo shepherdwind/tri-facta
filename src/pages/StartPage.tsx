@@ -4,7 +4,7 @@ import {
   Container,
   Flex,
   Heading,
-  Stack,
+  HStack,
   Text,
   VStack,
   useColorMode,
@@ -21,11 +21,10 @@ import { GameSettings } from '../components/GameSettings';
 import { GameMode } from '../game/types';
 import { Game } from '../game/models/Game';
 import { Player } from '../game/models/Player';
-import { GamePage } from './GamePage';
+import { GameStore } from '../stores/GameStore';
 
 export const StartPage: React.FC = () => {
   const [selectedMode, setSelectedMode] = useState<GameMode>(GameMode.ADDITION);
-  const [game, setGame] = useState<Game | null>(null);
   const [player1Name, setPlayer1Name] = useState('Player 1');
   const [player2Name, setPlayer2Name] = useState('Player 2');
   const { colorMode, toggleColorMode } = useColorMode();
@@ -33,85 +32,67 @@ export const StartPage: React.FC = () => {
   const navigate = useNavigate();
 
   const cardBg = useColorModeValue('brand.card', 'gray.700');
-  const textColor = useColorModeValue('brand.text', 'white');
   const primaryColor = useColorModeValue('brand.primary', 'blue.400');
 
   const handleStartGame = () => {
+    GameStore.reset();
     const player1 = new Player('player1', player1Name);
     const player2 = new Player('player2', player2Name);
-    const newGame = new Game(selectedMode, [player1, player2]);
-    newGame.start();
-    setGame(newGame);
+    const game = new Game(selectedMode, [player1, player2]);
+    GameStore.initialize(game);
+    navigate('/game');
   };
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === 'en' ? 'zh' : 'en');
   };
 
-  const handleExitGame = () => {
-    setGame(null);
-  };
-
   const handleHelpClick = () => {
     navigate('/help');
   };
 
-  if (game) {
-    return <GamePage game={game} onExit={handleExitGame} />;
-  }
-
   return (
-    <Container maxW="1200px" py={8}>
+    <Container maxW="container.md" py={8}>
       <VStack spacing={8} align="stretch">
         {/* Header */}
-        <Flex justify="space-between" align="center" flexWrap="wrap" gap={2}>
-          <Heading size="lg" color={primaryColor}>
-            {t('header.title')}
+        <Flex justify="space-between" align="center">
+          <Heading size="xl" color={primaryColor}>
+            tri-FACTa!™
           </Heading>
-          <Stack direction="row" spacing={0}>
-            <Tooltip label={i18n.language === 'en' ? '切换到中文' : 'Switch to English'}>
+          <HStack spacing={4}>
+            <Tooltip label={t('common.toggleTheme')}>
               <IconButton
-                aria-label={i18n.language === 'en' ? 'Switch to Chinese' : 'Switch to English'}
-                icon={<I18nIcon />}
-                onClick={toggleLanguage}
-                variant="ghost"
-                size="sm"
-              />
-            </Tooltip>
-            <Tooltip label={colorMode === 'light' ? t('header.darkMode') : t('header.lightMode')}>
-              <IconButton
-                aria-label={colorMode === 'light' ? t('header.darkMode') : t('header.lightMode')}
+                aria-label="Toggle color mode"
                 icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
                 onClick={toggleColorMode}
                 variant="ghost"
-                size="sm"
+                size="lg"
+              />
+            </Tooltip>
+            <Tooltip label={t('common.toggleLanguage')}>
+              <IconButton
+                aria-label="Toggle language"
+                icon={<I18nIcon />}
+                onClick={toggleLanguage}
+                variant="ghost"
+                size="lg"
               />
             </Tooltip>
             <Tooltip label={t('common.help')}>
               <IconButton
-                aria-label={t('common.help')}
+                aria-label="Help"
                 icon={<QuestionIcon />}
                 onClick={handleHelpClick}
                 variant="ghost"
-                size="sm"
+                size="lg"
               />
             </Tooltip>
-          </Stack>
+          </HStack>
         </Flex>
 
-        {/* Game Title */}
-        <Box textAlign="center">
-          <Heading size="2xl" mb={4}>
-            {t('game.title')}
-          </Heading>
-          <Text fontSize="xl" color={textColor}>
-            {t('game.subtitle')}
-          </Text>
-        </Box>
-
-        {/* Game Logo */}
-        <Box bg={cardBg} borderRadius="lg" boxShadow="lg" textAlign="center">
-          <Logo size={200} gameMode={selectedMode} />
+        {/* Logo */}
+        <Box>
+          <Logo size={300} gameMode={selectedMode} />
         </Box>
 
         {/* Game Settings */}

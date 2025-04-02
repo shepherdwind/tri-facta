@@ -7,6 +7,7 @@ import { Footer } from './components/Footer';
 import { InstallPWA } from './components/InstallPWA';
 import theme from './theme';
 import './i18n';
+import { GamePage } from './pages/GamePage';
 
 export const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ export const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<StartPage />} />
               <Route path="/help" element={<HelpPage />} />
+              <Route path="/game" element={<GamePage />} />
             </Routes>
           </Box>
           <Footer />
