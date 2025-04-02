@@ -37,7 +37,7 @@ export class Player {
       throw new Error('Player does not have this card');
     }
     if (this.stagingArea.has(position)) {
-      throw new Error('Position already has a card');
+      this.unstageCard(position);
     }
     this.stagingArea.set(position, card);
   }
