@@ -2,9 +2,12 @@
 
 A card game where players need to use their cards to form valid mathematical equations. The game combines strategy, mathematics, and fun!
 
+Play now at: [https://tri.iling.fun/](https://tri.iling.fun/)
+
+![Triangle Diagram](public/triangle-diagram.svg)
+
 ## Features
 
-- Real-time multiplayer gameplay
 - Mathematical equation validation
 - Card-based gameplay mechanics
 - Modern and responsive UI
