@@ -27,7 +27,26 @@ export class BaseGameManager {
     this.gameStatePersistence = GameStatePersistence.getInstance();
     this.toastManager = ToastManager.getInstance();
 
-    makeObservable(this, {
+    makeObservable<
+      BaseGameManager,
+      | 'hasDrawnCard'
+      | 'draggedCard'
+      | 'draggedCardPosition'
+      | 'isVictoryAnimationPlaying'
+      | 'winner'
+      | 'saveToLocalStorage'
+      | 'showError'
+      | 'showSuccess'
+      | 'currentPlayer'
+      | 'selectedCards'
+      | 'canDrawCard'
+      | 'canEndTurn'
+      | 'getTriFactaCard'
+      | 'drawCard'
+      | 'playCards'
+      | 'endTurn'
+      | 'endVictoryAnimation'
+    >(this, {
       hasDrawnCard: observable,
       draggedCard: observable,
       draggedCardPosition: observable,
@@ -130,5 +149,13 @@ export class BaseGameManager {
   endVictoryAnimation() {
     this.isVictoryAnimationPlaying = false;
     this.saveToLocalStorage();
+  }
+
+  getDraggedCard(): Card | null {
+    return this.draggedCard;
+  }
+
+  setDraggedCard(card: Card | null) {
+    this.draggedCard = card;
   }
 }

@@ -10,6 +10,8 @@ import {
 } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 
+const PWA_INSTALL_DISMISSED_KEY = 'pwa_install_dismissed';
+
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
@@ -17,10 +19,14 @@ interface BeforeInstallPromptEvent extends Event {
 
 export const InstallPWA: React.FC = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isDismissed, setIsDismissed] = useState(false);
   const { t } = useTranslation();
   const bgColor = useColorModeValue('white', 'gray.800');
 
   useEffect(() => {
+    const dismissed = localStorage.getItem(PWA_INSTALL_DISMISSED_KEY) === 'true';
+    setIsDismissed(dismissed);
+
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -40,10 +46,18 @@ export const InstallPWA: React.FC = () => {
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
       setDeferredPrompt(null);
+      localStorage.setItem(PWA_INSTALL_DISMISSED_KEY, 'true');
+      setIsDismissed(true);
     }
   };
 
-  if (!deferredPrompt) return null;
+  const handleDismiss = () => {
+    setDeferredPrompt(null);
+    localStorage.setItem(PWA_INSTALL_DISMISSED_KEY, 'true');
+    setIsDismissed(true);
+  };
+
+  if (!deferredPrompt || isDismissed) return null;
 
   return (
     <Alert
@@ -66,7 +80,7 @@ export const InstallPWA: React.FC = () => {
         <Button colorScheme="blue" onClick={handleInstallClick}>
           {t('pwa.install')}
         </Button>
-        <Button variant="ghost" onClick={() => setDeferredPrompt(null)}>
+        <Button variant="ghost" onClick={handleDismiss}>
           {t('common.cancel')}
         </Button>
       </HStack>

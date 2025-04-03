@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tri-facta-v1';
+const CACHE_NAME = 'tri-facta-v0.3.0';
 const urlsToCache = [
   '/',
   '/index.html',

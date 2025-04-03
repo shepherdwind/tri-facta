@@ -49,7 +49,7 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
     e.stopPropagation();
 
     // 从 store 中获取当前拖拽的卡片
-    const card = store.draggedCard;
+    const card = store.getDraggedCard();
 
     if (card) {
       store.setSelectedCard(card, position);
@@ -62,7 +62,7 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
     e.stopPropagation();
 
     // 从 store 中获取当前拖拽的卡片
-    const card = store.draggedCard;
+    const card = store.getDraggedCard();
     // store.showError(`Dropped: ${card?.getValue()} ${position}`);
     if (card) {
       store.setSelectedCard(card, position);
