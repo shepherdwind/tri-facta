@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Container,
@@ -19,29 +19,14 @@ import { useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { GameSettings } from '../components/GameSettings';
 import { GameMode } from '../game/types';
-import { Game } from '../game/models/Game';
-import { Player } from '../game/models/Player';
-import { GameStore } from '../stores/GameStore';
 
 export const StartPage: React.FC = () => {
-  const [selectedMode, setSelectedMode] = useState<GameMode>(GameMode.ADDITION);
-  const [player1Name, setPlayer1Name] = useState('Player 1');
-  const [player2Name, setPlayer2Name] = useState('Player 2');
   const { colorMode, toggleColorMode } = useColorMode();
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const textColor = useColorModeValue('brand.text', 'white');
   const cardBg = useColorModeValue('brand.card', 'gray.700');
   const primaryColor = useColorModeValue('brand.primary', 'blue.400');
-
-  const handleStartGame = () => {
-    GameStore.reset();
-    const player1 = new Player('player1', player1Name);
-    const player2 = new Player('player2', player2Name);
-    const game = new Game(selectedMode, [player1, player2]);
-    GameStore.initialize(game);
-    navigate('/game');
-  };
 
   const toggleLanguage = () => {
     i18n.changeLanguage(i18n.language === 'en' ? 'zh' : 'en');
@@ -59,7 +44,7 @@ export const StartPage: React.FC = () => {
           <Heading size="xl" color={primaryColor}>
             tri-FACTa!™
           </Heading>
-          <HStack spacing={4}>
+          <HStack spacing={0}>
             <Tooltip label={t('common.toggleTheme')}>
               <IconButton
                 aria-label="Toggle color mode"
@@ -101,20 +86,12 @@ export const StartPage: React.FC = () => {
         </Box>
         {/* Game Logo */}
         <Box bg={cardBg} borderRadius="lg" boxShadow="lg" textAlign="center">
-          <Logo size={200} gameMode={selectedMode} />
+          <Logo size={200} gameMode={GameMode.ADDITION} />
         </Box>
 
         {/* Game Settings */}
         <Box bg={cardBg}>
-          <GameSettings
-            player1Name={player1Name}
-            player2Name={player2Name}
-            selectedMode={selectedMode}
-            onPlayer1NameChange={setPlayer1Name}
-            onPlayer2NameChange={setPlayer2Name}
-            onModeChange={setSelectedMode}
-            onStartGame={handleStartGame}
-          />
+          <GameSettings />
         </Box>
 
         {/* Game Instructions */}

@@ -10,7 +10,9 @@
     "exit": "退出",
     "start": "开始游戏",
     "cancel": "取消",
-    "back": "返回"
+    "back": "返回",
+    "toggleTheme": "切换主题",
+    "toggleLanguage": "切换语言"
   },
   "footer": {
     "sourceCode": "查看源码："
@@ -114,6 +116,7 @@
     "drawCard": "抽牌",
     "playCards": "出牌",
     "endTurn": "换人",
+    "restore": "恢复游戏",
     "error": "错误",
     "errors": {
       "deckEmpty": "牌堆已空！",
@@ -124,14 +127,14 @@
     },
     "wildcard": {
       "title": "选择万能牌数值",
-      "selectValue": "选择1到20之间的数值",
+      "selectValue": "选择一个1到20之间的数值",
       "confirm": "确认"
     },
     "selectPosition": "选择位置",
     "position": {
-      "top": "顶部",
-      "bottomLeft": "左下角",
-      "bottomRight": "右下角"
+      "top": "上方",
+      "bottomLeft": "左下",
+      "bottomRight": "右下"
     }
   }
 }

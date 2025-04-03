@@ -11,7 +11,6 @@ export interface PlayerJSON {
   hand: CardJSON[];
   isCurrentTurn: boolean;
   stagingArea: { position: CardPosition; card: CardJSON }[];
-  wildcardValues: { card: CardJSON; value: number }[];
 }
 
 export interface DeckJSON {

@@ -10,7 +10,6 @@ export class Player {
   private hand: Card[];
   private isCurrentTurn: boolean;
   private stagingArea: Map<CardPosition, Card>;
-  private wildcardValues: Map<Card, number>;
 
   constructor(id: string, name: string) {
     this.id = id;
@@ -18,7 +17,6 @@ export class Player {
     this.hand = [];
     this.isCurrentTurn = false;
     this.stagingArea = new Map();
-    this.wildcardValues = new Map();
     makeAutoObservable(this);
   }
 
@@ -103,22 +101,14 @@ export class Player {
   }
 
   setWildcardValue(card: Card, value: number): void {
-    if (!card.isWildcard) {
-      throw new Error('Card is not a wildcard');
+    if (!card.isWildCard()) {
+      throw new Error('Cannot set wild value for non-wild card');
     }
-    if (value < 1 || value > 20) {
-      throw new Error('Wildcard value must be between 1 and 20');
-    }
-    this.wildcardValues.set(card, value);
-  }
-
-  getWildcardValue(card: Card): number | undefined {
-    return this.wildcardValues.get(card);
+    card.setValue(value);
   }
 
   clearHand(): void {
     this.hand = [];
-    this.wildcardValues.clear();
   }
 
   toJSON(): PlayerJSON {
@@ -130,10 +120,6 @@ export class Player {
       stagingArea: Array.from(this.stagingArea.entries()).map(([position, card]) => ({
         position,
         card: card.toJSON(),
-      })),
-      wildcardValues: Array.from(this.wildcardValues.entries()).map(([card, value]) => ({
-        card: card.toJSON(),
-        value,
       })),
     };
   }
@@ -158,15 +144,6 @@ export class Player {
       const matchingCard = player.findMatchingCard(card);
       if (matchingCard) {
         player.stagingArea.set(position, matchingCard);
-      }
-    }
-
-    // Restore wildcard values using references from hand
-    for (const { card: cardJson, value } of json.wildcardValues) {
-      const card = Card.fromJSON(cardJson);
-      const matchingCard = player.findMatchingCard(card);
-      if (matchingCard) {
-        player.wildcardValues.set(matchingCard, value);
       }
     }
 

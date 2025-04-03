@@ -10,7 +10,9 @@
     "exit": "Exit",
     "start": "Start Game",
     "cancel": "Cancel",
-    "back": "Back"
+    "back": "Back",
+    "toggleTheme": "Toggle Theme",
+    "toggleLanguage": "Toggle Language"
   },
   "footer": {
     "sourceCode": "View source code:"
@@ -113,6 +115,7 @@
     "drawCard": "Draw Card",
     "playCards": "Play Cards",
     "endTurn": "Next",
+    "restore": "Restore Game",
     "error": "Error",
     "errors": {
       "deckEmpty": "The deck is empty!",

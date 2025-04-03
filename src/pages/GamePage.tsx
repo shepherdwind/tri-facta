@@ -28,13 +28,19 @@ export const GamePage = observer(() => {
   }, [store, toast, t]);
 
   const handleExit = () => {
-    GameStore.reset();
     navigate('/');
   };
 
   return (
-    <Container maxW="1200px" py={8}>
-      <VStack spacing={8} align="stretch">
+    <Container
+      maxW="1200px"
+      py={8}
+      height="100%"
+      overflow="hidden"
+      display="flex"
+      flexDirection="column"
+    >
+      <VStack spacing={8} align="stretch" flex="1" overflow="auto">
         <Header onExit={handleExit} />
 
         <PlayerArea cardBg={cardBg} currentPlayerBorderColor={currentPlayerBorderColor} />

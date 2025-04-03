@@ -116,7 +116,6 @@ export class CardManager extends BaseGameManager {
     if (!this.selectedWildcard) return;
 
     try {
-      this.currentPlayer.setWildcardValue(this.selectedWildcard, this.wildcardValue);
       this.selectedWildcard.setValue(this.wildcardValue);
       this.isWildcardModalOpen = false;
       this.selectedWildcard = null;

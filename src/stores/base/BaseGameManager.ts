@@ -7,7 +7,7 @@ import { GameStatePersistence } from '../persistence/GameStatePersistence';
 import { ToastManager } from '../../utils/ToastManager';
 
 export class BaseGameManager {
-  protected game: Game;
+  game: Game;
   protected gameStatePersistence: GameStatePersistence;
   protected toastManager: ToastManager;
   protected hasDrawnCard: boolean;

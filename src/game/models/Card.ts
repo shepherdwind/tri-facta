@@ -1,4 +1,5 @@
 import { CardJSON } from '../types/serialization';
+import { makeAutoObservable } from 'mobx';
 
 export class Card {
   private value: number | null;
@@ -7,6 +8,7 @@ export class Card {
   constructor(value: number | null = null, isWildcard: boolean = false) {
     this.value = value;
     this.isWildcard = !value || isWildcard;
+    makeAutoObservable(this);
   }
 
   getValue(): number | null {
