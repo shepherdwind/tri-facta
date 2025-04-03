@@ -1,8 +1,10 @@
+import { makeAutoObservable } from 'mobx';
 import { Card } from './Card';
 import { CardGroup } from './CardGroup';
 import { Deck } from './Deck';
 import { Player } from './Player';
 import { GameMode, GameState, GameEvent, CardPosition } from '../types';
+import { GameJSON } from '../types/serialization';
 
 export class Game {
   private mode: GameMode;
@@ -24,6 +26,7 @@ export class Game {
     this.cardGroup = new CardGroup(mode);
     this.state = GameState.INIT;
     this.eventListeners = [];
+    makeAutoObservable(this);
   }
 
   start(): void {
@@ -253,5 +256,36 @@ export class Game {
 
   hasPlayerWon(player: Player): boolean {
     return player.hasWon();
+  }
+
+  toJSON(): GameJSON {
+    return {
+      mode: this.mode,
+      players: this.players.map((player) => player.toJSON()),
+      deck: this.deck.toJSON(),
+      currentPlayerIndex: this.currentPlayerIndex,
+      cardGroup: this.cardGroup.toJSON(),
+      state: this.state,
+    };
+  }
+
+  static fromJSON(json: GameJSON): Game {
+    // Restore players
+    const players = json.players.map((playerJson) => Player.fromJSON(playerJson));
+    const game = new Game(json.mode, players);
+
+    // Restore deck
+    game.deck = Deck.fromJSON(json.deck);
+
+    // Restore current player index
+    game.currentPlayerIndex = json.currentPlayerIndex;
+
+    // Restore card group
+    game.cardGroup = CardGroup.fromJSON(json.cardGroup);
+
+    // Restore state
+    game.state = json.state;
+
+    return game;
   }
 }

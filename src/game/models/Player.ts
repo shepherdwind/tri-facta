@@ -2,6 +2,7 @@ import { Card } from './Card';
 import { CardPosition } from '../types';
 import { CardGroup } from './CardGroup';
 import { makeAutoObservable } from 'mobx';
+import { PlayerJSON } from '../types/serialization';
 
 export class Player {
   private id: string;
@@ -118,5 +119,57 @@ export class Player {
   clearHand(): void {
     this.hand = [];
     this.wildcardValues.clear();
+  }
+
+  toJSON(): PlayerJSON {
+    return {
+      id: this.id,
+      name: this.name,
+      hand: this.hand.map((card) => card.toJSON()),
+      isCurrentTurn: this.isCurrentTurn,
+      stagingArea: Array.from(this.stagingArea.entries()).map(([position, card]) => ({
+        position,
+        card: card.toJSON(),
+      })),
+      wildcardValues: Array.from(this.wildcardValues.entries()).map(([card, value]) => ({
+        card: card.toJSON(),
+        value,
+      })),
+    };
+  }
+
+  private findMatchingCard(cardToFind: Card): Card | undefined {
+    return this.hand.find(
+      (card) =>
+        card.getValue() === cardToFind.getValue() && card.isWildCard() === cardToFind.isWildCard()
+    );
+  }
+
+  static fromJSON(json: PlayerJSON): Player {
+    const player = new Player(json.id, json.name);
+    player.isCurrentTurn = json.isCurrentTurn;
+
+    // Restore hand first
+    player.hand = json.hand.map((cardJson) => Card.fromJSON(cardJson));
+
+    // Restore staging area using references from hand
+    for (const { position, card: cardJson } of json.stagingArea) {
+      const card = Card.fromJSON(cardJson);
+      const matchingCard = player.findMatchingCard(card);
+      if (matchingCard) {
+        player.stagingArea.set(position, matchingCard);
+      }
+    }
+
+    // Restore wildcard values using references from hand
+    for (const { card: cardJson, value } of json.wildcardValues) {
+      const card = Card.fromJSON(cardJson);
+      const matchingCard = player.findMatchingCard(card);
+      if (matchingCard) {
+        player.wildcardValues.set(matchingCard, value);
+      }
+    }
+
+    return player;
   }
 }

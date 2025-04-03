@@ -1,5 +1,6 @@
 import { Card } from './Card';
 import { CardPosition, CardGroupState, GameMode } from '../types';
+import { CardGroupJSON } from '../types/serialization';
 
 export class CardGroup {
   // Working area stores cards that are currently being placed
@@ -271,5 +272,53 @@ export class CardGroup {
       bottomRightCard: null,
       playerId: null,
     };
+  }
+
+  toJSON(): CardGroupJSON {
+    return {
+      workingArea: {
+        topCard: this.workingArea.topCard?.toJSON() || null,
+        bottomLeftCard: this.workingArea.bottomLeftCard?.toJSON() || null,
+        bottomRightCard: this.workingArea.bottomRightCard?.toJSON() || null,
+        playerId: this.workingArea.playerId,
+      },
+      committedState: {
+        topCard: this.committedState.topCard?.toJSON() || null,
+        bottomLeftCard: this.committedState.bottomLeftCard?.toJSON() || null,
+        bottomRightCard: this.committedState.bottomRightCard?.toJSON() || null,
+        playerId: this.committedState.playerId,
+      },
+      gameMode: this.gameMode,
+    };
+  }
+
+  static fromJSON(json: CardGroupJSON): CardGroup {
+    const cardGroup = new CardGroup(json.gameMode);
+
+    // Restore working area
+    cardGroup.workingArea = {
+      topCard: json.workingArea.topCard ? Card.fromJSON(json.workingArea.topCard) : null,
+      bottomLeftCard: json.workingArea.bottomLeftCard
+        ? Card.fromJSON(json.workingArea.bottomLeftCard)
+        : null,
+      bottomRightCard: json.workingArea.bottomRightCard
+        ? Card.fromJSON(json.workingArea.bottomRightCard)
+        : null,
+      playerId: json.workingArea.playerId,
+    };
+
+    // Restore committed state
+    cardGroup.committedState = {
+      topCard: json.committedState.topCard ? Card.fromJSON(json.committedState.topCard) : null,
+      bottomLeftCard: json.committedState.bottomLeftCard
+        ? Card.fromJSON(json.committedState.bottomLeftCard)
+        : null,
+      bottomRightCard: json.committedState.bottomRightCard
+        ? Card.fromJSON(json.committedState.bottomRightCard)
+        : null,
+      playerId: json.committedState.playerId,
+    };
+
+    return cardGroup;
   }
 }

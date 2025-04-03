@@ -1,4 +1,5 @@
 import { Card } from './Card';
+import { DeckJSON } from '../types/serialization';
 
 export class Deck {
   private cards: Card[];
@@ -52,5 +53,17 @@ export class Deck {
     this.cards = [];
     this.initialize();
     this.shuffle();
+  }
+
+  toJSON(): DeckJSON {
+    return {
+      cards: this.cards.map((card) => card.toJSON()),
+    };
+  }
+
+  static fromJSON(json: DeckJSON): Deck {
+    const deck = new Deck();
+    deck.cards = json.cards.map((cardJson) => Card.fromJSON(cardJson));
+    return deck;
   }
 }

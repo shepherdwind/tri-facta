@@ -1,3 +1,5 @@
+import { CardJSON } from '../types/serialization';
+
 export class Card {
   private value: number | null;
   isWildcard: boolean;
@@ -37,5 +39,16 @@ export class Card {
       return 'Wildcard';
     }
     return this.value?.toString() || '';
+  }
+
+  toJSON(): CardJSON {
+    return {
+      value: this.value,
+      isWildcard: this.isWildcard,
+    };
+  }
+
+  static fromJSON(json: CardJSON): Card {
+    return new Card(json.value, json.isWildcard);
   }
 }
