@@ -130,7 +130,7 @@
     },
     "wildcard": {
       "title": "选择万能牌数值",
-      "selectValue": "选择一个1到20之间的数值",
+      "selectValue": "选择一个数值",
       "confirm": "确认"
     },
     "selectPosition": "选择位置",

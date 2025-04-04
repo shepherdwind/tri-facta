@@ -43,7 +43,7 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
         <ModalBody pb={6}>
           <VStack spacing={4}>
             <Text>{t('game.wildcard.selectValue')}</Text>
-            <NumberInput min={1} max={20} value={value} onChange={(_, value) => onChange(value)}>
+            <NumberInput min={1} value={value} onChange={(_, value) => onChange(value)}>
               <NumberInputField />
               <NumberInputStepper>
                 <NumberIncrementStepper />

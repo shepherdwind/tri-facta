@@ -4,7 +4,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { StartPage } from './pages/StartPage';
 import HelpPage from './components/HelpPage';
 import { Footer } from './components/Footer';
-import { InstallPWA } from './components/InstallPWA';
 import theme from './theme';
 import './i18n';
 import { GamePage } from './pages/GamePage';
@@ -23,7 +22,6 @@ export const App: React.FC = () => {
             </Routes>
           </Box>
           <Footer />
-          <InstallPWA />
         </Box>
       </Router>
     </ChakraProvider>

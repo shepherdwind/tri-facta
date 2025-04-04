@@ -130,7 +130,7 @@
     },
     "wildcard": {
       "title": "Select Wildcard Value",
-      "selectValue": "Choose a value between 1 and 20",
+      "selectValue": "Choose a value",
       "confirm": "Confirm"
     },
     "selectPosition": "Select Position",

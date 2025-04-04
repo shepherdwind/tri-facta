@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tri-facta-v0.5.0';
+const CACHE_NAME = 'tri-facta-v0.5.2';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -14,12 +14,12 @@ const urlsToCache = [
   '/icons/icon-512x512.png',
 ];
 
-// 检查是否为开发环境
+// Check if in development environment
 const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
 self.addEventListener('install', (event) => {
   if (isDev) {
-    // 在开发环境中，跳过等待，直接激活
+    // In development environment, skip waiting and activate immediately
     self.skipWaiting();
     return;
   }
@@ -38,17 +38,17 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // 在开发环境中，不拦截任何请求
+  // In development environment, don't intercept any requests
   if (isDev) {
     return;
   }
 
-  // 只处理 GET 请求
+  // Only handle GET requests
   if (event.request.method !== 'GET') {
     return;
   }
 
-  // 只处理同源请求
+  // Only handle same-origin requests
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }
