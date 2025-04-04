@@ -1,15 +1,4 @@
-const CACHE_NAME = 'tri-facta-v0.3.1';
-const CDN_CACHE_NAME = 'tri-facta-cdn-v0.3.1';
-
-// CDN 资源列表
-const cdnResources = [
-  'https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js',
-  'https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js',
-  'https://cdn.jsdelivr.net/npm/framer-motion@11.18.2/dist/framer-motion.min.js',
-  'https://cdn.jsdelivr.net/npm/@chakra-ui/react@2.8.2/dist/chakra-ui-react.min.js',
-  'https://cdn.jsdelivr.net/npm/@chakra-ui/icons@2.8.2/dist/chakra-ui-icons.min.js',
-];
-
+const CACHE_NAME = 'tri-facta-v0.5.0';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -36,20 +25,15 @@ self.addEventListener('install', (event) => {
   }
 
   event.waitUntil(
-    Promise.all([
-      // 缓存应用资源
-      caches.open(CACHE_NAME).then((cache) => {
-        console.log('Opened app cache');
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Opened cache');
         return cache.addAll(urlsToCache);
-      }),
-      // 缓存 CDN 资源
-      caches.open(CDN_CACHE_NAME).then((cache) => {
-        console.log('Opened CDN cache');
-        return cache.addAll(cdnResources);
-      }),
-    ]).catch((error) => {
-      console.error('Cache installation failed:', error);
-    })
+      })
+      .catch((error) => {
+        console.error('Cache installation failed:', error);
+      })
   );
 });
 
@@ -64,9 +48,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 检查是否是 CDN 请求
-  const isCdnRequest = cdnResources.some((url) => event.request.url === url);
-  const cacheName = isCdnRequest ? CDN_CACHE_NAME : CACHE_NAME;
+  // 只处理同源请求
+  if (!event.request.url.startsWith(self.location.origin)) {
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((response) => {
@@ -80,7 +65,7 @@ self.addEventListener('fetch', (event) => {
         }
 
         const responseToCache = response.clone();
-        caches.open(cacheName).then((cache) => {
+        caches.open(CACHE_NAME).then((cache) => {
           cache.put(event.request, responseToCache);
         });
 
@@ -95,7 +80,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME && cacheName !== CDN_CACHE_NAME) {
+          if (cacheName !== CACHE_NAME) {
             return caches.delete(cacheName);
           }
         })

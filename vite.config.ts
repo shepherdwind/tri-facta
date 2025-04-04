@@ -1,11 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { reactCdnPlugin } from './vite-plugin-react-cdn';
 import pkg from './package.json';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), reactCdnPlugin()],
+  plugins: [react()],
   server: {
     port: 3000,
     open: true,
@@ -13,9 +12,9 @@ export default defineConfig(({ mode }) => ({
   },
   build: {
     rollupOptions: {
-      external: ['react', 'react-dom', '@chakra-ui/react', '@chakra-ui/icons', 'framer-motion'],
       output: {
         manualChunks: {
+          react: ['react', 'react-dom'],
           vendor: [
             'mobx',
             'mobx-react-lite',
@@ -24,17 +23,17 @@ export default defineConfig(({ mode }) => ({
             'i18next-browser-languagedetector',
             'react-i18next',
           ],
+          chakra: [
+            '@chakra-ui/react',
+            '@chakra-ui/icons',
+            '@emotion/react',
+            '@emotion/styled',
+            'framer-motion',
+          ],
         },
         entryFileNames: `assets/[name].[hash].js`,
         chunkFileNames: `assets/[name].[hash].js`,
         assetFileNames: `assets/[name].[hash].[ext]`,
-        globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM',
-          '@chakra-ui/react': 'ChakraUI',
-          '@chakra-ui/icons': 'ChakraIcons',
-          'framer-motion': 'motion',
-        },
       },
     },
   },
