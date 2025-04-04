@@ -15,7 +15,10 @@
     "toggleLanguage": "Toggle Language"
   },
   "footer": {
-    "sourceCode": "View source code:"
+    "sourceCode": "View source code:",
+    "clearCache": "Clear Cache",
+    "cacheCleared": "Cache cleared successfully",
+    "cacheClearError": "Failed to clear cache"
   },
   "pwa": {
     "installTitle": "Install tri-FACTa!™",

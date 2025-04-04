@@ -15,7 +15,10 @@
     "toggleLanguage": "切换语言"
   },
   "footer": {
-    "sourceCode": "查看源码："
+    "sourceCode": "查看源码：",
+    "clearCache": "清除缓存",
+    "cacheCleared": "缓存清除成功",
+    "cacheClearError": "清除缓存失败"
   },
   "pwa": {
     "installTitle": "安装 tri-FACTa!™",

@@ -100,11 +100,8 @@ export const StartPage: React.FC = () => {
             <Text fontSize="xl" fontWeight="bold">
               {t('game.instructions.title')}
             </Text>
-            <Text>{t('game.instructionItems.multiplayer')}</Text>
             <Text>{t('game.instructionItems.winCondition')}</Text>
             <Text>{t('game.instructionItems.dragAndDrop')}</Text>
-            <Text>{t('game.instructionItems.clickToSelect')}</Text>
-            <Text>{t('game.instructionItems.clickToDeselect')}</Text>
           </VStack>
         </Box>
       </VStack>
