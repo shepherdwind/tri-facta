@@ -4,7 +4,7 @@ A card game where players need to use their cards to form valid mathematical equ
 
 Play now at: [https://tri.iling.fun/](https://tri.iling.fun/)
 
-![Triangle Diagram](public/triangle-diagram.svg)
+<img src="public/triangle-diagram.svg" alt="Triangle Diagram" width="200">
 
 ## Features
 
