@@ -1,12 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Link, Text, useColorModeValue, useToast } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+
+interface NavigatorStandalone extends Navigator {
+  standalone?: boolean;
+}
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation();
   const textColor = useColorModeValue('gray.600', 'gray.400');
   const version = import.meta.env.VITE_APP_VERSION;
   const toast = useToast();
+  const [showClearCache, setShowClearCache] = useState(false);
+
+  useEffect(() => {
+    const checkPWAAndCache = async () => {
+      // Check if running in PWA mode
+      const isPWA =
+        window.matchMedia('(display-mode: standalone)').matches ||
+        (window.navigator as NavigatorStandalone).standalone ||
+        document.referrer.includes('android-app://');
+
+      if (isPWA) {
+        // Check if there are any caches
+        const cacheNames = await caches.keys();
+        setShowClearCache(cacheNames.length > 0);
+      } else {
+        setShowClearCache(false);
+      }
+    };
+
+    checkPWAAndCache();
+  }, []);
 
   const handleClearCache = async () => {
     try {
@@ -51,16 +76,21 @@ export const Footer: React.FC = () => {
         >
           GitHub
         </Link>
-        {` · v${version}`}{' '}
-        <Link
-          as="button"
-          onClick={handleClearCache}
-          color="blue.500"
-          _hover={{ color: 'blue.600' }}
-          textDecoration="none"
-        >
-          {t('footer.clearCache')}
-        </Link>
+        {` · v${version}`}
+        {showClearCache && (
+          <>
+            {' · '}
+            <Link
+              as="button"
+              onClick={handleClearCache}
+              color="blue.500"
+              _hover={{ color: 'blue.600' }}
+              textDecoration="none"
+            >
+              {t('footer.clearCache')}
+            </Link>
+          </>
+        )}
       </Text>
     </Box>
   );
