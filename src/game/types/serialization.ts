@@ -15,6 +15,7 @@ export interface PlayerJSON {
 
 export interface DeckJSON {
   cards: CardJSON[];
+  gameMode: GameMode;
 }
 
 export interface CardGroupStateJSON {

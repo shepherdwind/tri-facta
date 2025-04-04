@@ -19,8 +19,8 @@ export class Card {
     if (!this.isWildcard) {
       throw new Error('Cannot set value for non-wildcard');
     }
-    if (value < 1 || value > 20) {
-      throw new Error('Value must be between 1 and 20');
+    if (value < 1) {
+      throw new Error('Value must be greater than 0');
     }
     this.value = value;
   }

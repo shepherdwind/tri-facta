@@ -21,7 +21,7 @@ export class Game {
     }
     this.mode = mode;
     this.players = players;
-    this.deck = new Deck();
+    this.deck = new Deck(mode);
     this.currentPlayerIndex = 0;
     this.cardGroup = new CardGroup(mode);
     this.state = GameState.INIT;
