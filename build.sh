@@ -10,7 +10,7 @@ docker buildx create --name multiarch-builder --use || true
 # 构建多平台镜像
 echo "Building multi-platform Docker image (version: $VERSION)..."
 docker buildx build \
-  --platform linux/amd64 \
+  --platform linux/amd64,linux/arm64 \
   -t shepherdwind/tri-facta:$VERSION \
   -t shepherdwind/tri-facta:latest \
   --push \
@@ -22,6 +22,7 @@ if [ $? -eq 0 ]; then
     echo "Images:"
     echo "  - shepherdwind/tri-facta:$VERSION"
     echo "  - shepherdwind/tri-facta:latest"
+    echo "Supported platforms: linux/amd64, linux/arm64"
 else
     echo "Build failed!"
     exit 1
