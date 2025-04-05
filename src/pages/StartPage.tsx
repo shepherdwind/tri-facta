@@ -94,7 +94,9 @@ export const StartPage: React.FC = () => {
         </div>
 
         {/* Game Settings */}
-        <GameSettings onGameStart={handleStartGame} />
+        <div className="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6">
+          <GameSettings onGameStart={handleStartGame} />
+        </div>
 
         {/* Game Instructions */}
         <div className="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6">

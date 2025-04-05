@@ -24,7 +24,6 @@ export const GamePage = observer(() => {
   const { theme } = useTheme();
   const { showToast } = useToast();
 
-  const cardBg = theme === 'dark' ? 'bg-gray-700' : 'bg-white';
   const currentPlayerBorderColor = theme === 'dark' ? 'border-blue-300' : 'border-blue-500';
 
   React.useEffect(() => {
@@ -46,7 +45,7 @@ export const GamePage = observer(() => {
       <div className="flex flex-col space-y-8 flex-1 overflow-auto">
         <Header onExit={handleExit} />
 
-        <PlayerArea cardBg={cardBg} currentPlayerBorderColor={currentPlayerBorderColor} />
+        <PlayerArea currentPlayerBorderColor={currentPlayerBorderColor} />
 
         <GameCenter store={store} />
       </div>

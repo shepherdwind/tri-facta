@@ -76,11 +76,10 @@ const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
 );
 
 interface PlayerAreaProps {
-  cardBg: string;
   currentPlayerBorderColor: string;
 }
 
-export const PlayerArea = observer<PlayerAreaProps>(({ cardBg, currentPlayerBorderColor }) => {
+export const PlayerArea = observer<PlayerAreaProps>(({ currentPlayerBorderColor }) => {
   const { t } = useTranslation();
   const [selectedCard, setSelectedCard] = React.useState<Card | null>(null);
   const store = GameStore.getInstance();
@@ -121,7 +120,7 @@ export const PlayerArea = observer<PlayerAreaProps>(({ cardBg, currentPlayerBord
 
   return (
     <div
-      className={`${cardBg} p-4 rounded-lg shadow-lg border-2 ${currentPlayerBorderColor} transition-all duration-200 opacity-100`}
+      className={`bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg border-2 ${currentPlayerBorderColor} transition-all duration-200`}
     >
       <div className="flex flex-col space-y-2">
         <div className="text-center">

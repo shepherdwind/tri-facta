@@ -3,7 +3,6 @@ import TriFactaCard from '../TriFacta/TriFactaCard';
 import { GameControls } from './GameControls';
 import { GameStore } from '../../stores/GameStore';
 import { CardPosition } from '../../game/types';
-import { useTheme } from '../../hooks/useTheme';
 
 interface GameCenterProps {
   store: GameStore;
@@ -11,8 +10,6 @@ interface GameCenterProps {
 
 export const GameCenter = observer<GameCenterProps>(({ store }) => {
   const triFactaCard = store.game.getTriFactaCard();
-  const { theme } = useTheme();
-  const cardBg = theme === 'dark' ? 'bg-gray-700' : 'bg-white';
 
   // 获取已提交的卡片
   const committedTopCard = triFactaCard.getCard(CardPosition.TOP);
@@ -72,7 +69,7 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
   };
 
   return (
-    <div className={`${cardBg} p-4 rounded-lg shadow-lg relative`}>
+    <div className="bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg relative">
       <div className="flex flex-col">
         <div
           onDragOver={handleDragOver}
