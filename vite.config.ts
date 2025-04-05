@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
             'i18next',
             'i18next-browser-languagedetector',
             'react-i18next',
+            'framer-motion',
           ],
         },
         entryFileNames: `assets/[name].[hash].js`,
