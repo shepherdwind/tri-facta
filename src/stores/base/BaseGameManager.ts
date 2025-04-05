@@ -127,7 +127,6 @@ export class BaseGameManager {
       if (this.currentPlayer.hasWon()) {
         this.winner = this.currentPlayer;
         this.isVictoryAnimationPlaying = true;
-        this.showSuccess(`${this.currentPlayer.getName()} has won the game!`);
         this.saveToLocalStorage();
       }
     } catch (error) {
