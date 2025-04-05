@@ -149,14 +149,14 @@ export const GameSettings: React.FC<GameSettingsProps> = ({ onGameStart }) => {
       <div className="flex flex-col md:flex-row gap-4 w-full">
         <button
           onClick={handleStartGame}
-          className="w-full md:w-[200px] px-4 py-2 text-lg font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="w-full md:w-[200px] px-4 py-2 text-lg font-medium text-white bg-blue-600 dark:bg-blue-700 rounded-md hover:bg-blue-700 dark:hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
         >
           {t('common.start')}
         </button>
         {hasSavedGame && (
           <button
             onClick={handleRestoreGame}
-            className="w-full md:w-[200px] px-4 py-2 text-lg font-medium text-white bg-green-600 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="w-full md:w-[200px] px-4 py-2 text-lg font-medium text-white bg-green-600 dark:bg-green-700 rounded-md hover:bg-green-700 dark:hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           >
             {t('game.restore')}
           </button>
