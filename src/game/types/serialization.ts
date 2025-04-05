@@ -11,6 +11,7 @@ export interface PlayerJSON {
   hand: CardJSON[];
   isCurrentTurn: boolean;
   stagingArea: { position: CardPosition; card: CardJSON }[];
+  hintUsageCount: number;
 }
 
 export interface DeckJSON {

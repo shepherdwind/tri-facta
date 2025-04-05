@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,14 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
   onConfirm,
 }) => {
   const { t } = useTranslation();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -65,6 +73,7 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
                   </p>
                   <div className="flex items-center">
                     <input
+                      ref={inputRef}
                       type="number"
                       min={1}
                       onChange={(e) => {
@@ -73,7 +82,7 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
                           onChange(newValue);
                         }
                       }}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 px-2"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-2 ring-inset ring-gray-400 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-700 dark:text-white dark:ring-gray-500 px-2"
                     />
                   </div>
                   <button

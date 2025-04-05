@@ -88,6 +88,9 @@ export class GameStore extends CardManager {
       }
     }
 
+    // Increment hint usage count if the hint was successful
+    currentPlayer.useHint();
+
     return true;
   }
 

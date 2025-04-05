@@ -22,8 +22,11 @@ export const HelpButton: React.FC<HelpButtonProps> = observer(({ gameStore }) =>
     .getHand()
     .filter((card) => !card.isWildCard()).length;
 
-  // Disable the button if there are 2 or fewer valid cards
-  const isDisabled = validCardCount < 2;
+  // Get remaining hints
+  const remainingHints = gameStore.currentPlayer.getRemainingHints();
+
+  // Disable the button if there are 2 or fewer valid cards or no remaining hints
+  const isDisabled = validCardCount < 2 || remainingHints <= 0;
 
   return (
     <button
@@ -32,7 +35,7 @@ export const HelpButton: React.FC<HelpButtonProps> = observer(({ gameStore }) =>
       disabled={isDisabled}
       title={t('game.help')}
     >
-      {t('game.help')}
+      {t('game.help')} ({remainingHints})
     </button>
   );
 });

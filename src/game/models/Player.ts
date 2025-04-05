@@ -10,6 +10,8 @@ export class Player {
   private hand: Card[];
   private isCurrentTurn: boolean;
   private stagingArea: Map<CardPosition, Card>;
+  private hintUsageCount: number;
+  private readonly maxHints: number = 3; // 默认最大提示次数为3
 
   constructor(id: string, name: string) {
     this.id = id;
@@ -17,6 +19,7 @@ export class Player {
     this.hand = [];
     this.isCurrentTurn = false;
     this.stagingArea = new Map();
+    this.hintUsageCount = 0;
     makeAutoObservable(this);
   }
 
@@ -111,6 +114,26 @@ export class Player {
     this.hand = [];
   }
 
+  useHint(): boolean {
+    if (this.hintUsageCount >= this.maxHints) {
+      return false;
+    }
+    this.hintUsageCount++;
+    return true;
+  }
+
+  getHintUsageCount(): number {
+    return this.hintUsageCount;
+  }
+
+  getRemainingHints(): number {
+    return this.maxHints - this.hintUsageCount;
+  }
+
+  resetHintUsage(): void {
+    this.hintUsageCount = 0;
+  }
+
   toJSON(): PlayerJSON {
     return {
       id: this.id,
@@ -121,6 +144,7 @@ export class Player {
         position,
         card: card.toJSON(),
       })),
+      hintUsageCount: this.hintUsageCount,
     };
   }
 
@@ -134,6 +158,7 @@ export class Player {
   static fromJSON(json: PlayerJSON): Player {
     const player = new Player(json.id, json.name);
     player.isCurrentTurn = json.isCurrentTurn;
+    player.hintUsageCount = json.hintUsageCount || 0;
 
     // Restore hand first
     player.hand = json.hand.map((cardJson) => Card.fromJSON(cardJson));
