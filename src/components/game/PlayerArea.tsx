@@ -53,7 +53,9 @@ export const PlayerArea = observer<PlayerAreaProps>(({ currentPlayerBorderColor 
 
   return (
     <div
-      className={`bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg border-2 ${currentPlayerBorderColor} transition-all duration-200 relative`}
+      className={`bg-white dark:bg-gray-700 p-4 rounded-lg shadow-lg border-2 ${
+        player.hasWon() ? 'border-yellow-400' : currentPlayerBorderColor
+      } transition-all duration-200 relative`}
     >
       <div className="flex flex-col space-y-2">
         <div className="text-center">
@@ -61,7 +63,7 @@ export const PlayerArea = observer<PlayerAreaProps>(({ currentPlayerBorderColor 
             {player.getName()}
           </h2>
           {player.hasWon() ? (
-            <p className="text-yellow-500 font-bold animate-pulse">{t('game.victory')} 🎉</p>
+            <p className="text-yellow-500 font-bold animate-pulse">{t('game.victory')}</p>
           ) : (
             <p>
               {t('game.cardsRemaining')}: {player.getHand().length}
