@@ -1,84 +1,64 @@
 import React from 'react';
-import {
-  Box,
-  VStack,
-  Text,
-  HStack,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  useColorModeValue,
-} from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { Card } from '../../game/models/Card';
 import { GameCard } from '../GameCard';
 import { CardPosition } from '../../game/types';
 import { GameStore } from '../../stores/GameStore';
+import { useTheme } from '../../hooks/useTheme';
 
 interface PositionSelectMenuProps {
   onPositionSelect: (position: CardPosition) => void;
-  onClose: () => void;
 }
 
-const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
-  ({ onPositionSelect, onClose }) => {
-    const { t } = useTranslation();
+const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(({ onPositionSelect }) => {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
 
-    return (
-      <Menu isOpen={true} onClose={onClose} placement="top" offset={[0, 8]}>
-        <MenuButton
-          as={Box}
-          position="absolute"
-          top="-8px"
-          left="50%"
-          transform="translateX(-50%)"
-          width="0"
-          height="0"
-          borderLeft="8px solid transparent"
-          borderRight="8px solid transparent"
-          borderTop="8px solid"
-          borderTopColor="blue.500"
-          borderBottom="none"
-          cursor="pointer"
-          _hover={{
-            borderTopColor: 'blue.600',
-          }}
-        />
-        <MenuList
-          borderWidth="2px"
-          borderColor="blue.500"
-          boxShadow="lg"
-          bg={useColorModeValue('white', 'gray.800')}
-          _hover={{ bg: useColorModeValue('gray.50', 'gray.700') }}
-          minW="120px"
-          maxW="150px"
-          marginBottom="-8px"
-        >
-          <MenuItem
+  return (
+    <div className="relative">
+      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-blue-500" />
+      <div
+        className={`absolute left-1/2 transform -translate-x-1/2 mt-2 w-32 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+          theme === 'dark' ? 'bg-gray-800' : 'bg-white'
+        }`}
+      >
+        <div className="py-1">
+          <button
+            className={`block w-full text-left px-4 py-2 text-sm ${
+              theme === 'dark'
+                ? 'text-gray-300 hover:bg-blue-900 hover:text-white'
+                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
+            }`}
             onClick={() => onPositionSelect(CardPosition.TOP)}
-            _hover={{ bg: useColorModeValue('blue.50', 'blue.900') }}
           >
             {t('game.position.top')}
-          </MenuItem>
-          <MenuItem
+          </button>
+          <button
+            className={`block w-full text-left px-4 py-2 text-sm ${
+              theme === 'dark'
+                ? 'text-gray-300 hover:bg-blue-900 hover:text-white'
+                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
+            }`}
             onClick={() => onPositionSelect(CardPosition.BOTTOM_LEFT)}
-            _hover={{ bg: useColorModeValue('blue.50', 'blue.900') }}
           >
             {t('game.position.bottomLeft')}
-          </MenuItem>
-          <MenuItem
+          </button>
+          <button
+            className={`block w-full text-left px-4 py-2 text-sm ${
+              theme === 'dark'
+                ? 'text-gray-300 hover:bg-blue-900 hover:text-white'
+                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
+            }`}
             onClick={() => onPositionSelect(CardPosition.BOTTOM_RIGHT)}
-            _hover={{ bg: useColorModeValue('blue.50', 'blue.900') }}
           >
             {t('game.position.bottomRight')}
-          </MenuItem>
-        </MenuList>
-      </Menu>
-    );
-  }
-);
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+});
 
 interface PlayerAreaProps {
   cardBg: string;
@@ -121,27 +101,19 @@ export const PlayerArea = observer<PlayerAreaProps>(({ cardBg, currentPlayerBord
   };
 
   return (
-    <Box
-      bg={cardBg}
-      p={4}
-      borderRadius="lg"
-      boxShadow="lg"
-      borderWidth="2px"
-      borderColor={currentPlayerBorderColor}
-      transition="all 0.2s"
-      opacity={1}
-      pointerEvents="auto"
+    <div
+      className={`${cardBg} p-4 rounded-lg shadow-lg border-2 ${currentPlayerBorderColor} transition-all duration-200 opacity-100`}
     >
-      <VStack spacing={2}>
-        <Text fontSize="lg" fontWeight="bold">
-          {player.getName()}
-        </Text>
-        <Text>
-          {t('game.cardsRemaining')}: {player.getHand().length}
-        </Text>
-        <HStack spacing={2} wrap="wrap" justify="center">
+      <div className="flex flex-col space-y-2">
+        <div className="text-center">
+          <h2 className="text-lg font-bold">{player.getName()}</h2>
+          <p>
+            {t('game.cardsRemaining')}: {player.getHand().length}
+          </p>
+        </div>
+        <div className="flex flex-wrap justify-center gap-2">
           {player.getHand().map((card, index) => (
-            <Box key={index} position="relative">
+            <div key={index} className="relative">
               <GameCard
                 card={card}
                 isSelected={Array.from(store.selectedCards.values()).includes(card)}
@@ -150,15 +122,12 @@ export const PlayerArea = observer<PlayerAreaProps>(({ cardBg, currentPlayerBord
               />
               {selectedCard === card &&
                 !Array.from(store.selectedCards.values()).includes(card) && (
-                  <PositionSelectMenu
-                    onPositionSelect={handlePositionSelect}
-                    onClose={() => setSelectedCard(null)}
-                  />
+                  <PositionSelectMenu onPositionSelect={handlePositionSelect} />
                 )}
-            </Box>
+            </div>
           ))}
-        </HStack>
-      </VStack>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 });

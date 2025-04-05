@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Link, Text, useColorModeValue, useToast } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { useToast } from '../components/ToastProvider';
 
 interface NavigatorStandalone extends Navigator {
   standalone?: boolean;
@@ -8,9 +8,8 @@ interface NavigatorStandalone extends Navigator {
 
 export const Footer: React.FC = () => {
   const { t } = useTranslation();
-  const textColor = useColorModeValue('gray.600', 'gray.400');
   const version = import.meta.env.VITE_APP_VERSION;
-  const toast = useToast();
+  const { showToast } = useToast();
   const [showClearCache, setShowClearCache] = useState(false);
 
   useEffect(() => {
@@ -44,8 +43,9 @@ export const Footer: React.FC = () => {
         const cacheNames = await caches.keys();
         await Promise.all(cacheNames.map((cacheName) => caches.delete(cacheName)));
 
-        toast({
+        showToast({
           title: t('footer.cacheCleared'),
+          description: t('footer.cacheCleared'),
           status: 'success',
           duration: 3000,
           isClosable: true,
@@ -55,8 +55,9 @@ export const Footer: React.FC = () => {
         window.location.reload();
       }
     } catch (error) {
-      toast({
+      showToast({
         title: t('footer.cacheClearError'),
+        description: t('footer.cacheClearError'),
         status: 'error',
         duration: 3000,
         isClosable: true,
@@ -65,33 +66,27 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <Box as="footer" py={4} textAlign="center" marginBottom={8}>
-      <Text color={textColor} fontSize="sm">
+    <footer className="py-4 text-center mb-8">
+      <p className="text-sm text-gray-600 dark:text-gray-400">
         {t('footer.sourceCode')}{' '}
-        <Link
+        <a
           href="https://github.com/shepherdwind/tri-facta"
-          isExternal
-          color="blue.500"
-          _hover={{ color: 'blue.600' }}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:text-blue-600"
         >
           GitHub
-        </Link>
+        </a>
         {` · v${version}`}
         {showClearCache && (
           <>
             {' · '}
-            <Link
-              as="button"
-              onClick={handleClearCache}
-              color="blue.500"
-              _hover={{ color: 'blue.600' }}
-              textDecoration="none"
-            >
+            <button onClick={handleClearCache} className="text-blue-500 hover:text-blue-600">
               {t('footer.clearCache')}
-            </Link>
+            </button>
           </>
         )}
-      </Text>
-    </Box>
+      </p>
+    </footer>
   );
 };

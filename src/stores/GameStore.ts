@@ -3,8 +3,8 @@ import { Game } from '../game/models/Game';
 import { GameMode } from '../game/types';
 import { Player } from '../game/models/Player';
 import { CardManager } from './card/CardManager';
-import { UseToastOptions } from '@chakra-ui/react';
 import { GameStatePersistence } from './persistence/GameStatePersistence';
+import { ToastOptions } from '../utils/ToastManager';
 
 export class GameStore extends CardManager {
   private static instance: GameStore | null = null;
@@ -52,7 +52,7 @@ export class GameStore extends CardManager {
     GameStatePersistence.getInstance().clearState();
   }
 
-  setToast(toast: (options: UseToastOptions) => void) {
+  setToast(toast: (options: ToastOptions) => void) {
     this.toastManager.setToast(toast);
   }
 }

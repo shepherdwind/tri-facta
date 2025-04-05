@@ -23,13 +23,6 @@ export default defineConfig(({ mode }) => ({
             'i18next-browser-languagedetector',
             'react-i18next',
           ],
-          chakra: [
-            '@chakra-ui/react',
-            '@chakra-ui/icons',
-            '@emotion/react',
-            '@emotion/styled',
-            'framer-motion',
-          ],
         },
         entryFileNames: `assets/[name].[hash].js`,
         chunkFileNames: `assets/[name].[hash].js`,

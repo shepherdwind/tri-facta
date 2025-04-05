@@ -1,21 +1,15 @@
-import { useColorModeValue } from '@chakra-ui/react';
+import { useTheme } from '../hooks/useTheme';
 
 export const useTriFactaStyles = () => {
-  const cardBg = useColorModeValue('#f3e9d2', '#2D3748');
-  const strokeColor = useColorModeValue('#5d534a', '#63B3ED');
-  const textColor = useColorModeValue('#5d534a', 'white');
-  const minusCircleFill = useColorModeValue('#e76f51', '#FC8181');
-  const plusCircleFill = useColorModeValue('#7fb069', '#48BB78');
-  const selectedTriangleFill = useColorModeValue('#a8d1ff', '#2B6CB0');
-  const dragOverTriangleFill = useColorModeValue('#e2e8f0', '#4A5568');
+  const { isDarkMode } = useTheme();
 
   return {
-    cardBg,
-    strokeColor,
-    textColor,
-    minusCircleFill,
-    plusCircleFill,
-    selectedTriangleFill,
-    dragOverTriangleFill,
+    cardBg: isDarkMode ? '#2D3748' : '#f3e9d2',
+    strokeColor: isDarkMode ? '#63B3ED' : '#5d534a',
+    textColor: isDarkMode ? '#FFFFFF' : '#5d534a',
+    minusCircleFill: isDarkMode ? '#FC8181' : '#e76f51',
+    plusCircleFill: isDarkMode ? '#48BB78' : '#7fb069',
+    selectedTriangleFill: isDarkMode ? '#2B6CB0' : '#a8d1ff',
+    dragOverTriangleFill: isDarkMode ? '#4A5568' : '#e2e8f0',
   };
 };

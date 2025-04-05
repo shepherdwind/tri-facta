@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box } from '@chakra-ui/react';
 import { GameMode, CardPosition } from '../../game/types';
 import { Card } from '../../game/models/Card';
 import { useTriFactaStyles } from '../styles/TriFactaStyles';
@@ -54,12 +53,11 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
   };
 
   return (
-    <Box width="100%" display="flex" justifyContent="center" alignItems="center" p={4}>
-      <Box position="relative" p={2}>
+    <div className="w-full flex justify-center items-center p-4">
+      <div className="relative p-2">
         <svg
           viewBox="50 50 300 275"
-          width="100%"
-          height="100%"
+          className="w-full h-full"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
@@ -159,8 +157,8 @@ const TriFactaCard: React.FC<TriFactaCardProps> = ({
             isMultiplication={isMultiplication}
           />
         </svg>
-      </Box>
-    </Box>
+      </div>
+    </div>
   );
 };
 

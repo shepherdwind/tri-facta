@@ -14,12 +14,12 @@ const urlsToCache = [
   '/icons/icon-512x512.png',
 ];
 
-// Check if in development environment
+// 检查是否为开发环境
 const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
 
 self.addEventListener('install', (event) => {
   if (isDev) {
-    // In development environment, skip waiting and activate immediately
+    // 在开发环境中，跳过等待，直接激活
     self.skipWaiting();
     return;
   }
@@ -38,17 +38,17 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // In development environment, don't intercept any requests
+  // 在开发环境中，不拦截任何请求
   if (isDev) {
     return;
   }
 
-  // Only handle GET requests
+  // 只处理 GET 请求
   if (event.request.method !== 'GET') {
     return;
   }
 
-  // Only handle same-origin requests
+  // 只处理同源请求
   if (!event.request.url.startsWith(self.location.origin)) {
     return;
   }

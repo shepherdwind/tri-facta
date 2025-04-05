@@ -1,28 +1,12 @@
 import React from 'react';
-import {
-  Box,
-  Container,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  List,
-  ListItem,
-  ListIcon,
-  useColorModeValue,
-  IconButton,
-  Tooltip,
-} from '@chakra-ui/react';
-import { CheckIcon, ArrowBackIcon } from '@chakra-ui/icons';
-import { I18nIcon } from './icons/I18nIcon';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { I18nIcon } from './icons/I18nIcon';
 import TriFactaCard from './TriFacta/TriFactaCard';
 import { GameMode } from '../game/types';
+import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 const HelpPage: React.FC = () => {
-  const textColor = useColorModeValue('gray.700', 'gray.200');
-  const headingColor = useColorModeValue('blue.600', 'blue.300');
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
@@ -35,182 +19,163 @@ const HelpPage: React.FC = () => {
   };
 
   return (
-    <Container maxW="1200px" py={8}>
-      <VStack spacing={8} align="stretch">
-        <HStack justify="space-between">
-          <IconButton
-            aria-label={t('common.back')}
-            icon={<ArrowBackIcon />}
+    <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="flex flex-col space-y-8">
+        <div className="flex justify-between items-center">
+          <button
             onClick={handleBack}
-            variant="ghost"
-            size="lg"
-          />
-          <Heading textAlign="center" color={headingColor} flex="1">
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            aria-label={t('common.back')}
+          >
+            <ArrowLeftIcon className="w-6 h-6" />
+          </button>
+          <h1 className="text-2xl font-bold text-center text-blue-600 dark:text-blue-300 flex-1">
             {t('help.title')}
-          </Heading>
-          <Tooltip label={i18n.language === 'en' ? '切换到中文' : 'Switch to English'}>
-            <IconButton
-              aria-label={i18n.language === 'en' ? 'Switch to Chinese' : 'Switch to English'}
-              icon={<I18nIcon />}
-              onClick={toggleLanguage}
-              variant="ghost"
-              size="lg"
-            />
-          </Tooltip>
-        </HStack>
+          </h1>
+          <button
+            onClick={toggleLanguage}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            aria-label={i18n.language === 'en' ? 'Switch to Chinese' : 'Switch to English'}
+            title={i18n.language === 'en' ? '切换到中文' : 'Switch to English'}
+          >
+            <I18nIcon className="w-6 h-6" />
+          </button>
+        </div>
 
-        <Box>
-          <Heading size="md" mb={4} color={headingColor}>
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-300">
             {t('help.introduction.title')}
-          </Heading>
-          <Text color={textColor}>{t('help.introduction.content')}</Text>
-        </Box>
+          </h2>
+          <p className="text-gray-700 dark:text-gray-200">{t('help.introduction.content')}</p>
+        </div>
 
-        <Box>
-          <Heading size="md" mb={4} color={headingColor}>
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-300">
             {t('help.basicRules.title')}
-          </Heading>
-          <List spacing={3}>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.basicRules.players')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.basicRules.duration')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.basicRules.winCondition')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.basicRules.initialCards')}
-            </ListItem>
-          </List>
-        </Box>
+          </h2>
+          <ul className="space-y-3">
+            {['players', 'duration', 'winCondition', 'initialCards'].map((rule) => (
+              <li key={rule} className="flex items-start">
+                <CheckIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
+                <span className="text-gray-700 dark:text-gray-200">
+                  {t(`help.basicRules.${rule}`)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <Box>
-          <Heading size="md" mb={4} color={headingColor}>
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-300">
             {t('help.gameFlow.title')}
-          </Heading>
-          <VStack align="stretch" spacing={4}>
-            <Box>
-              <Text fontWeight="bold" mb={2}>
-                {t('help.gameFlow.setup.title')}
-              </Text>
-              <Text>{t('help.gameFlow.setup.shuffle')}</Text>
-              <Text>{t('help.gameFlow.setup.draw')}</Text>
-            </Box>
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <p className="font-bold mb-2">{t('help.gameFlow.setup.title')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('help.gameFlow.setup.shuffle')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('help.gameFlow.setup.draw')}</p>
+            </div>
 
-            <Box>
-              <Text fontWeight="bold" mb={2}>
-                {t('help.gameFlow.turn.title')}
-              </Text>
-              <Text>{t('help.gameFlow.turn.replace')}</Text>
-              <Text fontSize="sm" color="gray.500" ml={4}>
-                {t('help.gameFlow.turn.replaceExample')}
-              </Text>
-              <Text>{t('help.gameFlow.turn.mathRelation')}</Text>
-              <Text fontSize="sm" color="gray.500" ml={4}>
-                {t('help.gameFlow.turn.mathExample')}
-              </Text>
-              <Text>{t('help.gameFlow.turn.priority')}</Text>
-            </Box>
+            <div>
+              <p className="font-bold mb-2">{t('help.gameFlow.turn.title')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('help.gameFlow.turn.replace')}</p>
+              <p className="text-sm text-gray-500 ml-4">{t('help.gameFlow.turn.replaceExample')}</p>
+              <p className="text-gray-700 dark:text-gray-200">
+                {t('help.gameFlow.turn.mathRelation')}
+              </p>
+              <p className="text-sm text-gray-500 ml-4">{t('help.gameFlow.turn.mathExample')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('help.gameFlow.turn.priority')}</p>
+            </div>
 
-            <Box>
-              <Text fontWeight="bold" mb={2}>
-                {t('help.gameFlow.noPlay.title')}
-              </Text>
-              <Text>{t('help.gameFlow.noPlay.draw')}</Text>
-              <Text>{t('help.gameFlow.noPlay.continue')}</Text>
-              <Text>{t('help.gameFlow.noPlay.pass')}</Text>
-            </Box>
-          </VStack>
-        </Box>
+            <div>
+              <p className="font-bold mb-2">{t('help.gameFlow.noPlay.title')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('help.gameFlow.noPlay.draw')}</p>
+              <p className="text-gray-700 dark:text-gray-200">
+                {t('help.gameFlow.noPlay.continue')}
+              </p>
+              <p className="text-gray-700 dark:text-gray-200">{t('help.gameFlow.noPlay.pass')}</p>
+            </div>
+          </div>
+        </div>
 
-        <Box>
-          <Heading size="md" mb={4} color={headingColor}>
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-300">
             {t('help.interaction.title')}
-          </Heading>
-          <List spacing={3}>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.interaction.dragAndDrop')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.interaction.clickToSelect')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.interaction.clickToDeselect')}
-            </ListItem>
-          </List>
-        </Box>
+          </h2>
+          <ul className="space-y-3">
+            {['dragAndDrop', 'clickToSelect', 'clickToDeselect'].map((interaction) => (
+              <li key={interaction} className="flex items-start">
+                <CheckIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
+                <span className="text-gray-700 dark:text-gray-200">
+                  {t(`help.interaction.${interaction}`)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-        <Box>
-          <Heading size="md" mb={4} color={headingColor}>
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-300">
             {t('help.examples.title')}
-          </Heading>
-          <HStack spacing={8} justify="center" mb={4}>
-            <Box>
-              <Text mb={2} textAlign="center" color={textColor}>
+          </h2>
+          <div className="flex justify-center space-x-8 mb-4">
+            <div>
+              <p className="mb-2 text-center text-gray-700 dark:text-gray-200">
                 {t('help.examples.additionMode')}
-              </Text>
+              </p>
               <TriFactaCard
                 topNumber={12}
                 leftNumber={5}
                 rightNumber={7}
                 gameMode={GameMode.ADDITION}
               />
-            </Box>
-            <Box>
-              <Text mb={2} textAlign="center" color={textColor}>
+            </div>
+            <div>
+              <p className="mb-2 text-center text-gray-700 dark:text-gray-200">
                 {t('help.examples.multiplicationMode')}
-              </Text>
+              </p>
               <TriFactaCard
                 topNumber={24}
                 leftNumber={6}
                 rightNumber={4}
                 gameMode={GameMode.MULTIPLICATION}
               />
-            </Box>
-          </HStack>
-          <Text color={textColor}>{t('help.examples.inExamples')}</Text>
-          <List spacing={2} mt={2}>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.examples.additionExample')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.examples.multiplicationExample')}
-            </ListItem>
-          </List>
-        </Box>
+            </div>
+          </div>
+          <p className="text-gray-700 dark:text-gray-200">{t('help.examples.inExamples')}</p>
+          <ul className="mt-2 space-y-2">
+            <li className="flex items-start">
+              <CheckIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
+              <span className="text-gray-700 dark:text-gray-200">
+                {t('help.examples.additionExample')}
+              </span>
+            </li>
+            <li className="flex items-start">
+              <CheckIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
+              <span className="text-gray-700 dark:text-gray-200">
+                {t('help.examples.multiplicationExample')}
+              </span>
+            </li>
+          </ul>
+        </div>
 
-        <Box>
-          <Heading size="md" mb={4} color={headingColor}>
+        <div>
+          <h2 className="text-xl font-semibold mb-4 text-blue-600 dark:text-blue-300">
             {t('help.specialRules.title')}
-          </Heading>
-          <List spacing={3}>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.specialRules.wildcardValue')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.specialRules.wildcardDeclaration')}
-            </ListItem>
-            <ListItem>
-              <ListIcon as={CheckIcon} color="green.500" />
-              {t('help.specialRules.wildcardPersistence')}
-            </ListItem>
-          </List>
-        </Box>
-      </VStack>
-    </Container>
+          </h2>
+          <ul className="space-y-3">
+            {['wildcardValue', 'wildcardDeclaration', 'wildcardPersistence'].map((rule) => (
+              <li key={rule} className="flex items-start">
+                <CheckIcon className="w-5 h-5 text-green-500 mr-2 mt-0.5" />
+                <span className="text-gray-700 dark:text-gray-200">
+                  {t(`help.specialRules.${rule}`)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
   );
 };
 

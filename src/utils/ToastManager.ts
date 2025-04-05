@@ -1,8 +1,16 @@
-import { UseToastOptions } from '@chakra-ui/react';
+export interface ToastOptions {
+  title?: string;
+  description: string;
+  status?: 'success' | 'error' | 'info' | 'warning';
+  duration?: number;
+  isClosable?: boolean;
+  position?: 'top' | 'bottom';
+  variant?: 'solid' | 'subtle' | 'left-accent' | 'top-accent';
+}
 
 export class ToastManager {
   private static instance: ToastManager | null = null;
-  private toast: ((options: UseToastOptions) => void) | null = null;
+  private toast: ((options: ToastOptions) => void) | null = null;
 
   private constructor() {}
 
@@ -13,7 +21,7 @@ export class ToastManager {
     return ToastManager.instance;
   }
 
-  public setToast(toast: (options: UseToastOptions) => void) {
+  public setToast(toast: (options: ToastOptions) => void) {
     this.toast = toast;
   }
 

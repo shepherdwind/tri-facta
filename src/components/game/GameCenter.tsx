@@ -1,9 +1,9 @@
-import { Box, VStack, useColorModeValue } from '@chakra-ui/react';
 import { observer } from 'mobx-react-lite';
 import TriFactaCard from '../TriFacta/TriFactaCard';
 import { GameControls } from './GameControls';
 import { GameStore } from '../../stores/GameStore';
 import { CardPosition } from '../../game/types';
+import { useTheme } from '../../hooks/useTheme';
 
 interface GameCenterProps {
   store: GameStore;
@@ -11,7 +11,8 @@ interface GameCenterProps {
 
 export const GameCenter = observer<GameCenterProps>(({ store }) => {
   const triFactaCard = store.game.getTriFactaCard();
-  const cardBg = useColorModeValue('brand.card', 'gray.700');
+  const { theme } = useTheme();
+  const cardBg = theme === 'dark' ? 'bg-gray-700' : 'bg-white';
 
   // 获取已提交的卡片
   const committedTopCard = triFactaCard.getCard(CardPosition.TOP);
@@ -71,9 +72,10 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
   };
 
   return (
-    <Box bg={cardBg} p={4} borderRadius="lg" boxShadow="lg">
-      <VStack spacing={4}>
-        <Box
+    <div className={`${cardBg} p-4 rounded-lg shadow-lg`}>
+      <div className="flex flex-col">
+        <GameControls store={store} />
+        <div
           onDragOver={handleDragOver}
           //   onDrop={(e) => handleDrop(e, CardPosition.TOP)}
           onTouchStart={handleTouchStart}
@@ -89,10 +91,8 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
             onDrop={(e, position) => handleDrop(e, position)}
             onTouchEnd={(e, position) => handleTouchEnd(e, position)}
           />
-        </Box>
-
-        <GameControls store={store} />
-      </VStack>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 });

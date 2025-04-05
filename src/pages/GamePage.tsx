@@ -1,5 +1,4 @@
 import React from 'react';
-import { Container, VStack, useColorModeValue, useToast } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
@@ -8,45 +7,46 @@ import { PlayerArea } from '../components/game/PlayerArea';
 import { GameCenter } from '../components/game/GameCenter';
 import { WildcardModal } from '../components/game/WildcardModal';
 import { GameStore } from '../stores/GameStore';
+import { useTheme } from '../hooks/useTheme';
+
+interface ToastOptions {
+  title?: string;
+  description: string;
+  status?: 'info' | 'warning' | 'success' | 'error';
+  duration?: number;
+  isClosable?: boolean;
+}
 
 export const GamePage = observer(() => {
   const { t } = useTranslation();
-  const toast = useToast();
   const navigate = useNavigate();
   const store = GameStore.getInstance();
+  const { theme } = useTheme();
 
-  const cardBg = useColorModeValue('brand.card', 'gray.700');
-  const currentPlayerBorderColor = useColorModeValue('blue.500', 'blue.300');
+  const cardBg = theme === 'dark' ? 'bg-gray-700' : 'bg-white';
+  const currentPlayerBorderColor = theme === 'dark' ? 'border-blue-300' : 'border-blue-500';
 
   React.useEffect(() => {
-    store.setToast((options: any) => {
-      toast({
-        ...options,
-        description: t(options.description),
-      });
+    store.setToast((options: ToastOptions) => {
+      // You'll need to implement your own toast system or use a library like react-hot-toast
+      const translatedDescription = t(options.description);
+      console.log({ ...options, description: translatedDescription });
     });
-  }, [store, toast, t]);
+  }, [store, t]);
 
   const handleExit = () => {
     navigate('/');
   };
 
   return (
-    <Container
-      maxW="1200px"
-      py={8}
-      height="100%"
-      overflow="hidden"
-      display="flex"
-      flexDirection="column"
-    >
-      <VStack spacing={8} align="stretch" flex="1" overflow="auto">
+    <div className="container mx-auto max-w-4xl py-8 h-full overflow-hidden flex flex-col">
+      <div className="flex flex-col space-y-8 flex-1 overflow-auto">
         <Header onExit={handleExit} />
 
         <PlayerArea cardBg={cardBg} currentPlayerBorderColor={currentPlayerBorderColor} />
 
         <GameCenter store={store} />
-      </VStack>
+      </div>
 
       <WildcardModal
         isOpen={store.isWildcardModalOpen}
@@ -55,6 +55,6 @@ export const GamePage = observer(() => {
         onChange={(value) => store.setWildcardValueInput(value)}
         onConfirm={() => store.setWildcardValue()}
       />
-    </Container>
+    </div>
   );
 });

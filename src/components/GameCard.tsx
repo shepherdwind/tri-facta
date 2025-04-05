@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { Box, useColorModeValue } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { Card } from '../game/models/Card';
 import { CardPosition } from '../game/types';
 import { GameStore } from '../stores/GameStore';
+import { cn } from '../utils/cn';
 
 interface GameCardProps {
   card: Card;
@@ -25,12 +25,6 @@ export const GameCard = observer<GameCardProps>(
     );
     const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
     const cardRef = useRef<HTMLDivElement>(null);
-    const cardBg = useColorModeValue('white', 'gray.800');
-    const selectedBg = useColorModeValue('blue.200', 'blue.800');
-    const borderColor = useColorModeValue('gray.300', 'gray.500');
-    const selectedBorderColor = useColorModeValue('blue.600', 'blue.400');
-    const textColor = useColorModeValue('gray.900', 'white');
-    const positionTextColor = useColorModeValue('blue.600', 'blue.400');
     const store = GameStore.getInstance();
 
     const getPositionText = (position?: CardPosition) => {
@@ -66,12 +60,10 @@ export const GameCard = observer<GameCardProps>(
       setTouchStartPosition({ x: touch.clientX, y: touch.clientY });
       setIsDragging(false);
 
-      // 设置长按计时器
       const timer = setTimeout(() => {
         setIsDragging(true);
         store.setDraggedCard(card);
 
-        // 创建一个自定义的拖拽事件
         const dragEvent = new DragEvent('dragstart', {
           bubbles: true,
           cancelable: true,
@@ -83,7 +75,7 @@ export const GameCard = observer<GameCardProps>(
         });
         cardRef.current?.dispatchEvent(dragEvent);
         onDragStart?.(dragEvent as unknown as React.DragEvent, card);
-      }, 500); // 500ms 长按阈值
+      }, 500);
 
       setLongPressTimer(timer);
     };
@@ -95,18 +87,16 @@ export const GameCard = observer<GameCardProps>(
       const deltaX = Math.abs(touch.clientX - touchStartPosition.x);
       const deltaY = Math.abs(touch.clientY - touchStartPosition.y);
 
-      // 如果移动距离太大，取消长按计时器
       if (deltaX > 10 || deltaY > 10) {
         if (longPressTimer) {
           clearTimeout(longPressTimer);
           setLongPressTimer(null);
         }
-        e.preventDefault(); // 只在移动距离大时阻止默认行为
+        e.preventDefault();
       }
     };
 
     const handleTouchEnd = (e: React.TouchEvent) => {
-      // 清除长按计时器
       if (longPressTimer) {
         clearTimeout(longPressTimer);
         setLongPressTimer(null);
@@ -115,13 +105,11 @@ export const GameCard = observer<GameCardProps>(
       const touchEndTime = Date.now();
       const touchDuration = touchEndTime - touchStartTime;
 
-      // 如果不是拖拽状态，且触摸时间小于长按阈值，则认为是点击
       if (!isDragging && touchDuration < 500) {
-        e.preventDefault(); // 阻止默认行为，防止触发其他事件
+        e.preventDefault();
         onClick?.();
       }
 
-      // 如果正在拖拽，触发拖拽结束事件
       if (isDragging) {
         const dragEndEvent = new DragEvent('dragend', {
           bubbles: true,
@@ -131,7 +119,6 @@ export const GameCard = observer<GameCardProps>(
         onDragEnd?.(dragEndEvent as unknown as React.DragEvent);
       }
 
-      // 重置状态
       setIsDragging(false);
       setTouchStartTime(0);
       setTouchStartPosition(null);
@@ -149,67 +136,36 @@ export const GameCard = observer<GameCardProps>(
     };
 
     return (
-      <Box
+      <div
         ref={cardRef}
-        width="60px"
-        height="80px"
-        bg={isSelected ? selectedBg : cardBg}
-        borderWidth="2px"
-        borderColor={isSelected ? selectedBorderColor : borderColor}
-        borderRadius="md"
-        boxShadow="md"
-        display="flex"
-        flexDirection="column"
-        alignItems="center"
-        justifyContent="center"
-        cursor={onClick ? 'pointer' : 'default'}
+        className={cn(
+          'w-[60px] h-[80px] rounded-md shadow-md flex flex-col items-center justify-center relative transition-all duration-200',
+          'border-2',
+          isSelected
+            ? 'bg-blue-200 dark:bg-blue-800 border-blue-600 dark:border-blue-400'
+            : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-500',
+          onClick ? 'cursor-pointer hover:shadow-lg hover:-translate-y-0.5' : 'cursor-default',
+          isDragging ? 'opacity-50' : 'opacity-100'
+        )}
+        style={{ transform: getTransform() }}
         onClick={onClick}
-        position="relative"
-        transition="all 0.2s"
-        transform={getTransform()}
         draggable={!!onClick && !isSelected}
         onDragStart={(e) => handleDragStart(e, card)}
         onDragEnd={handleDragEnd}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        opacity={isDragging ? 0.5 : 1}
-        sx={{
-          touchAction: 'none',
-          WebkitTapHighlightColor: 'transparent', // 移除移动端点击高亮
-        }}
-        _hover={
-          onClick
-            ? { transform: isSelected ? 'translateY(-4px)' : 'translateY(-2px)', boxShadow: 'lg' }
-            : {}
-        }
-        _active={onClick ? { transform: isSelected ? 'translateY(-4px)' : 'translateY(0)' } : {}}
       >
-        <Box fontSize="xl" fontWeight="bold" color={textColor} textAlign="center">
+        <div className="text-xl font-bold text-gray-900 dark:text-white text-center">
           {card.getValue() === null ? '?' : card.getValue()}
-        </Box>
+        </div>
         {isSelected && targetPosition && (
-          <Box
-            fontSize="2xs"
-            color={positionTextColor}
-            position="absolute"
-            bottom="2px"
-            textAlign="center"
-          >
+          <div className="absolute bottom-0.5 text-[10px] text-blue-600 dark:text-blue-400 text-center">
             {getPositionText(targetPosition)}
-          </Box>
+          </div>
         )}
-        <Box
-          position="absolute"
-          top="0"
-          right="0"
-          width="6px"
-          height="6px"
-          bg="green.500"
-          borderRadius="full"
-          transform="translate(2px, -2px)"
-        />
-      </Box>
+        <div className="absolute top-0 right-0 w-1.5 h-1.5 bg-green-500 rounded-full transform translate-x-0.5 -translate-y-0.5" />
+      </div>
     );
   }
 );
