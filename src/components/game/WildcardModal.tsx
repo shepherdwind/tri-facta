@@ -7,20 +7,17 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 interface WildcardModalProps {
   isOpen: boolean;
   onClose: () => void;
-  value: number;
-  onChange: (value: number) => void;
+  onChange: (value: string | number) => void;
   onConfirm: () => void;
 }
 
 export const WildcardModal: React.FC<WildcardModalProps> = ({
   isOpen,
   onClose,
-  value,
   onChange,
   onConfirm,
 }) => {
   const { t } = useTranslation();
-
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -70,8 +67,12 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
                     <input
                       type="number"
                       min={1}
-                      value={value}
-                      onChange={(e) => onChange(Number(e.target.value))}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        if (Number(newValue) > 0) {
+                          onChange(newValue);
+                        }
+                      }}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 px-2"
                     />
                   </div>

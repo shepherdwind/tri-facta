@@ -53,8 +53,7 @@ export const GamePage = observer(() => {
       <WildcardModal
         isOpen={store.isWildcardModalOpen}
         onClose={() => store.closeWildcardModal()}
-        value={store.wildcardValue}
-        onChange={(value) => store.setWildcardValueInput(value)}
+        onChange={(value) => store.setWildcardValueInput(+value)}
         onConfirm={() => store.setWildcardValue()}
       />
     </div>

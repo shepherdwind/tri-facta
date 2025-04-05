@@ -137,6 +137,9 @@ export class CardManager extends BaseGameManager {
   }
 
   setWildcardValueInput(value: number) {
+    if (!value) {
+      return;
+    }
     this.wildcardValue = value;
   }
 

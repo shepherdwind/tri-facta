@@ -27,6 +27,27 @@ export class TwoCardPlacementHelper {
     this.suggestions = [];
   }
 
+  /**
+   * 判断两个值是否满足游戏模式的等式关系
+   * @param value1 第一个值
+   * @param value2 第二个值
+   * @param targetValue 目标值
+   * @param isSum 是否为和/积关系，true表示和/积关系，false表示等式关系
+   * @returns 是否满足关系
+   */
+  private isValueMatch(
+    value1: number,
+    value2: number,
+    targetValue: number,
+    isSum: boolean = false
+  ): boolean {
+    if (this.gameMode === GameMode.ADDITION) {
+      return isSum ? value1 + value2 === targetValue : value1 === value2 + targetValue;
+    } else {
+      return isSum ? value1 * value2 === targetValue : value1 === value2 * targetValue;
+    }
+  }
+
   private createSuggestion(placement: CardPlacement): CardPlacementSuggestion {
     const cards = new Map<CardPosition, Card>(this.committedCards);
     const newCards = new Map<CardPosition, Card>();
@@ -64,8 +85,8 @@ export class TwoCardPlacementHelper {
 
       if (value1 === null || value2 === null) return;
 
-      const isValidOrder1 = value1 === value2 + targetValue;
-      const isValidOrder2 = value2 === value1 + targetValue;
+      const isValidOrder1 = this.isValueMatch(value1, value2, targetValue);
+      const isValidOrder2 = this.isValueMatch(value2, value1, targetValue);
 
       if (isValidOrder1) {
         this.suggestions.push(this.createSuggestion({ position1, position2, card1, card2 }));
@@ -94,8 +115,8 @@ export class TwoCardPlacementHelper {
         CardPosition.BOTTOM_LEFT,
         CardPosition.BOTTOM_RIGHT
       );
-      const isSumEqualToTop = value1 + value2 === topValue;
-      const isReverseSumEqualToTop = value2 + value1 === topValue;
+      const isSumEqualToTop = this.isValueMatch(value1, value2, topValue, true);
+      const isReverseSumEqualToTop = this.isValueMatch(value2, value1, topValue, true);
 
       if (isSumEqualToTop && isBottomPositionsValid) {
         this.suggestions.push(
@@ -139,8 +160,12 @@ export class TwoCardPlacementHelper {
         CardPosition.TOP,
         CardPosition.BOTTOM_RIGHT
       );
-      const isDifferenceEqualToBottomLeft = value1 === value2 + bottomLeftValue;
-      const isReverseDifferenceEqualToBottomLeft = value2 === value1 + bottomLeftValue;
+      const isDifferenceEqualToBottomLeft = this.isValueMatch(value1, value2, bottomLeftValue);
+      const isReverseDifferenceEqualToBottomLeft = this.isValueMatch(
+        value2,
+        value1,
+        bottomLeftValue
+      );
 
       if (isDifferenceEqualToBottomLeft && isTopAndBottomRightValid) {
         this.suggestions.push(

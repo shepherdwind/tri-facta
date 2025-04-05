@@ -82,9 +82,6 @@ export const StartPage: React.FC = () => {
 
         {/* Game Title */}
         <div className="text-center">
-          <h2 className="text-5xl font-bold mb-4 text-gray-900 dark:text-white">
-            {t('game.title')}
-          </h2>
           <p className="text-xl text-gray-700 dark:text-gray-300">{t('game.subtitle')}</p>
         </div>
 

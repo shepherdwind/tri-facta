@@ -139,7 +139,8 @@ export const PlayerArea = observer<PlayerAreaProps>(({ currentPlayerBorderColor 
                 targetPosition={getCardTargetPosition(card)}
               />
               {selectedCard === card &&
-                !Array.from(store.selectedCards.values()).includes(card) && (
+                !Array.from(store.selectedCards.values()).includes(card) &&
+                (!card.isWildCard() || card.getValue() !== null) && (
                   <PositionSelectMenu
                     onPositionSelect={handlePositionSelect}
                     onClose={handleCloseMenu}
