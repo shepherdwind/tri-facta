@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { Card } from '../../game/models/Card';
@@ -9,17 +9,32 @@ import { useTheme } from '../../hooks/useTheme';
 
 interface PositionSelectMenuProps {
   onPositionSelect: (position: CardPosition) => void;
+  onClose: () => void;
 }
 
-const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(({ onPositionSelect }) => {
-  const { t } = useTranslation();
-  const { theme } = useTheme();
+const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
+  ({ onPositionSelect, onClose }) => {
+    const { t } = useTranslation();
+    const { theme } = useTheme();
+    const menuRef = useRef<HTMLDivElement>(null);
 
-  return (
-    <div className="relative">
-      <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-blue-500" />
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+          onClose();
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [onClose]);
+
+    return (
       <div
-        className={`absolute left-1/2 transform -translate-x-1/2 mt-2 w-32 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${
+        ref={menuRef}
+        className={`absolute left-1/2 transform -translate-x-1/2 mt-2 w-32 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50 ${
           theme === 'dark' ? 'bg-gray-800' : 'bg-white'
         }`}
       >
@@ -56,9 +71,9 @@ const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(({ onPosi
           </button>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
 
 interface PlayerAreaProps {
   cardBg: string;
@@ -89,6 +104,10 @@ export const PlayerArea = observer<PlayerAreaProps>(({ cardBg, currentPlayerBord
       store.handlePositionSelect(selectedCard, position);
       setSelectedCard(null);
     }
+  };
+
+  const handleCloseMenu = () => {
+    setSelectedCard(null);
   };
 
   const getCardTargetPosition = (card: Card): CardPosition | undefined => {
@@ -122,7 +141,10 @@ export const PlayerArea = observer<PlayerAreaProps>(({ cardBg, currentPlayerBord
               />
               {selectedCard === card &&
                 !Array.from(store.selectedCards.values()).includes(card) && (
-                  <PositionSelectMenu onPositionSelect={handlePositionSelect} />
+                  <PositionSelectMenu
+                    onPositionSelect={handlePositionSelect}
+                    onClose={handleCloseMenu}
+                  />
                 )}
             </div>
           ))}

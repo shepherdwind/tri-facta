@@ -39,7 +39,7 @@ export const GamePage = observer(() => {
   };
 
   return (
-    <div className="container mx-auto max-w-4xl py-8 h-full overflow-hidden flex flex-col">
+    <div className="container mx-auto max-w-4xl py-8 px-4 h-full overflow-hidden flex flex-col">
       <div className="flex flex-col space-y-8 flex-1 overflow-auto">
         <Header onExit={handleExit} />
 

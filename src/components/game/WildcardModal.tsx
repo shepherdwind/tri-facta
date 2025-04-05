@@ -66,30 +66,14 @@ export const WildcardModal: React.FC<WildcardModalProps> = ({
                   <p className="text-sm text-gray-500 dark:text-gray-400">
                     {t('game.wildcard.selectValue')}
                   </p>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center">
                     <input
                       type="number"
                       min={1}
                       value={value}
                       onChange={(e) => onChange(Number(e.target.value))}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 sm:text-sm sm:leading-6"
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 dark:bg-gray-700 dark:text-white dark:ring-gray-600 px-2"
                     />
-                    <div className="flex flex-col">
-                      <button
-                        type="button"
-                        onClick={() => onChange(value + 1)}
-                        className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-700"
-                      >
-                        ▲
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => onChange(Math.max(1, value - 1))}
-                        className="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-gray-700"
-                      >
-                        ▼
-                      </button>
-                    </div>
                   </div>
                   <button
                     type="button"
