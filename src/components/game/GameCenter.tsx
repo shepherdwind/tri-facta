@@ -72,15 +72,12 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
   };
 
   return (
-    <div className={`${cardBg} p-4 rounded-lg shadow-lg`}>
+    <div className={`${cardBg} p-4 rounded-lg shadow-lg relative`}>
       <div className="flex flex-col">
-        <GameControls store={store} />
         <div
           onDragOver={handleDragOver}
-          //   onDrop={(e) => handleDrop(e, CardPosition.TOP)}
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
-          //   onTouchEnd={(e) => handleTouchEnd(e, CardPosition.TOP)}
         >
           <TriFactaCard
             topNumber={topNumber}
@@ -92,6 +89,9 @@ export const GameCenter = observer<GameCenterProps>(({ store }) => {
             onTouchEnd={(e, position) => handleTouchEnd(e, position)}
           />
         </div>
+      </div>
+      <div className="absolute right-4 top-4">
+        <GameControls store={store} />
       </div>
     </div>
   );
