@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { GameMode } from '../game/types';
 import { Game } from '../game/models/Game';
 import { Player } from '../game/models/Player';
 import { GameStatePersistence } from '../stores/persistence/GameStatePersistence';
 import { GameStore } from '../stores/GameStore';
 import { Combobox } from '@headlessui/react';
+import { router } from '../router';
 
 const PLAYER_NAMES_STORAGE_KEY = 'player_names';
 
@@ -25,7 +25,6 @@ export const GameSettings: React.FC<GameSettingsProps> = ({ onGameStart }) => {
   const [player2Name, setPlayer2Name] = useState('Player 2');
   const [hasSavedGame, setHasSavedGame] = useState(false);
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   useEffect(() => {
     // Load saved game state
@@ -58,12 +57,12 @@ export const GameSettings: React.FC<GameSettingsProps> = ({ onGameStart }) => {
     const game = new Game(selectedMode, [player1, player2]);
     GameStore.initialize(game);
     savePlayerNames(player1Name, player2Name);
-    navigate('/game');
+    router.navigate('/game');
     onGameStart?.();
   };
 
   const handleRestoreGame = () => {
-    navigate('/game');
+    router.navigate('/game');
     onGameStart?.();
   };
 

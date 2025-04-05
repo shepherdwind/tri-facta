@@ -1,7 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
-import { useNavigate } from 'react-router-dom';
 import { Header } from '../components/game/Header';
 import { PlayerArea } from '../components/game/PlayerArea';
 import { GameCenter } from '../components/game/GameCenter';
@@ -9,6 +8,7 @@ import { WildcardModal } from '../components/game/WildcardModal';
 import { GameStore } from '../stores/GameStore';
 import { useTheme } from '../hooks/useTheme';
 import { useToast } from '../components/ToastProvider';
+import { router } from '../router';
 
 interface ToastOptions {
   title?: string;
@@ -20,7 +20,6 @@ interface ToastOptions {
 
 export const GamePage = observer(() => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const store = GameStore.getInstance();
   const { theme } = useTheme();
   const { showToast } = useToast();
@@ -39,7 +38,7 @@ export const GamePage = observer(() => {
   }, [store, t, showToast]);
 
   const handleExit = () => {
-    navigate('/');
+    router.navigate('/');
   };
 
   return (

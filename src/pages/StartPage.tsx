@@ -1,15 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { Logo } from '../components/Logo';
 import { GameSettings } from '../components/GameSettings';
 import { GameMode } from '../game/types';
 import { I18nIcon } from '../components/icons/I18nIcon';
 import { useTheme } from '../hooks/useTheme';
+import { router } from '../router';
 
 export const StartPage: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
 
   const toggleLanguage = () => {
@@ -17,7 +16,11 @@ export const StartPage: React.FC = () => {
   };
 
   const handleHelpClick = () => {
-    navigate('/help');
+    router.navigate('/help');
+  };
+
+  const handleStartGame = () => {
+    router.navigate('/game');
   };
 
   return (
@@ -26,11 +29,19 @@ export const StartPage: React.FC = () => {
         {/* Header */}
         <div className="flex justify-between items-center">
           <h1 className="text-4xl font-bold text-blue-600 dark:text-blue-400">tri-FACTa!™</h1>
-          <div className="flex space-x-2">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={toggleLanguage}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              aria-label={i18n.language === 'en' ? 'Switch to Chinese' : 'Switch to English'}
+              title={i18n.language === 'en' ? '切换到中文' : 'Switch to English'}
+            >
+              <I18nIcon className="w-6 h-6" />
+            </button>
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              title={t('common.toggleTheme')}
+              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+              aria-label={theme === 'light' ? t('header.darkMode') : t('header.lightMode')}
             >
               {theme === 'light' ? (
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -51,13 +62,6 @@ export const StartPage: React.FC = () => {
                   />
                 </svg>
               )}
-            </button>
-            <button
-              onClick={toggleLanguage}
-              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              title={t('common.toggleLanguage')}
-            >
-              <I18nIcon className="w-6 h-6" />
             </button>
             <button
               onClick={handleHelpClick}
@@ -90,9 +94,7 @@ export const StartPage: React.FC = () => {
         </div>
 
         {/* Game Settings */}
-        <div className="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6">
-          <GameSettings />
-        </div>
+        <GameSettings onGameStart={handleStartGame} />
 
         {/* Game Instructions */}
         <div className="bg-white dark:bg-gray-700 rounded-lg shadow-lg p-6">

@@ -3,6 +3,7 @@ import { I18nIcon } from '../icons/I18nIcon';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../hooks/useTheme';
 import { SunIcon, MoonIcon, QuestionMarkCircleIcon } from '@heroicons/react/24/outline';
+import { router } from '../../router';
 
 interface HeaderProps {
   onExit: () => void;
@@ -39,7 +40,7 @@ export const Header: React.FC<HeaderProps> = ({ onExit }) => {
         </button>
         <button
           className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-          onClick={() => (window.location.href = '/help')}
+          onClick={() => router.navigate('/help')}
           title={t('common.help')}
           aria-label={t('common.help')}
         >

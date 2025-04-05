@@ -18,7 +18,6 @@ export default defineConfig(({ mode }) => ({
           vendor: [
             'mobx',
             'mobx-react-lite',
-            'react-router-dom',
             'i18next',
             'i18next-browser-languagedetector',
             'react-i18next',

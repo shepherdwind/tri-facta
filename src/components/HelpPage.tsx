@@ -1,17 +1,16 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { I18nIcon } from './icons/I18nIcon';
 import TriFactaCard from './TriFacta/TriFactaCard';
 import { GameMode } from '../game/types';
 import { ArrowLeftIcon, CheckIcon } from '@heroicons/react/24/outline';
+import { router } from '../router';
 
 const HelpPage: React.FC = () => {
-  const navigate = useNavigate();
   const { t, i18n } = useTranslation();
 
   const handleBack = () => {
-    navigate('/');
+    router.navigate('/');
   };
 
   const toggleLanguage = () => {
