@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { Card } from '../game/models/Card';
 import { CardPosition } from '../game/types';
 import { GameStore } from '../stores/GameStore';
 import { cn } from '../utils/cn';
+import { TopIcon, BottomLeftIcon, BottomRightIcon } from './game/PositionSelectMenu';
 
 interface GameCardProps {
   card: Card;
@@ -15,9 +15,8 @@ interface GameCardProps {
   onDragEnd?: (e: React.DragEvent) => void;
 }
 
-export const GameCard = observer<GameCardProps>(
+export const GameCard: React.FC<GameCardProps> = observer(
   ({ card, isSelected = false, onClick, targetPosition, onDragStart, onDragEnd }) => {
-    const { t } = useTranslation();
     const [isDragging, setIsDragging] = useState(false);
     const [touchStartTime, setTouchStartTime] = useState<number>(0);
     const [touchStartPosition, setTouchStartPosition] = useState<{ x: number; y: number } | null>(
@@ -28,16 +27,16 @@ export const GameCard = observer<GameCardProps>(
     const store = GameStore.getInstance();
 
     const getPositionText = (position?: CardPosition) => {
-      if (!position) return '';
+      if (!position) return null;
       switch (position) {
         case CardPosition.TOP:
-          return t('game.position.top');
+          return <TopIcon />;
         case CardPosition.BOTTOM_LEFT:
-          return t('game.position.bottomLeft');
+          return <BottomLeftIcon />;
         case CardPosition.BOTTOM_RIGHT:
-          return t('game.position.bottomRight');
+          return <BottomRightIcon />;
         default:
-          return '';
+          return null;
       }
     };
 

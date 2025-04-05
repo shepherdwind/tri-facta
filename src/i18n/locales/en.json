@@ -140,6 +140,7 @@
       "top": "Top",
       "bottomLeft": "Bottom Left",
       "bottomRight": "Bottom Right"
-    }
+    },
+    "victory": "You won the game, congratulations! 🎉"
   }
 }

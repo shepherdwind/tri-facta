@@ -88,7 +88,7 @@ export class BaseGameManager {
   }
 
   get canDrawCard(): boolean {
-    return !this.hasDrawnCard;
+    return !this.hasDrawnCard && this.currentPlayer.getHand().length > 0;
   }
 
   get canEndTurn(): boolean {
