@@ -12,15 +12,20 @@ Play now at: [https://tri.iling.fun/](https://tri.iling.fun/)
 - Card-based gameplay mechanics
 - Modern and responsive UI
 - Docker support for easy deployment
+- Automated builds with GitHub Actions
 
 ## Quick Start
 
 ### Using Docker (Recommended)
 
-1. Pull the latest image:
+1. Pull the latest image from GitHub Container Registry:
 
 ```bash
-docker pull shepherdwind/tri-facta:latest
+# Login to GitHub Container Registry (first time only)
+echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+
+# Pull the image
+docker pull ghcr.io/shepherdwind/tri-facta:latest
 ```
 
 2. Create a `docker-compose.yml` file with the following content:
@@ -30,7 +35,7 @@ version: '3.8'
 
 services:
   app:
-    image: shepherdwind/tri-facta:latest
+    image: ghcr.io/shepherdwind/tri-facta:latest
     ports:
       - '80:80'
     restart: unless-stopped
@@ -88,9 +93,25 @@ npm run build
 npm run preview
 ```
 
-### Docker Build
+### Docker Images
 
-To build and push a new Docker image:
+The Docker images are automatically built and published to GitHub Container Registry (ghcr.io) using GitHub Actions. Images are available at:
+
+- Latest version: `ghcr.io/shepherdwind/tri-facta:latest`
+- Specific version: `ghcr.io/shepherdwind/tri-facta:v1.0.0` (replace with actual version)
+- Branch builds: `ghcr.io/shepherdwind/tri-facta:main` (or other branch names)
+
+#### Automated Builds
+
+The following events trigger automatic Docker image builds:
+
+- Push to main branch
+- Creation of version tags (e.g., v1.0.0)
+- Pull requests to main branch
+
+#### Manual Build (Local Development)
+
+To build and push a new Docker image locally:
 
 ```bash
 # Build and push latest version
@@ -98,6 +119,18 @@ To build and push a new Docker image:
 
 # Build and push specific version
 ./build.sh v1.0.0
+```
+
+#### Pulling Images
+
+To pull a specific version of the image:
+
+```bash
+# Pull using the pull script
+./pull.sh
+
+# Or manually pull
+docker pull ghcr.io/shepherdwind/tri-facta:latest
 ```
 
 ## Game Rules
