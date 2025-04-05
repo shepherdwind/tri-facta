@@ -93,6 +93,8 @@
       "addition": "加法模式",
       "multiplication": "乘法模式"
     },
+    "help": "提示",
+    "noValidPlacements": "没有找到有效的放置组合",
     "instructions": {
       "title": "游戏说明",
       "basic": "基本规则",

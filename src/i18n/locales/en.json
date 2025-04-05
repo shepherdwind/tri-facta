@@ -91,6 +91,8 @@
       "addition": "Addition Mode",
       "multiplication": "Multiplication Mode"
     },
+    "help": "Help",
+    "noValidPlacements": "No valid placements found",
     "instructions": {
       "title": "Game Instructions",
       "basic": "Basic Rules",

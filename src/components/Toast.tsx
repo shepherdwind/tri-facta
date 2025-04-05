@@ -73,7 +73,7 @@ export const Toast: React.FC<ToastProps> = ({
       leaveTo="opacity-0"
     >
       <div
-        className={`fixed right-4 ${getPositionClass()} z-50 max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto overflow-hidden ${getStatusColor()} ${getVariantStyle()}`}
+        className={`fixed right-4 ${getPositionClass()} z-50 max-w-sm w-full shadow-lg rounded-lg pointer-events-auto overflow-hidden ${getStatusColor()} ${getVariantStyle()}`}
       >
         <div className="p-4">
           <div className="flex items-start">

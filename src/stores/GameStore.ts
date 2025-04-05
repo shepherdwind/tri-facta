@@ -5,6 +5,7 @@ import { Player } from '../game/models/Player';
 import { CardManager } from './card/CardManager';
 import { GameStatePersistence } from './persistence/GameStatePersistence';
 import { ToastOptions } from '../utils/ToastManager';
+import { findValidPlacements } from '../game/models/GameHelper/index';
 
 export class GameStore extends CardManager {
   private static instance: GameStore | null = null;
@@ -13,6 +14,7 @@ export class GameStore extends CardManager {
     super(game);
     makeObservable(this, {
       setToast: action,
+      helpPlaceCards: action,
     });
   }
 
@@ -54,5 +56,46 @@ export class GameStore extends CardManager {
 
   setToast(toast: (options: ToastOptions) => void) {
     this.toastManager.setToast(toast);
+  }
+
+  /**
+   * Help the current player by finding a valid card placement and setting it in the staging area
+   * @returns true if a valid placement was found and set, false otherwise
+   */
+  helpPlaceCards(): boolean {
+    const currentPlayer = this.currentPlayer;
+    const cardGroup = this.game.getCardGroup();
+    const playerHand = currentPlayer.getHand();
+
+    // Find valid placements
+    const suggestions = findValidPlacements(playerHand, cardGroup);
+
+    if (suggestions.length === 0) {
+      return false;
+    }
+
+    // Use the first suggestion
+    const suggestion = suggestions[0];
+
+    // Clear current selections
+    this.selectedCards.clear();
+
+    // Place cards according to the suggestion, but only stage cards from player's hand
+    for (const [position, card] of suggestion.cards.entries()) {
+      // Only stage the card if it's in the player's hand
+      if (playerHand.includes(card)) {
+        this.setSelectedCard(card, position);
+      }
+    }
+
+    return true;
+  }
+
+  /**
+   * Display an error message
+   * @param message The error message to display
+   */
+  displayError(message: string): void {
+    this.showError(message);
   }
 }

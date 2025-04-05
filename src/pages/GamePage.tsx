@@ -8,6 +8,7 @@ import { GameCenter } from '../components/game/GameCenter';
 import { WildcardModal } from '../components/game/WildcardModal';
 import { GameStore } from '../stores/GameStore';
 import { useTheme } from '../hooks/useTheme';
+import { useToast } from '../components/ToastProvider';
 
 interface ToastOptions {
   title?: string;
@@ -22,17 +23,20 @@ export const GamePage = observer(() => {
   const navigate = useNavigate();
   const store = GameStore.getInstance();
   const { theme } = useTheme();
+  const { showToast } = useToast();
 
   const cardBg = theme === 'dark' ? 'bg-gray-700' : 'bg-white';
   const currentPlayerBorderColor = theme === 'dark' ? 'border-blue-300' : 'border-blue-500';
 
   React.useEffect(() => {
     store.setToast((options: ToastOptions) => {
-      // You'll need to implement your own toast system or use a library like react-hot-toast
       const translatedDescription = t(options.description);
-      console.log({ ...options, description: translatedDescription });
+      showToast({
+        ...options,
+        description: translatedDescription,
+      });
     });
-  }, [store, t]);
+  }, [store, t, showToast]);
 
   const handleExit = () => {
     navigate('/');

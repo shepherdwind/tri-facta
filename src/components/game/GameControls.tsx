@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { GameStore } from '../../stores/GameStore';
+import { HelpButton } from '../HelpButton';
 
 interface GameControlsProps {
   store: GameStore;
@@ -32,6 +33,7 @@ export const GameControls = observer<GameControlsProps>(({ store }) => {
       >
         {t('game.endTurn')}
       </button>
+      <HelpButton gameStore={store} />
     </div>
   );
 });

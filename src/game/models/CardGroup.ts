@@ -100,16 +100,6 @@ export class CardGroup {
       return true;
     }
 
-    const cardsArray = [
-      workingArea.topCard!,
-      workingArea.bottomLeftCard!,
-      workingArea.bottomRightCard!,
-    ];
-
-    if (this.hasWildCard(cardsArray)) {
-      return true;
-    }
-
     return this.isValidMathEquation(workingArea);
   }
 
@@ -122,13 +112,6 @@ export class CardGroup {
       workingArea.bottomLeftCard !== null &&
       workingArea.bottomRightCard !== null
     );
-  }
-
-  /**
-   * Check if any of the cards is a wild card
-   */
-  private hasWildCard(cards: Card[]): boolean {
-    return cards.some((card) => card !== null && card.isWildcard);
   }
 
   /**
@@ -272,6 +255,20 @@ export class CardGroup {
       bottomRightCard: null,
       playerId: null,
     };
+  }
+
+  /**
+   * Get the committed state of the card group
+   */
+  getCommittedState(): CardGroupState {
+    return { ...this.committedState };
+  }
+
+  /**
+   * Get the game mode of the card group
+   */
+  getGameMode(): GameMode {
+    return this.gameMode;
   }
 
   toJSON(): CardGroupJSON {
