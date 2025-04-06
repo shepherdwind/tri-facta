@@ -43,6 +43,13 @@ export class ThemeStore {
     root.classList.remove('light', 'dark');
     root.classList.add(this.theme);
 
+    // Update theme-color meta tag for Android
+    const themeColor = this.theme === 'dark' ? '#111827' : '#F9FAFB';
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.setAttribute('content', themeColor);
+    }
+
     // Update apple-mobile-web-app-status-bar-style for iOS
     const metaAppleStatusBar = document.querySelector(
       'meta[name="apple-mobile-web-app-status-bar-style"]'
