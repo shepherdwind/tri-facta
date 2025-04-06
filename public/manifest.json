@@ -4,8 +4,8 @@
   "description": "A fun and educational math game",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#319795",
+  "background_color": "#F9FAFB",
+  "theme_color": "#F9FAFB",
   "orientation": "portrait",
   "icons": [
     {
