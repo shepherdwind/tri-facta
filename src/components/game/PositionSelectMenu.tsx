@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { observer } from 'mobx-react-lite';
 import { CardPosition } from '../../game/types';
 import { useTheme } from '../../hooks/useTheme';
+import { GameStore } from '../../stores/GameStore';
 
 interface PositionSelectMenuProps {
   onPositionSelect: (position: CardPosition) => void;
@@ -69,6 +70,7 @@ export const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
     const { t } = useTranslation();
     const { theme } = useTheme();
     const menuRef = useRef<HTMLDivElement>(null);
+    const store = GameStore.getInstance();
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
@@ -83,6 +85,39 @@ export const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
       };
     }, [onClose]);
 
+    const getPositionButton = (position: CardPosition, icon: React.ReactNode) => {
+      const selectedCard = store.selectedCards.get(position);
+      const isSelected = selectedCard !== undefined;
+      const cardValue = selectedCard?.getValue();
+
+      return (
+        <button
+          className={`block w-full text-left px-4 py-2 text-sm relative ${
+            theme === 'dark'
+              ? isSelected
+                ? 'text-white bg-indigo-700 border-l-4 border-indigo-400'
+                : 'text-gray-300 hover:bg-blue-900 hover:text-white'
+              : isSelected
+                ? 'text-indigo-900 bg-indigo-100 border-l-4 border-indigo-500'
+                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
+          }`}
+          onClick={() => onPositionSelect(position)}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {icon}
+              <span>{t(`game.position.${position}`)}</span>
+            </div>
+            {isSelected && cardValue !== null && (
+              <div className="bg-indigo-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                {cardValue}
+              </div>
+            )}
+          </div>
+        </button>
+      );
+    };
+
     return (
       <div
         ref={menuRef}
@@ -91,36 +126,9 @@ export const PositionSelectMenu: React.FC<PositionSelectMenuProps> = observer(
         }`}
       >
         <div className="py-1">
-          <button
-            className={`block w-full text-left px-4 py-2 text-sm ${
-              theme === 'dark'
-                ? 'text-gray-300 hover:bg-blue-900 hover:text-white'
-                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
-            }`}
-            onClick={() => onPositionSelect(CardPosition.TOP)}
-          >
-            <TopIcon /> {t('game.position.top')}
-          </button>
-          <button
-            className={`block w-full text-left px-4 py-2 text-sm ${
-              theme === 'dark'
-                ? 'text-gray-300 hover:bg-blue-900 hover:text-white'
-                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
-            }`}
-            onClick={() => onPositionSelect(CardPosition.BOTTOM_LEFT)}
-          >
-            <BottomLeftIcon /> {t('game.position.bottomLeft')}
-          </button>
-          <button
-            className={`block w-full text-left px-4 py-2 text-sm ${
-              theme === 'dark'
-                ? 'text-gray-300 hover:bg-blue-900 hover:text-white'
-                : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
-            }`}
-            onClick={() => onPositionSelect(CardPosition.BOTTOM_RIGHT)}
-          >
-            <BottomRightIcon /> {t('game.position.bottomRight')}
-          </button>
+          {getPositionButton(CardPosition.TOP, <TopIcon />)}
+          {getPositionButton(CardPosition.BOTTOM_LEFT, <BottomLeftIcon />)}
+          {getPositionButton(CardPosition.BOTTOM_RIGHT, <BottomRightIcon />)}
         </div>
       </div>
     );
