@@ -76,7 +76,6 @@ jobs:
             type=ref,event=pr
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
-            type=sha,format=long
 
       - name: Build and push Docker image
         if: steps.check-version.outputs.should_build == 'true'
