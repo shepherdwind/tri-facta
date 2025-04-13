@@ -21,9 +21,6 @@ Play now at: [https://tri.iling.fun/](https://tri.iling.fun/)
 1. Pull the latest image from GitHub Container Registry:
 
 ```bash
-# Login to GitHub Container Registry (first time only)
-echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
-
 # Pull the image
 docker pull ghcr.io/shepherdwind/tri-facta:latest
 ```
