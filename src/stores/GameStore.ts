@@ -70,6 +70,9 @@ export class GameStore extends CardManager {
     // Find valid placements
     const suggestions = findValidPlacements(playerHand, cardGroup);
 
+    // Use a hint, no matter if there are suggestions or not
+    currentPlayer.useHint();
+
     if (suggestions.length === 0) {
       return false;
     }
@@ -87,9 +90,6 @@ export class GameStore extends CardManager {
         this.setSelectedCard(card, position);
       }
     }
-
-    // Increment hint usage count if the hint was successful
-    currentPlayer.useHint();
 
     return true;
   }

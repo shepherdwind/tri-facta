@@ -77,7 +77,7 @@ export const GameSettings: React.FC<GameSettingsProps> = ({ onGameStart }) => {
           <Combobox value={player1Name} onChange={setPlayer1Name}>
             <div className="relative">
               <Combobox.Input
-                className="w-full px-4 py-2 text-lg border-2 border-gray-400 dark:border-gray-500 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-4 py-2 text-lg border-2 border-gray-400 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 dark:bg-gray-800 dark:text-white"
                 placeholder={t('game.player1')}
                 displayValue={(name: string) => name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -94,7 +94,7 @@ export const GameSettings: React.FC<GameSettingsProps> = ({ onGameStart }) => {
           <Combobox value={player2Name} onChange={setPlayer2Name}>
             <div className="relative">
               <Combobox.Input
-                className="w-full px-4 py-2 text-lg border-2 border-gray-400 dark:border-gray-500 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-4 py-2 text-lg border-2 border-gray-400 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-400 dark:focus:border-blue-400 dark:bg-gray-800 dark:text-white"
                 placeholder={t('game.player2')}
                 displayValue={(name: string) => name}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -121,7 +121,7 @@ export const GameSettings: React.FC<GameSettingsProps> = ({ onGameStart }) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSelectedMode(e.target.value as GameMode)
               }
-              className="w-5 h-5 text-blue-600 focus:ring-blue-500"
+              className="w-5 h-5 text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:focus:ring-blue-400"
             />
             <span className="text-lg text-gray-700 dark:text-gray-300">
               {t('game.modes.addition')}
@@ -136,7 +136,7 @@ export const GameSettings: React.FC<GameSettingsProps> = ({ onGameStart }) => {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setSelectedMode(e.target.value as GameMode)
               }
-              className="w-5 h-5 text-blue-600 focus:ring-blue-500"
+              className="w-5 h-5 text-blue-600 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:focus:ring-blue-400"
             />
             <span className="text-lg text-gray-700 dark:text-gray-300">
               {t('game.modes.multiplication')}
